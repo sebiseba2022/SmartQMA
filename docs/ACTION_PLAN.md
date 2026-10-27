@@ -1,32 +1,25 @@
 # SmartQMA — Plan de Acțiune & Faze de Implementare
 
-SmartQMA este o platformă modernă dedicată **trasabilității și analizei avansate a produselor** într-o secție de producție industrială. Sistemul monitorizează ciclul complet de viață al fiecărui produs, lot și componentă prin diverse **stagii și stări de fabricație**, înregistrând parametrii de testare calitativă și cantitativă de-a lungul liniilor de producție.
+SmartQMA este o aplicație dedicată **trasabilității și analizei calității produselor** dintr-o secție de producție industrială. Sistemul urmărește produsele de-a lungul etapelor de fabricație, înregistrând măsurătorile parametrice și rezultatele testelor la fiecare stație.
 
 ---
 
-## 🎯 Obiective Principale
-1. **Trasabilitate Completă**: Urmărirea serialelor/loturilor în timp real prin fiecare stație și punct de control.
-2. **Controlul Calității (QA & Testing)**: Înregistrarea parametrilor de testare la fiecare etapă și blocarea automată a produselor neconforme (quarantine/scrap).
-3. **Analiză & Raportare**: Tablouri de bord analitice cu rate de randament (Yield), defecte Pareto, timpi de ciclu (Cycle Time) și performanța stațiilor.
-4. **Audit Imutabil & Securitate**: Jurnalizare automată la nivel de bază de date a fiecărei modificări de stare, acces exclusiv prin Google OAuth2/OIDC.
-5. **Standarde de Inginerie Riguroase**: Calitate cod automată, testare >80%, E2E automatizat zilnic, containerizare Podman & Docker, pipeline-uri CI/CD.
-
----
-
-## 🏗️ Stack Tehnologic Recomandat
-
-| Componentă | Tehnologie Selectată | Justificare |
-| :--- | :--- | :--- |
-| **Backend** | **PHP 8.2+ / Laravel 11** | Arhitectură robustă enterprise, Eloquent ORM cu suport nativ pentru JSONB, Laravel Socialite pentru Google Auth, Observers/Pachete de Audit (`owen-it/laravel-auditing`), evenimente și WebSockets (Laravel Reverb / Echo). |
-| **Bază de Date & Audit** | **PostgreSQL 16** | Suport pentru tranzacții ACID, tabele de audit istoric, extensii JSONB pentru date flexibile de testare și măsurători parametrice. |
-| **Frontend** | **React + Vite (TypeScript)** | Interfață reactivă, componentizare modulară pentru stațiile de scanare și panourile de trasabilitate. |
-| **Mediu de Lucru / IDE** | **Antigravity** | Mediul oficial de dezvoltare asistat de inteligență artificială, configurat cu context dedicat pentru întreg proiectul. |
-| **Design System** | **SmartQMA Design Tokens** | Paletă industrială personalizată: Roșu, Portocaliu, Negru, Alb. Conformitate WCAG 2.1 AA. |
-| **Testare Unitară & Feature** | **Pest PHP / PHPUnit & Vitest** | Teste rapide backend și frontend, prag minim impus de 80% acoperire a codului. |
-| **Testare E2E** | **Playwright** | Automatizare completă a fluxurilor utilizator în browser, rulare automată zilnică în CI/CD. |
-| **Containerizare** | **Podman & Docker (Compose)** | Compatibilitate duală cu mediu containerizat pentru Laravel, PostgreSQL și React. |
-| **CI/CD** | **GitHub Actions** | Automatizare completă: linting, analize de securitate, testare unitară, rulare E2E și deploy. |
-| **Autentificare** | **Google OAuth2 / OIDC (Socialite)** | Exclusiv Google Auth; fără parole locale stocate în aplicație. |
+## 🎯 Puncte Cheie Cuprinse
+1. **Mediul Curent de Dezvoltare**:
+   - Mediu oficial: **Antigravity**
+   - Backend: **PHP 8.2+ / Laravel 11**
+   - Frontend: **React + Vite (TypeScript)**
+   - Bază de Date: **PostgreSQL 16**
+   - Calitate cod local: **Laravel Pint** (PHP) & **ESLint / Prettier** (React)
+2. **Ghidul Vizual (Visual Guidelines)**:
+   - Paletă industrială: **Roșu**, **Portocaliu**, **Negru**, **Alb**
+   - Componente UI: Badge-uri de stare, carduri de măsurători, font monospațiat pentru seriale
+3. **Testare Unitară (Unit Testing)**:
+   - Suită backend **Pest PHP / PHPUnit** (modele, state machine, validare toleranțe teste)
+   - Suită frontend **Vitest** (componente React)
+   - Acoperire minimă impusă: **80%**
+4. **Testare End-to-End (E2E Testing)**:
+   - Suită **Playwright** pentru fluxurile critice de producție (scanare, testare, trecere stare, carantină)
 
 ---
 
@@ -34,124 +27,95 @@ SmartQMA este o platformă modernă dedicată **trasabilității și analizei av
 
 ```mermaid
 flowchart TD
-    F1[Faza 1: Fundație & Tooling] --> F2[Faza 2: Autentificare Google & RBAC]
-    F2 --> F3[Faza 3: Arhitectură Date & Audit Imutabil]
-    F3 --> F4[Faza 4: Motorul de Trasabilitate & Testare]
-    F4 --> F5[Faza 5: Frontend & SmartQMA Design System]
-    F5 --> F6[Faza 6: Strategie de Testare Unit & E2E Playwright]
-    F6 --> F7[Faza 7: Containerizare, CI/CD & Medii Separate]
-    F7 --> F8[Faza 8: Documentație, Analytics & Finalizare]
+    F1[Faza 1: Configurare Mediu Curent Antigravity] --> F2[Faza 2: Model de Date & Bază PostgreSQL]
+    F2 --> F3[Faza 3: Logica de Trasabilitate & Testare Laravel]
+    F3 --> F4[Faza 4: Interfață React & Ghid Vizual SmartQMA]
+    F4 --> F5[Faza 5: Teste Unitare Pest & Vitest]
+    F5 --> F6[Faza 6: Teste End-to-End Playwright]
 ```
 
 ---
 
-### Faza 1: Fundație, Tooling & Standarde de Cod
-- [ ] **Structura Repositoriului**: Organizare monorepo sau structură clară `/client`, `/server`, `/shared`, `/docs`.
-- [ ] **Configurare Linter & Formatter**:
-  - Backend (Laravel): **Laravel Pint** și **PHPStan** (nivel strict de analiză statică).
-  - Frontend (React): **ESLint** (reguli stricte TypeScript) și **Prettier**.
-- [ ] **Pre-commit Hooks**:
-  - Integrare Git Hooks / Husky + `lint-staged` pentru validare automată linter și teste înainte de orice commit.
-- [ ] **Configurare Mediu Antigravity**:
-  - Setări de spațiu de lucru pentru Antigravity (`.vscode/settings.json`, extensii esențiale pentru PHP, Laravel și React).
-- [ ] **Ghiduri de Contribuție & Protecție**:
-  - `.github/pull_request_template.md` și șabloane de Issues (Bug, Feature, Task).
-  - Reguli de Branch Protection pe `main` (fără direct commits, minim 1 review, status checks verzi).
-  - Instrucțiuni AI: `.github/copilot-instructions.md` și `AGENTS.md`.
+### Faza 1: Configurare Mediu Curent (Antigravity & Tooling)
+- [ ] **Configurare Spațiu de Lucru Antigravity**:
+  - Integrare `.vscode/settings.json` (format-on-save cu Pint și Prettier).
+  - Extensii pentru PHP, Laravel și React.
+- [ ] **Setup Proiect**:
+  - Backend Laravel 11 configurat cu PostgreSQL (`.env`).
+  - Frontend React cu Vite și TypeScript.
+- [ ] **Calitate Cod Local**:
+  - `Laravel Pint` pentru verificarea și formatarea stilului PHP (`./vendor/bin/pint`).
+  - `ESLint` și `Prettier` pentru verificarea codului React (`npm run lint`).
+  - Pre-commit hook pentru rularea automată a linter-ului.
 
 ---
 
-### Faza 2: Autentificare Google & Control Acces (RBAC)
-- [ ] **Configurare Google OAuth2 / OpenID Connect**:
-  - Implementare flux de login exclusiv cu contul Google (fără tabele de parole locale).
-  - Validare ID Token Google pe backend și generare sesiune securizată (JWT HTTP-only cookie).
-- [ ] **Matricea de Roluri și Permisiuni (RBAC)**:
-  - `OPERATOR`: Poate scana produse, bifa începerea/finalizarea etapelor, înregistra măsurători manuale de test.
-  - `QUALITY_INSPECTOR` (QA): Poate valida teste de calitate, aproba/respinge loturi, plasa produse în carantină.
-  - `LINE_MANAGER`: Configurează liniile de producție, etapele și parametrii de testare, vizualizează rapoarte analitice.
-  - `ADMIN`: Administrează utilizatorii, integrările și politicile de securitate.
-- [ ] **Middleware & Guards**: Verificarea autorizării la nivel de endpoint API și pe rutele din interfață.
+### Faza 2: Model de Date & Bază PostgreSQL
+- [ ] **Migrații Bază de Date**:
+  - `products`: ID unic, serial number, tip produs, lot, stare curentă (`PASSED`, `IN_PROGRESS`, `FAILED`, `QUARANTINED`, `SCRAPPED`).
+  - `stages` & `stations`: Etapele procesului tehnologic și stațiile de lucru.
+  - `quality_tests`: Înregistrare măsurători (tensiune, dimensiuni, aspect), toleranțe admise și rezultat PASS/FAIL.
+  - `audits`: Jurnalizare imutabilă a schimbărilor de stare și a rezultatelor testelor.
+- [ ] **Modele Eloquent & Relații**:
+  - Implementare relații directe între produse, etape, teste și istoricul de audit.
+  - Utilizare `SoftDeletes` pentru prevenirea pierderii accidentale a datelor.
 
 ---
 
-### Faza 3: Arhitectură Date, Model de Trasabilitate & Audit Imutabil
-- [ ] **Schema Bazei de Date (PostgreSQL)**:
-  - `products`: ID unic, serial number (UUID/Barcode/QR), tip produs, lot (batch_id), stare curentă, creat_la.
-  - `production_lines` & `stations`: Linii de fabricație, stații fizice, capacitate.
-  - `stages`: Etape de fabricație ordonate secvențial sau cu dependențe grafo-orientate (ex: Asamblare -> Test Preliminar -> Finisare -> Test Final -> Ambalare).
-  - `stage_executions`: Trecerea fiecărui produs printr-o etapă (operator_id, timestamp_start, timestamp_end, status: IN_PROGRESS / PASSED / FAILED / REWORKED).
-  - `quality_tests`: Parametri de test (tensiune, dimensiune, etanșeitate, aspect vizual), valori măsurate, toleranțe min/max, rezultat PASS/FAIL.
-  - `defects`: Înregistrare anomalii, cauze rădăcină (root-cause), acțiuni corective (scrap/rework).
-- [ ] **Audit Trail Automat**:
-  - Implementare mecanism de audit imutabil (folosind `owen-it/laravel-auditing` sau Eloquent Observers pe modelele `Product`, `QualityTest`, `StageExecution`):
-    - Înregistrare automată: `user_id`, `event` (`created`, `updated`, `deleted`), `old_values`, `new_values`, `ip_address`, `user_agent`, `created_at`.
-    - Nicio ștergere dură (SoftDeletes în Laravel).
-- [ ] **Sistem Automat de Backup**:
-  - Backup automat programat (folosind `spatie/laravel-backup` sau scripturi `pg_dump` pe PostgreSQL) cu reținere istorică și proceduri documentate de restaurare.
-
----
-
-### Faza 4: Motorul de Trasabilitate & Înregistrare Teste (Backend Core)
+### Faza 3: Motorul de Trasabilitate & Înregistrare Teste (Backend Laravel)
 - [ ] **State Machine pentru Produse**:
-  - Validarea strictă a tranzițiilor de stare: un produs nu poate trece la etapa $N+1$ dacă etapa $N$ nu a fost finalizată cu `PASSED`.
-  - Tratarea excepțiilor: Carantină (`QUARANTINED`), Re-lucrare (`REWORK`), Casare (`SCRAPPED`).
-- [ ] **API de Testare & Măsurători**:
-  - Endpoint-uri de ingestie a rezultatelor testelor automate (ex: payload JSON de la bancuri de testare).
-  - Validare automată pe baza specificațiilor tehnice (toleranțe).
-- [ ] **WebSockets / Server-Sent Events (SSE)**:
-  - Notificări în timp real pe liniile de producție atunci când o stație raportează un defect critic sau o oprire a liniei.
+  - Reguli de avansare: un produs poate trece la etapa următoare doar dacă testele etapei curente sunt valide (`PASSED`).
+  - Rutare automată în `QUARANTINED` dacă valorile măsurate sunt în afara toleranțelor.
+- [ ] **Endpoints API**:
+  - Endpoint scanare produs la stație.
+  - Endpoint trimitere și validare rezultate teste.
+  - Endpoint consultare istoric complet și arbore de trasabilitate.
+- [ ] **Autentificare Google**:
+  - Integrare Google OAuth2 prin Laravel Socialite (fără parole locale).
 
 ---
 
-### Faza 5: Frontend & SmartQMA Design System
-- [ ] **Implementare Design System SmartQMA**:
-  - Paletă cromatică industrială conform cerințelor: **Roșu** (erori, alerte calitate), **Portocaliu** (avertizări, în curs), **Negru** (fundal modern, structură dark/industrială), **Alb** (suprafețe curate, contrast maxim).
-  - Componente de status: Badges interactive pentru stări (`PASSED`, `TESTING`, `FAILED`, `QUARANTINE`).
-  - Respectare WCAG 2.1 AA (contrast ridicat, lizibilitate crescută pe ecrane de uzină/tablete).
-- [ ] **Ecrane Principale**:
-  - **Operator Station View**: Ecran simplificat, optimizat pentru tastatură/scanner cod de bare, acțiuni rapide de trecere etapă și introducere valori test.
-  - **Product Genealogy / Traceability Tree**: Vizualizare completă a istoricului unui produs (cine l-a asamblat, pe ce linie, la ce dată, ce teste a trecut).
-  - **Quality Analytics & Dashboard**: Rate de conformitate (First Pass Yield - FPY), grafice Pareto pentru defecte frecvente, distribuții gaussiene ale măsurătorilor de test.
-  - **Audit Log Viewer**: Ecran dedicat pentru auditori și manageri pentru investigarea oricărei schimbări de stare.
+### Faza 4: Interfață React & Ghid Vizual SmartQMA
+- [ ] **Implementare Sistem Vizual**:
+  - Integrare paletă: **Negru** (fundal, contrast), **Alb** (suprafețe și text), **Roșu** (erori, defecte, `FAILED`), **Portocaliu** (în lucru, atenționări `WARNING`).
+  - Tipografie: Font monospațiat (`JetBrains Mono` / `Roboto Mono`) pentru numere de serie, coduri de bare și valori numerice.
+  - Conformitate accesibilitate **WCAG 2.1 AA**.
+- [ ] **Ecrane Aplicație**:
+  - **Ecran Stație Operator**: Câmp de scanare cu auto-focus, afișare parametri de testare, butoane de confirmare/respingere.
+  - **Panou Trasabilitate (Genealogie Produs)**: Stepper vizual cu etapele parcurse, valorile măsurate și starea curentă.
+  - **Dashboard Calitate**: Indicatori randament (FPY) și distribuție defecte.
 
 ---
 
-### Faza 6: Strategie de Testare (Unit & E2E cu Playwright)
-- [ ] **Unit & Feature Testing (Acoperire minimă 80%)**:
-  - Testarea regulilor de business ale state machine-ului în Laravel (Pest / PHPUnit).
-  - Testarea validării parametrilor de testare și calculul toleranțelor.
-  - Testarea mecanismului de audit pe modelele Eloquent.
-  - Testarea componentelor React (Vitest / React Testing Library).
-  - Măsurare automată a acoperirii (`php artisan test --coverage` și `npm run test:coverage`) blocantă la build.
-- [ ] **End-to-End Testing (Playwright)**:
-  - Scenariu 1: Autentificare utilizator -> Creare produs / lot -> Trecere prin stații de producție.
-  - Scenariu 2: Introducere valori de test invalide -> Blocare automată produs în starea `FAILED`/`QUARANTINED`.
-  - Scenariu 3: Consultare arbore de trasabilitate și verificare generare înregistrări în log-ul de audit.
-- [ ] **Rulare Automată E2E**:
-  - Workflow GitHub Actions programat zilnic (ex: la ora 02:00 UTC) și la fiecare Pull Request către `main`.
+### Faza 5: Teste Unitare (Acoperire minimă 80%)
+- [ ] **Teste Unitare Backend (Pest PHP / PHPUnit)**:
+  - Testarea regulilor de tranziție între stări ale produsului.
+  - Testarea validării toleranțelor minime/maxime pentru măsurători.
+  - Testarea salvării automate a istoricului de audit.
+  - Rulare și verificare acoperire:
+    ```bash
+    php artisan test --coverage --min=80
+    ```
+- [ ] **Teste Unitare Frontend (Vitest)**:
+  - Testarea componentelor de afișare badge-uri de stare și valori numerice.
+  - Testarea validării formularelor de introducere parametri.
+  - Rulare:
+    ```bash
+    npm test
+    npm run test:coverage
+    ```
 
 ---
 
-### Faza 7: Containerizare, CI/CD & Separare Medii
-- [ ] **Dual Containerization (Podman & Docker)**:
-  - `Dockerfile` multi-stage optimizat pentru producție (reducere dimensiune imagine, securitate non-root user).
-  - `compose.yaml` (și `docker-compose.yml`) pentru pornirea rapidă a întregului stack (App, PostgreSQL, Redis).
-  - Testare și validare a compatibilității identice atât cu comenzi `docker`, cât și cu `podman`.
-- [ ] **Separare Medii**:
-  - Mediu **Staging / Development**: Bază de date de test cu date sintetice de uzină, logging detaliat.
-  - Mediu **Production**: Bază de date securizată cu backup activ, audit strict, optimizări de performanță.
-  - Fără secrete în cod: fișiere `.env.example` și gestionare prin GitHub Repository Secrets.
-- [ ] **Pipeline CI/CD GitHub Actions**:
-  - Job de Linting & Typecheck.
-  - Job de Testare Unitară cu raport de acoperire.
-  - Job de Testare E2E.
-  - Job de Build Container & Verificare Vulnerabilități (Dependabot / Snyk / CodeQL).
-  - Triggere automate de deploy pentru `develop` (staging) și `main` (production).
-
----
-
-### Faza 8: Documentație, Manuale & Pregătire Licență
-- [ ] **Documentație Arhitecturală**: Diagrame C4, model ERD bază de date, fluxuri de stare ale produsului.
-- [ ] **Configurare Mediu Antigravity**: Ghid de lucru și bune practici în Antigravity cu AI Agent.
-- [ ] **API Docs**: Documentație interactivă Swagger / OpenAPI / Scramble pentru toate endpoint-urile Laravel.
-- [ ] **Raport & Sinteză Lucrare de Licență**: Concluzii asupra eficienței reducerii timpului de localizare a defectelor și îmbunătățirea trasabilității în producție.
+### Faza 6: Teste End-to-End (Playwright)
+- [ ] **Configurare Playwright**:
+  - Configurare `playwright.config.ts` pentru rulare pe Chrome/Firefox headless și interactiv.
+- [ ] **Scenarii E2E Esențiale**:
+  - **Scenariu Conform**: Autentificare -> Scanare produs nou -> Introducere parametri în toleranță -> Validare trecere în starea `PASSED`.
+  - **Scenariu Defect**: Scanare produs -> Introducere valoare peste toleranță -> Verificare blocare automată în `QUARANTINED`.
+  - **Scenariu Istoric & Audit**: Consultare arbore de trasabilitate și verificare afișare corectă a valorilor înregistrate.
+- [ ] **Comenzi de Rulare**:
+  ```bash
+  npx playwright test
+  npx playwright test --ui
+  ```

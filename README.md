@@ -1,18 +1,17 @@
 # SmartQMA (Smart Quality Management & Analytics)
 
-> **Platformă industrială pentru trasabilitatea și analiza produselor pe linia de fabricație.**
+> **Platformă industrială pentru trasabilitatea și analiza calității produselor pe linia de fabricație.**
 > Monitorizează ciclul complet de viață al componentelor prin multiple etape și stări de producție, înregistrând măsurătorile de testare calitativă și cantitativă pentru asigurarea calității (QA) și prevenirea defectelor.
 
 ---
 
 ## 📑 Cuprins
 - [Prezentare Generală](#-prezentare-generală)
-- [Arhitectură & Tehnologii](#-arhitectură--tehnologii)
-- [Sistemul Vizual & Paletă Culori](#-sistemul-vizual--paletă-culori)
-- [Cerințe Cheie (Core Requirements)](#-cerințe-cheie-core-requirements)
-- [Documentație & Plan de Acțiune](#-documentație--plan-de-acțiune)
-- [Rulare & Containerizare (Docker & Podman)](#-rulare--containerizare-docker--podman)
-- [Metodologie de Dezvoltare](#-metodologie-de-dezvoltare)
+- [Mediul Curent de Lucru](#-mediul-curent-de-lucru)
+- [Ghidul Vizual (Design System)](#-ghidul-vizual-design-system)
+- [Strategie de Testare (Unit & E2E)](#-strategie-de-testare-unit--e2e)
+- [Plan de Acțiune](#-plan-de-acțiune)
+- [Pornire & Rulare Locală](#-pornire--rulare-locală)
 
 ---
 
@@ -24,88 +23,90 @@
 - **Trasabilitate unitară**: Identificarea fiecărei piese după număr de serie unic, cod de bare sau QR.
 - **Validarea stagiilor**: Blocarea automată a avansării pe linie dacă testele etapei curente nu au fost promovate (`PASSED`).
 - **Controlul Defectelor (QA)**: Identificare imediată, izolare în carantină (`QUARANTINED`) și proceduri de retuș/casare (`REWORK`/`SCRAP`).
-- **Analiză Randament (Yield)**: Calcul First Pass Yield (FPY), diagrame Pareto de defecte și statistici ale stațiilor în timp real.
+- **Analiză Randament (Yield)**: Calcul First Pass Yield (FPY), diagrame Pareto de defecte și statistici în timp real.
 - **Audit Imutabil**: Înregistrarea la nivel de bază de date a fiecărui eveniment (cine, când, la ce stație, cu ce valori).
 
 ---
 
-## 🛠️ Arhitectură & Tehnologii
+## 💻 Mediul Curent de Lucru
 
-- **Backend**: **PHP 8.2+ / Laravel 11** (REST API, Eloquent ORM, WebSockets prin Laravel Reverb / Echo).
-- **Bază de Date**: **PostgreSQL 16** cu audit imutabil automat și suport avansat pentru date JSONB.
-- **Frontend**: **React + Vite (TypeScript)**, optimizat pentru stații de scanare industrială și panouri tactile.
-- **Mediu de Lucru Oficial**: **Antigravity** (mediu asistat de AI, fără suport sau dependență de alte IDE-uri).
-- **Testare**: 
-  - Teste Unitare & Feature: Pest PHP / PHPUnit și Vitest (acoperire minimă impusă: **80%**).
-  - Teste End-to-End: Playwright (rulare automată zilnică în CI/CD).
-- **Autentificare**: Exclusiv **Google OAuth2 / OpenID Connect (OIDC)** prin Laravel Socialite (fără parole locale).
-- **Containerizare**: Suport dual pentru **Docker** și **Podman**.
+Dezvoltarea se realizează exclusiv în **Antigravity**. Nu se utilizează alte IDE-uri.
+
+- **Backend**: **PHP 8.2+ / Laravel 11** (REST API, Eloquent ORM, WebSockets).
+- **Frontend**: **React + Vite (TypeScript)**, optimizat pentru operare rapidă și ecrane tactile de producție.
+- **Bază de Date**: **PostgreSQL 16** cu istoric de audit și stocare JSONB pentru măsurători dinamice.
+- **Autentificare**: Exclusiv **Google OAuth2 / OpenID Connect (OIDC)** via Laravel Socialite (fără stocare de parole locale).
+- **Calitate Cod Local**:
+  - Backend: **Laravel Pint** (formatter) și **PHPStan** (analiză statică de tipuri).
+  - Frontend: **ESLint** și **Prettier**.
 
 ---
 
-## 🎨 Sistemul Vizual & Paletă Culori
+## 🎨 Ghidul Vizual (Design System)
 
-Interfața SmartQMA este configurată pe o temă industrială cu contrast ridicat (conform **WCAG 2.1 AA**), concepută pentru ecrane de uzină, tablete și monitoare de control:
+Interfața SmartQMA este configurată pe o temă industrială cu contrast ridicat (conform **WCAG 2.1 AA**):
 
 - ⬛ **Negru (`#09090B`, `#18181B`)**: Fundal structural, panouri de comandă, contrast maxim.
-- ⬜ **Alb (`#FFFFFF`, `#FAFAFA`)**: Text primar pe fundal dark, carduri curate în laborator.
-- 🔴 **Roșu (`#DC2626`, `#991B1B`)**: Erori critice, rebuturi (`FAILED`, `SCRAP`), oprire de urgență a liniei.
-- 🟠 **Portocaliu (`#EA580C`, `#F97316`)**: Etape în derulare (`IN_PROGRESS`), avertizări de toleranță (`WARNING`), cozi de verificare.
+- ⬜ **Alb (`#FFFFFF`, `#FAFAFA`)**: Text primar pe fundal dark, carduri curate de date.
+- 🔴 **Roșu (`#DC2626`, `#991B1B`)**: Erori critice, rebuturi (`FAILED`, `SCRAP`), carantină (`QUARANTINED`), oprire linie.
+- 🟠 **Portocaliu (`#EA580C`, `#F97316`)**: Etape în desfășurare (`IN_PROGRESS`), atenționări de toleranță (`WARNING`), cozi de verificare.
+- 🔤 **Font Monospațiat (`JetBrains Mono`)**: Utilizat obligatoriu pentru numere de serie, coduri de bare și valori numerice ale măsurătorilor de test.
 
-👉 Detalii complete și token-uri CSS în [Ghidul Vizual SmartQMA](docs/DESIGN_SYSTEM.md).
-
----
-
-## ✅ Cerințe Cheie (Core Requirements)
-
-| Domeniu | Cerință | Implementare în SmartQMA |
-| :--- | :--- | :--- |
-| **Linting & Code Quality** | Verificări automate stricte | Laravel Pint + PHPStan (Backend) și ESLint + Prettier (Frontend) |
-| **Branch Protection** | Protecție ramură `main` | PR obligatoriu, minim 1 review, status checks verzi |
-| **AI Agent Guidelines** | Ghid pentru asistenți AI | [copilot-instructions.md](.github/copilot-instructions.md) |
-| **Containerizare Duală** | Docker & Podman | Dockerfile multi-stage și `compose.yaml` (Laravel + React + Postgres) |
-| **CI/CD Automation** | Pipeline-uri automate | GitHub Actions (Lint, Test, Coverage, Build, Deploy) |
-| **Testare E2E** | Teste automate zilnice | Suită Playwright rulată la fiecare PR și zilnic la 02:00 UTC |
-| **Testare Unitară & Feature** | Acoperire ridicată | Minim 80% coverage impus prin Pest/PHPUnit și Vitest |
-| **Separare Medii** | Izolare staging vs. producție | `.env.staging` și `.env.production` configurate separat |
-| **Mediu de Lucru** | Configurare oficială | Exclusiv **Antigravity** (configurare `.vscode/` integrată) |
-| **Securitate & Auth** | Autentificare Google | OAuth2 / OIDC prin Laravel Socialite fără parole locale |
-| **Bază de Date** | Auditare și salvări automate | Audit imutabil pe fiecare model Eloquent + backup-uri programate |
+👉 Detalii complete în [Ghidul Vizual SmartQMA](docs/DESIGN_SYSTEM.md).
 
 ---
 
-## 📚 Documentație & Plan de Acțiune
+## 🧪 Strategie de Testare (Unit & E2E)
 
-Documentația extinsă a proiectului este organizată în directorul `docs/`:
+### 1. Testare Unitară (Unit Testing)
+- **Acoperire minimă impusă**: **80%**
+- **Backend**: **Pest PHP / PHPUnit** pentru testarea regulilor de tranziție ale stărilor, validarea toleranțelor și audit.
+  ```bash
+  php artisan test --coverage --min=80
+  ```
+- **Frontend**: **Vitest** pentru componentele React și validarea formularelor de măsurători.
+  ```bash
+  npm test
+  npm run test:coverage
+  ```
 
-1. 🗺️ **[Plan de Acțiune & Faze de Dezvoltare](docs/ACTION_PLAN.md)**: Detalierea pas cu pas a celor 8 faze de implementare (de la modelul de date până la predarea licenței).
-2. 🎨 **[Ghid Vizual & Design System](docs/DESIGN_SYSTEM.md)**: Specificații complete de culori, tipografie monospațială pentru seriale, componente UI și accesibilitate.
-3. 📐 **[Standarde de Inginerie & Metodologie](docs/ENGINEERING_STANDARDS.md)**: Convenții de cod, flux de Pull Request, strategii de testare și audit.
-4. 🤖 **[Instrucțiuni AI & GitHub Copilot](.github/copilot-instructions.md)**: Context architectural dedicat asistenților inteligenți de cod.
+### 2. Testare End-to-End (Playwright)
+- Validare pe browser a fluxurilor utilizator complete:
+  - **Happy Path**: Scanare produs -> Introducere măsurători conforme -> Trecere în `PASSED`.
+  - **Flux Defect**: Scanare produs -> Introducere valoare peste toleranță -> Blocare în `QUARANTINED`.
+  - **Trasabilitate**: Verificare arbore de etape și jurnal de audit.
+  ```bash
+  # Rulare teste E2E
+  npx playwright test
+  npx playwright test --ui
+  ```
 
 ---
 
-## 🐳 Rulare & Containerizare (Docker & Podman)
+## 🗺️ Plan de Acțiune
 
-Proiectul este compatibil atât cu Docker, cât și cu Podman fără modificări ale configurației:
+Documentația extinsă a proiectului este organizată în `docs/`:
+1. 🗺️ **[Plan de Acțiune](docs/ACTION_PLAN.md)**: Cele 6 faze de implementare (Mediu curent, Model date, Backend, Frontend, Teste Unitare, Teste E2E).
+2. 🎨 **[Ghid Vizual](docs/DESIGN_SYSTEM.md)**: Paletă de culori, componente de stare, accesibilitate.
+3. 📐 **[Standarde Tehnice](docs/ENGINEERING_STANDARDS.md)**: Calitate cod, comenzi de testare și reguli de lucru.
+4. 🤖 **[Instrucțiuni AI Antigravity](.github/copilot-instructions.md)**: Context specific pentru asistentul AI.
+
+---
+
+## 🚀 Pornire & Rulare Locală
 
 ```bash
-# Copiere configurare mediu
+# 1. Configurare fișier de mediu
 cp .env.example .env
 
-# Pornire folosind Docker:
-docker compose up -d --build
+# 2. Rulare verificări de stil
+./vendor/bin/pint --test
+npm run lint
 
-# Pornire folosind Podman (echivalent):
-podman-compose up -d --build
+# 3. Rulare teste unitare
+php artisan test
+npm test
+
+# 4. Rulare teste E2E
+npx playwright test
 ```
-
----
-
-## 📝 Metodologie de Dezvoltare
-
-Proiectul adoptă **Issue-Driven Development**:
-- Nicio modificare nu se comite direct în `main`.
-- Orice activitate începe cu un Issue creat după șabloanele din `.github/ISSUE_TEMPLATE/`.
-- Branch-urile respectă convenția `feature/issue-X` sau `bugfix/issue-Y`.
-- Commit-urile respectă formatul [Conventional Commits](https://www.conventionalcommits.org/).
