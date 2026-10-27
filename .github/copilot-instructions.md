@@ -1,6 +1,6 @@
-# SmartQMA — AI Coding Assistant & Copilot Instructions
+# SmartQMA — Instrucțiuni pentru Dezvoltare în Antigravity (AI Coding Assistant)
 
-Aceste instrucțiuni oferă context critic asistenților de inteligență artificială (GitHub Copilot, Antigravity, etc.) pentru a asigura respectarea arhitecturii, convențiilor și standardelor definite pentru proiectul **SmartQMA**.
+Aceste instrucțiuni oferă context critic asistentului AI integrat în **Antigravity** pentru a asigura respectarea arhitecturii, convențiilor și standardelor definite pentru proiectul **SmartQMA**.
 
 ---
 
@@ -10,40 +10,56 @@ Aceste instrucțiuni oferă context critic asistenților de inteligență artifi
 
 ---
 
+## 🛠️ Stack Tehnologic & Mediu
+- **IDE / Mediu de Dezvoltare**: Exclusiv **Antigravity**.
+- **Backend**: **PHP 8.2+ / Laravel 11** cu Eloquent ORM.
+- **Frontend**: **React + Vite (TypeScript)**.
+- **Bază de Date**: **PostgreSQL 16** cu audit imutabil și suport JSONB.
+
+---
+
 ## 🧭 Convenții de Arhitectură & Cod
 
-### 1. Limbaj & Tipare
-- Folosiți **TypeScript în mod strict** (`strict: true`, fără tipuri `any`). Definiți interfețe și tipuri pentru toate entitățile de producție.
-- Aplicați principii de **Clean Architecture / Modular Monolith**:
-  - Separarea clară a stratului de domeniu (entități, state machine), stratului de aplicație (cazuri de utilizare) și stratului de infrastructură (bază de date, API).
-- Operațiuni asincrone bazate exclusiv pe `async/await`.
+### 1. Backend (Laravel & PHP)
+- Respectați standardele PSR-12 și stilul oficial Laravel, formatat cu **Laravel Pint**.
+- Folosiți **PHPStan** pentru verificare strictă de tipuri pe clase, metode și relații Eloquent.
+- Aplicați principii de arhitectură curată:
+  - Modele Eloquent cu tipizare strictă pe atribute și relații.
+  - Form Requests pentru validarea datelor de intrare (scanări, parametri de test).
+  - API Resources pentru formatarea răspunsurilor JSON.
+  - Politici de autorizare (Laravel Policies / Gates) pentru controlul accesului bazat pe roluri (RBAC).
 
-### 2. Autentificare & Securitate
+### 2. Frontend (React & TypeScript)
+- Folosiți **TypeScript în mod strict** (`strict: true`, fără tipuri `any`).
+- Definiți interfețe clare pentru entitățile de producție (`Product`, `QualityTest`, `StageExecution`, `Station`).
+- Formatare automată cu **Prettier** și validare cu **ESLint**.
+
+### 3. Autentificare & Securitate
 - ❌ **Nu creați tabele sau câmpuri de parole locale.**
-- Autentificarea se bazează exclusiv pe **Google OAuth2 / OIDC**.
+- Autentificarea se bazează exclusiv pe **Google OAuth2 / OIDC** prin **Laravel Socialite**.
 - Asigurați verificarea rolului utilizatorului (`OPERATOR`, `QUALITY_INSPECTOR`, `LINE_MANAGER`, `ADMIN`) pe fiecare operațiune critică.
 
-### 3. Trasabilitate & Audit Bază de Date
-- Fiecare modificare de stare a unui produs sau înregistrare a unui test trebuie însoțită de un log de audit imutabil:
-  - `userId`, `timestamp`, `action`, `previousState`, `newState`, `details`.
-- Nu efectuați ștergeri fizice (`DELETE FROM ...`) pe entitățile de produse sau teste; folosiți `deletedAt` (soft-delete).
+### 4. Trasabilitate & Audit Bază de Date (PostgreSQL)
+- Fiecare modificare de stare a unui produs sau înregistrare a unui test trebuie însoțită de un log de audit imutabil (`owen-it/laravel-auditing` sau Observers dedicate):
+  - `user_id`, `timestamp`, `event`, `old_values`, `new_values`, `ip_address`.
+- Nu efectuați ștergeri fizice pe produsele sau testele din fabrică; folosiți trait-ul `SoftDeletes` din Laravel.
 
-### 4. Sistem Vizual (Design System)
+### 5. Sistem Vizual (Design System)
 - Respectați paleta de culori SmartQMA:
-  - **Negru** (`#09090B`, `#18181B`) pentru fundaluri și structuri dark industrial.
-  - **Alb** (`#FFFFFF`, `#FAFAFA`) pentru contrast maxim și suprafețe luminoase.
-  - **Roșu** (`#DC2626`) pentru stări `FAILED`, alerte de calitate, erori și defecte critice.
-  - **Portocaliu** (`#EA580C`, `#F97316`) pentru stări `IN_PROGRESS`, avertizări și parametri la limită.
+  - **Negru** (`#09090B`, `#18181B`) pentru fundaluri și panouri industriale.
+  - **Alb** (`#FFFFFF`, `#FAFAFA`) pentru suprafețe curate și contrast maxim.
+  - **Roșu** (`#DC2626`) pentru stări `FAILED`, rebuturi `SCRAP`, erori și alerte de calitate.
+  - **Portocaliu** (`#EA580C`, `#F97316`) pentru stări `IN_PROGRESS`, avertizări de toleranță `WARNING` și cozi de testare.
 - Pentru valori numerice, seriale și coduri de bare, folosiți fonturi monospațiale (`JetBrains Mono` / `Roboto Mono`).
 
 ---
 
 ## 🧪 Reguli de Testare
-- **Unit Testing**: Toate funcțiile de calcul (toleranțe, validare tranziții de stare, randament FPY) necesită teste unitare cu **acoperire minimă de 80%**.
-- **E2E Testing**: Noile fluxuri utilizator trebuie însoțite de specificații de testare **Playwright**.
-- Folosiți mock-uri pentru apelurile de rețea externe și servicii cloud.
+- **Backend (Laravel)**: Teste scrise cu **Pest PHP** sau **PHPUnit**, acoperire minimă impusă de **80%** (`php artisan test --coverage`).
+- **Frontend (React)**: Teste de componente cu **Vitest** + React Testing Library.
+- **E2E Testing**: Suită automată **Playwright** pentru fluxurile complete (scanare, testare, carantină, audit).
 
 ---
 
 ## 📦 Containerizare
-- Asigurați-vă că orice modificare la nivel de build este compatibilă atât cu **Docker**, cât și cu **Podman**.
+- Asigurați compatibilitate completă atât cu **Docker**, cât și cu **Podman** (`compose.yaml`).

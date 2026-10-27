@@ -31,14 +31,14 @@
 
 ## 🛠️ Arhitectură & Tehnologii
 
-- **Backend**: Node.js (NestJS / TypeScript), REST API + WebSockets pentru evenimente de linie live.
-- **Bază de Date**: PostgreSQL 16 cu mecanisme automate de audit și stocare istoric modificări.
-- **Cache / Cozi**: Redis (stări curente ale stațiilor).
-- **Frontend**: React 18 + TypeScript + Vite, componente optimizate pentru scanare rapidă și panouri tactile.
+- **Backend**: **PHP 8.2+ / Laravel 11** (REST API, Eloquent ORM, WebSockets prin Laravel Reverb / Echo).
+- **Bază de Date**: **PostgreSQL 16** cu audit imutabil automat și suport avansat pentru date JSONB.
+- **Frontend**: **React + Vite (TypeScript)**, optimizat pentru stații de scanare industrială și panouri tactile.
+- **Mediu de Lucru Oficial**: **Antigravity** (mediu asistat de AI, fără suport sau dependență de alte IDE-uri).
 - **Testare**: 
-  - Teste Unitare: Jest / Vitest (acoperire minimă impusă: **80%**).
-  - Teste End-to-End: Playwright (rulare automată zilnică pe GitHub Actions).
-- **Autentificare**: Exclusiv **Google OAuth2 / OpenID Connect (OIDC)** (fără parole locale).
+  - Teste Unitare & Feature: Pest PHP / PHPUnit și Vitest (acoperire minimă impusă: **80%**).
+  - Teste End-to-End: Playwright (rulare automată zilnică în CI/CD).
+- **Autentificare**: Exclusiv **Google OAuth2 / OpenID Connect (OIDC)** prin Laravel Socialite (fără parole locale).
 - **Containerizare**: Suport dual pentru **Docker** și **Podman**.
 
 ---
@@ -60,17 +60,17 @@ Interfața SmartQMA este configurată pe o temă industrială cu contrast ridica
 
 | Domeniu | Cerință | Implementare în SmartQMA |
 | :--- | :--- | :--- |
-| **Linting & Code Quality** | Verificări automate stricte | ESLint + Prettier + Husky pre-commit hooks |
+| **Linting & Code Quality** | Verificări automate stricte | Laravel Pint + PHPStan (Backend) și ESLint + Prettier (Frontend) |
 | **Branch Protection** | Protecție ramură `main` | PR obligatoriu, minim 1 review, status checks verzi |
 | **AI Agent Guidelines** | Ghid pentru asistenți AI | [copilot-instructions.md](.github/copilot-instructions.md) |
-| **Containerizare Duală** | Docker & Podman | Dockerfile multi-stage și `compose.yaml` |
+| **Containerizare Duală** | Docker & Podman | Dockerfile multi-stage și `compose.yaml` (Laravel + React + Postgres) |
 | **CI/CD Automation** | Pipeline-uri automate | GitHub Actions (Lint, Test, Coverage, Build, Deploy) |
 | **Testare E2E** | Teste automate zilnice | Suită Playwright rulată la fiecare PR și zilnic la 02:00 UTC |
-| **Testare Unitară** | Acoperire ridicată | Minim 80% coverage impus prin CI |
+| **Testare Unitară & Feature** | Acoperire ridicată | Minim 80% coverage impus prin Pest/PHPUnit și Vitest |
 | **Separare Medii** | Izolare staging vs. producție | `.env.staging` și `.env.production` configurate separat |
-| **IDE Support** | Configurare rapidă dezvoltatori | Fișiere `.vscode/` (`settings`, `launch`, `extensions`) |
-| **Securitate & Auth** | Autentificare Google | OAuth2 / OIDC fără stocare locală de parole |
-| **Bază de Date** | Auditare și salvări automate | Audit trail imutabil pe fiecare entitate + backup-uri programate |
+| **Mediu de Lucru** | Configurare oficială | Exclusiv **Antigravity** (configurare `.vscode/` integrată) |
+| **Securitate & Auth** | Autentificare Google | OAuth2 / OIDC prin Laravel Socialite fără parole locale |
+| **Bază de Date** | Auditare și salvări automate | Audit imutabil pe fiecare model Eloquent + backup-uri programate |
 
 ---
 

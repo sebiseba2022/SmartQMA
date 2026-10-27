@@ -17,16 +17,16 @@ SmartQMA este o platformă modernă dedicată **trasabilității și analizei av
 
 | Componentă | Tehnologie Selectată | Justificare |
 | :--- | :--- | :--- |
-| **Backend** | **Node.js (NestJS / TypeScript)** | Structură modulară enterprise, suport nativ pentru TypeORM/Prisma, WebSockets pentru evenimente de linie în timp real, typing strict. |
-| **Bază de Date & Audit** | **PostgreSQL 16 + TypeORM / Hibernate / Prisma** | Suport pentru tranzacții ACID, tabele de audit istoric/triggers, extensii JSONB pentru date dinamice de testare. |
-| **Cache & Real-time** | **Redis** | Gestionare stări live ale senzorilor/stațiilor și pub/sub pentru actualizări în timp real. |
-| **Frontend** | **React 18 + Vite + TypeScript** | Performanță ridicată, ecosistem bogat de componente pentru vizualizări industriale și grafice. |
-| **Design System** | **SmartQMA Design Tokens (Vanilla CSS / Tailwind)** | Paletă industrială personalizată: Roșu, Portocaliu, Negru, Alb. Conformitate WCAG 2.1 AA. |
-| **Testare Unitară** | **Jest / Vitest** | Rulare rapidă a testelor, acoperire minimă impusă de 80%, mocks pentru dependințe. |
-| **Testare E2E** | **Playwright** | Automatizare browser modernă, scenarii complete de trasabilitate, rulare zilnică în GitHub Actions. |
-| **Containerizare** | **Podman & Docker (Compose)** | Compatibilitate duală cu Dockerfile multi-stage și fișiere `compose.yaml`. |
-| **CI/CD** | **GitHub Actions** | Verificări automate de lint, teste, build, securitate și deploy staging/prod. |
-| **Autentificare** | **Google OAuth2 / OpenID Connect (OIDC)** | Fără parole locale; integrare securizată bazată pe roluri (RBAC). |
+| **Backend** | **PHP 8.2+ / Laravel 11** | Arhitectură robustă enterprise, Eloquent ORM cu suport nativ pentru JSONB, Laravel Socialite pentru Google Auth, Observers/Pachete de Audit (`owen-it/laravel-auditing`), evenimente și WebSockets (Laravel Reverb / Echo). |
+| **Bază de Date & Audit** | **PostgreSQL 16** | Suport pentru tranzacții ACID, tabele de audit istoric, extensii JSONB pentru date flexibile de testare și măsurători parametrice. |
+| **Frontend** | **React + Vite (TypeScript)** | Interfață reactivă, componentizare modulară pentru stațiile de scanare și panourile de trasabilitate. |
+| **Mediu de Lucru / IDE** | **Antigravity** | Mediul oficial de dezvoltare asistat de inteligență artificială, configurat cu context dedicat pentru întreg proiectul. |
+| **Design System** | **SmartQMA Design Tokens** | Paletă industrială personalizată: Roșu, Portocaliu, Negru, Alb. Conformitate WCAG 2.1 AA. |
+| **Testare Unitară & Feature** | **Pest PHP / PHPUnit & Vitest** | Teste rapide backend și frontend, prag minim impus de 80% acoperire a codului. |
+| **Testare E2E** | **Playwright** | Automatizare completă a fluxurilor utilizator în browser, rulare automată zilnică în CI/CD. |
+| **Containerizare** | **Podman & Docker (Compose)** | Compatibilitate duală cu mediu containerizat pentru Laravel, PostgreSQL și React. |
+| **CI/CD** | **GitHub Actions** | Automatizare completă: linting, analize de securitate, testare unitară, rulare E2E și deploy. |
+| **Autentificare** | **Google OAuth2 / OIDC (Socialite)** | Exclusiv Google Auth; fără parole locale stocate în aplicație. |
 
 ---
 
@@ -48,13 +48,12 @@ flowchart TD
 ### Faza 1: Fundație, Tooling & Standarde de Cod
 - [ ] **Structura Repositoriului**: Organizare monorepo sau structură clară `/client`, `/server`, `/shared`, `/docs`.
 - [ ] **Configurare Linter & Formatter**:
-  - ESLint cu reguli stricte de TypeScript (`strict-type-checked`).
-  - Prettier pentru consistență stilistică.
+  - Backend (Laravel): **Laravel Pint** și **PHPStan** (nivel strict de analiză statică).
+  - Frontend (React): **ESLint** (reguli stricte TypeScript) și **Prettier**.
 - [ ] **Pre-commit Hooks**:
-  - Integrare Husky + `lint-staged` pentru a forța rularea linter-ului și a testelor unitare la fiecare commit.
-- [ ] **Configurare IDE**:
-  - `.vscode/settings.json`, `.vscode/launch.json` și `.vscode/extensions.json` pentru depanare facilă și format-on-save.
-  - Ghid de configurare pentru IntelliJ IDEA / WebStorm în documentație.
+  - Integrare Git Hooks / Husky + `lint-staged` pentru validare automată linter și teste înainte de orice commit.
+- [ ] **Configurare Mediu Antigravity**:
+  - Setări de spațiu de lucru pentru Antigravity (`.vscode/settings.json`, extensii esențiale pentru PHP, Laravel și React).
 - [ ] **Ghiduri de Contribuție & Protecție**:
   - `.github/pull_request_template.md` și șabloane de Issues (Bug, Feature, Task).
   - Reguli de Branch Protection pe `main` (fără direct commits, minim 1 review, status checks verzi).
@@ -84,11 +83,11 @@ flowchart TD
   - `quality_tests`: Parametri de test (tensiune, dimensiune, etanșeitate, aspect vizual), valori măsurate, toleranțe min/max, rezultat PASS/FAIL.
   - `defects`: Înregistrare anomalii, cauze rădăcină (root-cause), acțiuni corective (scrap/rework).
 - [ ] **Audit Trail Automat**:
-  - Implementare mecanism de audit (la nivel de ORM / Subscribers / Triggers BD):
-    - Cine a modificat (`user_id`), data/ora exactă (`timestamp`), tipul acțiunii (`CREATE`, `UPDATE`, `DELETE`), starea anterioară (`before_state`), starea nouă (`after_state`).
-    - Nicio ștergere dură (Soft-delete cu `deleted_at`).
+  - Implementare mecanism de audit imutabil (folosind `owen-it/laravel-auditing` sau Eloquent Observers pe modelele `Product`, `QualityTest`, `StageExecution`):
+    - Înregistrare automată: `user_id`, `event` (`created`, `updated`, `deleted`), `old_values`, `new_values`, `ip_address`, `user_agent`, `created_at`.
+    - Nicio ștergere dură (SoftDeletes în Laravel).
 - [ ] **Sistem Automat de Backup**:
-  - Scripturi de backup automat programat (`pg_dump`) cu reținere istorică și proceduri documentate de Point-in-Time Recovery.
+  - Backup automat programat (folosind `spatie/laravel-backup` sau scripturi `pg_dump` pe PostgreSQL) cu reținere istorică și proceduri documentate de restaurare.
 
 ---
 
@@ -118,11 +117,12 @@ flowchart TD
 ---
 
 ### Faza 6: Strategie de Testare (Unit & E2E cu Playwright)
-- [ ] **Unit Testing (Acoperire minimă 80%)**:
-  - Testarea regulilor de business ale state machine-ului.
+- [ ] **Unit & Feature Testing (Acoperire minimă 80%)**:
+  - Testarea regulilor de business ale state machine-ului în Laravel (Pest / PHPUnit).
   - Testarea validării parametrilor de testare și calculul toleranțelor.
-  - Testarea mecanismului de audit.
-  - Măsurare automată a acoperirii (`npm run test:coverage`) blocantă la build.
+  - Testarea mecanismului de audit pe modelele Eloquent.
+  - Testarea componentelor React (Vitest / React Testing Library).
+  - Măsurare automată a acoperirii (`php artisan test --coverage` și `npm run test:coverage`) blocantă la build.
 - [ ] **End-to-End Testing (Playwright)**:
   - Scenariu 1: Autentificare utilizator -> Creare produs / lot -> Trecere prin stații de producție.
   - Scenariu 2: Introducere valori de test invalide -> Blocare automată produs în starea `FAILED`/`QUARANTINED`.
@@ -152,6 +152,6 @@ flowchart TD
 
 ### Faza 8: Documentație, Manuale & Pregătire Licență
 - [ ] **Documentație Arhitecturală**: Diagrame C4, model ERD bază de date, fluxuri de stare ale produsului.
-- [ ] **Ghiduri de Configurare IDE**: Ghid pas cu pas pentru VS Code, IntelliJ IDEA / WebStorm.
-- [ ] **API Docs**: Documentație interactivă Swagger / OpenAPI pentru toate endpoint-urile.
+- [ ] **Configurare Mediu Antigravity**: Ghid de lucru și bune practici în Antigravity cu AI Agent.
+- [ ] **API Docs**: Documentație interactivă Swagger / OpenAPI / Scramble pentru toate endpoint-urile Laravel.
 - [ ] **Raport & Sinteză Lucrare de Licență**: Concluzii asupra eficienței reducerii timpului de localizare a defectelor și îmbunătățirea trasabilității în producție.
