@@ -1,0 +1,57 @@
+# Dependinte PHP & Node
+vendor/
+node_modules/
+.pnp
+.pnp.js
+
+# Laravel Storage & Cache
+/storage/*.key
+/storage/app/*
+!/storage/app/.gitignore
+/storage/framework/cache/*
+!/storage/framework/cache/.gitignore
+/storage/framework/sessions/*
+!/storage/framework/sessions/.gitignore
+/storage/framework/views/*
+!/storage/framework/views/.gitignore
+/storage/logs/*
+!/storage/logs/.gitignore
+/bootstrap/cache/*
+!/bootstrap/cache/.gitignore
+
+# Build & Distributie Frontend (React/Vite)
+dist/
+build/
+/public/build
+/public/hot
+/public/storage
+coverage/
+.nyc_output/
+
+# Medii & Secrete
+.env
+.env.backup
+.env.*.local
+*.pem
+*.key
+
+# Testare & Rapoarte
+test-results/
+playwright-report/
+blob-report/
+playwright/.cache/
+.phpunit.result.cache
+.pest/
+
+# Log-uri
+logs
+*.log
+npm-debug.log*
+yarn-debug.log*
+podman-debug.log*
+
+# OS & Editoare
+.DS_Store
+Thumbs.db
+*.sublime-project
+*.sublime-workspace
