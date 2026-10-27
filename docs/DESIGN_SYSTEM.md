@@ -4,6 +4,14 @@ Sistemul vizual **SmartQMA** este un ghid complet de componente, token-uri de st
 
 ---
 
+## 🖼️ Previzualizare Vizuală & Mockup-uri
+
+![Sistem de Componente SmartQMA](assets/components-preview.png)
+
+![Tablou de Bord Industrial SmartQMA](assets/dashboard-preview.png)
+
+---
+
 ## 📑 Cuprins
 1. [Paleta Cromatică & Token-uri CSS](#1-paleta-cromatică--token-uri-css)
 2. [Sistemul Tipografic & Spațiere](#2-sistemul-tipografic--spațiere)
@@ -134,6 +142,50 @@ Paleta este construită strict pe cele 4 culori cerute: **Negru**, **Alb**, **Ro
 
 Toate iconițele sunt optimizate în format SVG nativ pe un grid de **24x24 px**, folosind `stroke="currentColor"`, `stroke-width="2"`, `fill="none"`, `stroke-linecap="round"` și `stroke-linejoin="round"`.
 Ele moștenesc automat culoarea textului părintelui (`text-red-primary`, `text-orange-primary`, `text-white` etc.).
+
+### 3.0 Galeria de Iconițe PNG Disponibile în Repo (`docs/icons/`)
+
+Fiecare pictogramă este exportată ca fișier **PNG la rezoluție de 128x128 px** (fundal transparent, redare vectorială de mare precizie) în 3 variante cromatice:
+- **Default / Alb**: `docs/icons/white/<nume>.png` (și `docs/icons/<nume>.png`)
+- **Portocaliu**: `docs/icons/orange/<nume>.png`
+- **Roșu**: `docs/icons/red/<nume>.png`
+
+| Pictogramă (Alb) | Pictogramă (Portocaliu) | Pictogramă (Roșu) | Fișier PNG | Descriere Funcțională |
+| :---: | :---: | :---: | :--- | :--- |
+| <img src="icons/white/search.png" width="24" height="24" alt="search" /> | <img src="icons/orange/search.png" width="24" height="24" alt="search" /> | <img src="icons/red/search.png" width="24" height="24" alt="search" /> | `search.png` | Căutare generală / filtrare rapidă |
+| <img src="icons/white/filter.png" width="24" height="24" alt="filter" /> | <img src="icons/orange/filter.png" width="24" height="24" alt="filter" /> | <img src="icons/red/filter.png" width="24" height="24" alt="filter" /> | `filter.png` | Filtrare parametri și loturi |
+| <img src="icons/white/plus.png" width="24" height="24" alt="plus" /> | <img src="icons/orange/plus.png" width="24" height="24" alt="plus" /> | <img src="icons/red/plus.png" width="24" height="24" alt="plus" /> | `plus.png` | Adăugare element / intrare nouă |
+| <img src="icons/white/trash.png" width="24" height="24" alt="trash" /> | <img src="icons/orange/trash.png" width="24" height="24" alt="trash" /> | <img src="icons/red/trash.png" width="24" height="24" alt="trash" /> | `trash.png` | Ștergere / eliminare element |
+| <img src="icons/white/edit.png" width="24" height="24" alt="edit" /> | <img src="icons/orange/edit.png" width="24" height="24" alt="edit" /> | <img src="icons/red/edit.png" width="24" height="24" alt="edit" /> | `edit.png` | Editare valori și parametri |
+| <img src="icons/white/check.png" width="24" height="24" alt="check" /> | <img src="icons/orange/check.png" width="24" height="24" alt="check" /> | <img src="icons/red/check.png" width="24" height="24" alt="check" /> | `check.png` | Validare / confirmare acțiune |
+| <img src="icons/white/x.png" width="24" height="24" alt="x" /> | <img src="icons/orange/x.png" width="24" height="24" alt="x" /> | <img src="icons/red/x.png" width="24" height="24" alt="x" /> | `x.png` | Închidere dialog / anulare |
+| <img src="icons/white/refresh-cw.png" width="24" height="24" alt="refresh-cw" /> | <img src="icons/orange/refresh-cw.png" width="24" height="24" alt="refresh-cw" /> | <img src="icons/red/refresh-cw.png" width="24" height="24" alt="refresh-cw" /> | `refresh-cw.png` | Reîmprospătare date / sincronizare |
+| <img src="icons/white/arrow-right.png" width="24" height="24" alt="arrow-right" /> | <img src="icons/orange/arrow-right.png" width="24" height="24" alt="arrow-right" /> | <img src="icons/red/arrow-right.png" width="24" height="24" alt="arrow-right" /> | `arrow-right.png` | Navigare pas următor |
+| <img src="icons/white/arrow-left.png" width="24" height="24" alt="arrow-left" /> | <img src="icons/orange/arrow-left.png" width="24" height="24" alt="arrow-left" /> | <img src="icons/red/arrow-left.png" width="24" height="24" alt="arrow-left" /> | `arrow-left.png` | Navigare pas anterior |
+| <img src="icons/white/chevron-down.png" width="24" height="24" alt="chevron-down" /> | <img src="icons/orange/chevron-down.png" width="24" height="24" alt="chevron-down" /> | <img src="icons/red/chevron-down.png" width="24" height="24" alt="chevron-down" /> | `chevron-down.png` | Meniu derulant / dropdown |
+| <img src="icons/white/chevron-right.png" width="24" height="24" alt="chevron-right" /> | <img src="icons/orange/chevron-right.png" width="24" height="24" alt="chevron-right" /> | <img src="icons/red/chevron-right.png" width="24" height="24" alt="chevron-right" /> | `chevron-right.png` | Extindere detalii listă |
+| <img src="icons/white/alert-triangle.png" width="24" height="24" alt="alert-triangle" /> | <img src="icons/orange/alert-triangle.png" width="24" height="24" alt="alert-triangle" /> | <img src="icons/red/alert-triangle.png" width="24" height="24" alt="alert-triangle" /> | `alert-triangle.png` | Avertizare abatere parametru (Warning) |
+| <img src="icons/white/alert-circle.png" width="24" height="24" alt="alert-circle" /> | <img src="icons/orange/alert-circle.png" width="24" height="24" alt="alert-circle" /> | <img src="icons/red/alert-circle.png" width="24" height="24" alt="alert-circle" /> | `alert-circle.png` | Eroare critică / rebut depistat (Error) |
+| <img src="icons/white/check-circle.png" width="24" height="24" alt="check-circle" /> | <img src="icons/orange/check-circle.png" width="24" height="24" alt="check-circle" /> | <img src="icons/red/check-circle.png" width="24" height="24" alt="check-circle" /> | `check-circle.png` | Succes / test promovat cu succes |
+| <img src="icons/white/info.png" width="24" height="24" alt="info" /> | <img src="icons/orange/info.png" width="24" height="24" alt="info" /> | <img src="icons/red/info.png" width="24" height="24" alt="info" /> | `info.png` | Informație suplimentară / indicație |
+| <img src="icons/white/help-circle.png" width="24" height="24" alt="help-circle" /> | <img src="icons/orange/help-circle.png" width="24" height="24" alt="help-circle" /> | <img src="icons/red/help-circle.png" width="24" height="24" alt="help-circle" /> | `help-circle.png` | Ajutor / descriere funcționalitate |
+| <img src="icons/white/ban.png" width="24" height="24" alt="ban" /> | <img src="icons/orange/ban.png" width="24" height="24" alt="ban" /> | <img src="icons/red/ban.png" width="24" height="24" alt="ban" /> | `ban.png` | Piesă blocată / carantină |
+| <img src="icons/white/clock.png" width="24" height="24" alt="clock" /> | <img src="icons/orange/clock.png" width="24" height="24" alt="clock" /> | <img src="icons/red/clock.png" width="24" height="24" alt="clock" /> | `clock.png` | Istoric modificări / durată execuție |
+| <img src="icons/white/shield.png" width="24" height="24" alt="shield" /> | <img src="icons/orange/shield.png" width="24" height="24" alt="shield" /> | <img src="icons/red/shield.png" width="24" height="24" alt="shield" /> | `shield.png` | Integritate date / securitate |
+| <img src="icons/white/lock.png" width="24" height="24" alt="lock" /> | <img src="icons/orange/lock.png" width="24" height="24" alt="lock" /> | <img src="icons/red/lock.png" width="24" height="24" alt="lock" /> | `lock.png` | Acces restricționat / blocare |
+| <img src="icons/white/settings.png" width="24" height="24" alt="settings" /> | <img src="icons/orange/settings.png" width="24" height="24" alt="settings" /> | <img src="icons/red/settings.png" width="24" height="24" alt="settings" /> | `settings.png` | Configurări banc / setări |
+| <img src="icons/white/eye.png" width="24" height="24" alt="eye" /> | <img src="icons/orange/eye.png" width="24" height="24" alt="eye" /> | <img src="icons/red/eye.png" width="24" height="24" alt="eye" /> | `eye.png` | Vizualizare date / afișare |
+| <img src="icons/white/eye-off.png" width="24" height="24" alt="eye-off" /> | <img src="icons/orange/eye-off.png" width="24" height="24" alt="eye-off" /> | <img src="icons/red/eye-off.png" width="24" height="24" alt="eye-off" /> | `eye-off.png` | Ascundere date / mascare |
+| <img src="icons/white/download.png" width="24" height="24" alt="download" /> | <img src="icons/orange/download.png" width="24" height="24" alt="download" /> | <img src="icons/red/download.png" width="24" height="24" alt="download" /> | `download.png` | Descărcare rapoarte / export date |
+| <img src="icons/white/upload.png" width="24" height="24" alt="upload" /> | <img src="icons/orange/upload.png" width="24" height="24" alt="upload" /> | <img src="icons/red/upload.png" width="24" height="24" alt="upload" /> | `upload.png` | Încărcare fișiere date |
+| <img src="icons/white/copy.png" width="24" height="24" alt="copy" /> | <img src="icons/orange/copy.png" width="24" height="24" alt="copy" /> | <img src="icons/red/copy.png" width="24" height="24" alt="copy" /> | `copy.png` | Copiere identificator în clipboard |
+| <img src="icons/white/external-link.png" width="24" height="24" alt="external-link" /> | <img src="icons/orange/external-link.png" width="24" height="24" alt="external-link" /> | <img src="icons/red/external-link.png" width="24" height="24" alt="external-link" /> | `external-link.png` | Navigare pagină externă |
+| <img src="icons/white/bar-chart-2.png" width="24" height="24" alt="bar-chart-2" /> | <img src="icons/orange/bar-chart-2.png" width="24" height="24" alt="bar-chart-2" /> | <img src="icons/red/bar-chart-2.png" width="24" height="24" alt="bar-chart-2" /> | `bar-chart-2.png` | Grafic bare / analiză |
+| <img src="icons/white/activity.png" width="24" height="24" alt="activity" /> | <img src="icons/orange/activity.png" width="24" height="24" alt="activity" /> | <img src="icons/red/activity.png" width="24" height="24" alt="activity" /> | `activity.png` | Monitorizare activitate în timp real |
+| <img src="icons/white/database.png" width="24" height="24" alt="database" /> | <img src="icons/orange/database.png" width="24" height="24" alt="database" /> | <img src="icons/red/database.png" width="24" height="24" alt="database" /> | `database.png` | Bază de date PostgreSQL / stocare |
+| <img src="icons/white/layers.png" width="24" height="24" alt="layers" /> | <img src="icons/orange/layers.png" width="24" height="24" alt="layers" /> | <img src="icons/red/layers.png" width="24" height="24" alt="layers" /> | `layers.png` | Stagii succesive / niveluri |
+| <img src="icons/white/terminal.png" width="24" height="24" alt="terminal" /> | <img src="icons/orange/terminal.png" width="24" height="24" alt="terminal" /> | <img src="icons/red/terminal.png" width="24" height="24" alt="terminal" /> | `terminal.png` | Consolă sistem / comenzi |
+| <img src="icons/white/bell.png" width="24" height="24" alt="bell" /> | <img src="icons/orange/bell.png" width="24" height="24" alt="bell" /> | <img src="icons/red/bell.png" width="24" height="24" alt="bell" /> | `bell.png` | Alerte sistem / notificări |
 
 ### 3.1 Navigare, Căutare & Acțiuni Esențiale
 
