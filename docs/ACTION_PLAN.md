@@ -1,105 +1,103 @@
-# SmartQMA — Plan de Acțiune & Faze de Implementare
+# SmartQMA — Plan de Configurare Stack Tehnic & Mediu de Lucru
 
-SmartQMA este o aplicație dedicată **trasabilității și analizei calității produselor** dintr-o secție de producție industrială. Sistemul urmărește produsele de-a lungul etapelor de fabricație, înregistrând măsurătorile parametrice și rezultatele testelor la fiecare stație.
-
----
-
-## 🎯 Puncte Cheie Cuprinse
-1. **Mediul Curent de Dezvoltare**:
-   - Mediu oficial: **Antigravity**
-   - Backend: **PHP 8.2+ / Laravel 11**
-   - Frontend: **React + Vite (TypeScript)**
-   - Bază de Date: **PostgreSQL 16**
-   - Calitate cod local: **Laravel Pint** (PHP) & **ESLint / Prettier** (React)
-2. **Ghidul Vizual (Visual Guidelines)**:
-   - Paletă industrială: **Roșu**, **Portocaliu**, **Negru**, **Alb**
-   - Componente UI: Badge-uri de stare, carduri de măsurători, font monospațiat pentru seriale
-3. **Testare Unitară (Unit Testing)**:
-   - Suită backend **Pest PHP / PHPUnit** (modele, state machine, validare toleranțe teste)
-   - Suită frontend **Vitest** (componente React)
-   - Acoperire minimă impusă: **80%**
-4. **Testare End-to-End (E2E Testing)**:
-   - Suită **Playwright** pentru fluxurile critice de producție (scanare, testare, trecere stare, carantină)
+Acest plan de acțiune detaliază configurarea completă a **stack-ului tehnic** și a **mediului de dezvoltare** pentru proiectul SmartQMA, fără a include logica de business sau paginile aplicației.
 
 ---
 
-## 🗺️ Fazele Planului de Acțiune
+## 🎯 Obiectivul Configurării
+Implementarea unei infrastructuri de dezvoltare robuste, curate și complet verificate, compusă din:
+1. **Mediul de lucru local**: **Antigravity**
+2. **Backend**: **PHP 8.2+ / Laravel 11**
+3. **Frontend**: **React + Vite (TypeScript)**
+4. **Bază de Date**: **PostgreSQL 16**
+5. **Ghidul Vizual (Design Tokens)**: Paleta industrială **Roșu, Portocaliu, Negru, Alb**
+6. **Suita de Testare Unitară**: **Pest PHP / PHPUnit** (Backend) & **Vitest** (Frontend) cu prag minim de **80% coverage**
+7. **Suita de Testare End-to-End**: **Playwright**
+
+---
+
+## 🗺️ Fazele Planului de Configurare a Stack-ului
 
 ```mermaid
 flowchart TD
-    F1[Faza 1: Configurare Mediu Curent Antigravity] --> F2[Faza 2: Model de Date & Bază PostgreSQL]
-    F2 --> F3[Faza 3: Logica de Trasabilitate & Testare Laravel]
-    F3 --> F4[Faza 4: Interfață React & Ghid Vizual SmartQMA]
-    F4 --> F5[Faza 5: Teste Unitare Pest & Vitest]
-    F5 --> F6[Faza 6: Teste End-to-End Playwright]
+    F1[Faza 1: Inițializare Structură Proiect & Antigravity] --> F2[Faza 2: Configurare Calitate Cod & Lintere]
+    F2 --> F3[Faza 3: Configurare Ghid Vizual & Design Tokens]
+    F3 --> F4[Faza 4: Configurare Mediu Testare Unitară]
+    F4 --> F5[Faza 5: Configurare Mediu Testare End-to-End Playwright]
 ```
 
 ---
 
-### Faza 1: Configurare Mediu Curent (Antigravity & Tooling)
+### Faza 1: Inițializare Structură Proiect & Configurare Mediu Antigravity
 - [ ] **Configurare Spațiu de Lucru Antigravity**:
-  - Integrare `.vscode/settings.json` (format-on-save cu Pint și Prettier).
-  - Extensii pentru PHP, Laravel și React.
-- [ ] **Setup Proiect**:
-  - Backend Laravel 11 configurat cu PostgreSQL (`.env`).
-  - Frontend React cu Vite și TypeScript.
-- [ ] **Calitate Cod Local**:
-  - `Laravel Pint` pentru verificarea și formatarea stilului PHP (`./vendor/bin/pint`).
-  - `ESLint` și `Prettier` pentru verificarea codului React (`npm run lint`).
-  - Pre-commit hook pentru rularea automată a linter-ului.
+  - Validare `.vscode/settings.json` (format-on-save, reguli linter, setări editor).
+  - Validare `.vscode/extensions.json` (Laravel Pint, PHP Intelephense, ESLint, Prettier, Playwright).
+- [ ] **Inițializare Proiect Backend (Laravel 11)**:
+  - Creare / inițializare schelet aplicație Laravel 11 (PHP 8.2+).
+  - Configurare fișier `.env` pentru conexiunea la instanța locală de **PostgreSQL 16**.
+  - Verificare funcționare conexiune bază de date (`php artisan migrate:status`).
+- [ ] **Inițializare Proiect Frontend (React + Vite)**:
+  - Inițializare schelet aplicație React cu TypeScript și Vite.
+  - Configurare integrare între frontend și backend (Vite proxy / rute API).
+- [ ] **Controlul Versiunilor & Ignorare Fișiere**:
+  - Validare fișier `.gitignore` pentru dependințe PHP (`/vendor`), Node (`node_modules`), fișiere build (`dist/`, `public/build`) și fișiere `.env`.
 
 ---
 
-### Faza 2: Model de Date & Bază PostgreSQL
-- [ ] **Migrații Bază de Date**:
-  - `products`: ID unic, serial number, tip produs, lot, stare curentă (`PASSED`, `IN_PROGRESS`, `FAILED`, `QUARANTINED`, `SCRAPPED`).
-  - `stages` & `stations`: Etapele procesului tehnologic și stațiile de lucru.
-  - `quality_tests`: Înregistrare măsurători (tensiune, dimensiuni, aspect), toleranțe admise și rezultat PASS/FAIL.
-  - `audits`: Jurnalizare imutabilă a schimbărilor de stare și a rezultatelor testelor.
-- [ ] **Modele Eloquent & Relații**:
-  - Implementare relații directe între produse, etape, teste și istoricul de audit.
-  - Utilizare `SoftDeletes` pentru prevenirea pierderii accidentale a datelor.
+### Faza 2: Configurare Calitate Cod & Lintere (Linting & Code Quality)
+- [ ] **Configurare Backend (PHP / Laravel)**:
+  - Integrare **Laravel Pint** pentru formatare automată și respectarea standardelor PSR-12:
+    ```bash
+    ./vendor/bin/pint --test
+    ./vendor/bin/pint
+    ```
+  - Integrare **PHPStan** pentru analiză statică strictă de tipuri:
+    ```bash
+    ./vendor/bin/phpstan analyse
+    ```
+- [ ] **Configurare Frontend (React / TypeScript)**:
+  - Configurare **ESLint** cu reguli stricte pentru TypeScript.
+  - Configurare **Prettier** pentru formatarea automată a fișierelor `.tsx`, `.ts`, `.css`.
+  - Scripturi în `package.json`:
+    ```bash
+    npm run lint
+    npm run lint:fix
+    npm run format:check
+    ```
+- [ ] **Pre-commit Hooks**:
+  - Configurare Git Hooks (Husky / `lint-staged`) pentru a rula Pint și ESLint înainte de fiecare commit.
 
 ---
 
-### Faza 3: Motorul de Trasabilitate & Înregistrare Teste (Backend Laravel)
-- [ ] **State Machine pentru Produse**:
-  - Reguli de avansare: un produs poate trece la etapa următoare doar dacă testele etapei curente sunt valide (`PASSED`).
-  - Rutare automată în `QUARANTINED` dacă valorile măsurate sunt în afara toleranțelor.
-- [ ] **Endpoints API**:
-  - Endpoint scanare produs la stație.
-  - Endpoint trimitere și validare rezultate teste.
-  - Endpoint consultare istoric complet și arbore de trasabilitate.
-- [ ] **Autentificare Google**:
-  - Integrare Google OAuth2 prin Laravel Socialite (fără parole locale).
+### Faza 3: Configurare Ghid Vizual & Design Tokens
+- [ ] **Definire Token-uri CSS & Variabile Globale**:
+  - Creare fișier de bază pentru variabile de stil (ex: `tokens.css` sau configurare Tailwind/CSS Modules).
+  - Paleta de culori obligatorie:
+    - **Negru**: `--color-black: #09090B`, `--color-surface-dark: #18181B`
+    - **Alb**: `--color-white: #FFFFFF`, `--color-surface-light: #FAFAFA`
+    - **Roșu**: `--color-red-primary: #DC2626`, `--color-red-dark: #991B1B`
+    - **Portocaliu**: `--color-orange-primary: #EA580C`, `--color-orange-amber: #F97316`
+- [ ] **Configurare Tipografie**:
+  - Font primar UI (sans-serif): `Inter` / `Roboto`.
+  - Font monospațiat pentru date/valori/seriale: `JetBrains Mono` / `Roboto Mono`.
+- [ ] **Stiluri de Bază pentru Componente Primare**:
+  - Token-uri pentru butoane, input-uri, carduri și badge-uri de stare.
+  - Verificare conformitate contrast minim **WCAG 2.1 AA**.
 
 ---
 
-### Faza 4: Interfață React & Ghid Vizual SmartQMA
-- [ ] **Implementare Sistem Vizual**:
-  - Integrare paletă: **Negru** (fundal, contrast), **Alb** (suprafețe și text), **Roșu** (erori, defecte, `FAILED`), **Portocaliu** (în lucru, atenționări `WARNING`).
-  - Tipografie: Font monospațiat (`JetBrains Mono` / `Roboto Mono`) pentru numere de serie, coduri de bare și valori numerice.
-  - Conformitate accesibilitate **WCAG 2.1 AA**.
-- [ ] **Ecrane Aplicație**:
-  - **Ecran Stație Operator**: Câmp de scanare cu auto-focus, afișare parametri de testare, butoane de confirmare/respingere.
-  - **Panou Trasabilitate (Genealogie Produs)**: Stepper vizual cu etapele parcurse, valorile măsurate și starea curentă.
-  - **Dashboard Calitate**: Indicatori randament (FPY) și distribuție defecte.
-
----
-
-### Faza 5: Teste Unitare (Acoperire minimă 80%)
-- [ ] **Teste Unitare Backend (Pest PHP / PHPUnit)**:
-  - Testarea regulilor de tranziție între stări ale produsului.
-  - Testarea validării toleranțelor minime/maxime pentru măsurători.
-  - Testarea salvării automate a istoricului de audit.
-  - Rulare și verificare acoperire:
+### Faza 4: Configurare Mediu de Testare Unitară (Acoperire minimă 80%)
+- [ ] **Configurare Suită Backend (Pest PHP / PHPUnit)**:
+  - Instalare și configurare **Pest PHP** sau **PHPUnit**.
+  - Configurare raportare automată a acoperirii codului (coverage driver: Xdebug sau PCOV).
+  - Test de validare inițial (smoke test) pentru verificarea rulării suitei:
     ```bash
     php artisan test --coverage --min=80
     ```
-- [ ] **Teste Unitare Frontend (Vitest)**:
-  - Testarea componentelor de afișare badge-uri de stare și valori numerice.
-  - Testarea validării formularelor de introducere parametri.
-  - Rulare:
+- [ ] **Configurare Suită Frontend (Vitest)**:
+  - Instalare și configurare **Vitest** + **React Testing Library** + **jsdom**.
+  - Configurare raport de acoperire cod frontend (`c8` / `@vitest/coverage-v8`).
+  - Test de validare inițial (smoke test de componentă):
     ```bash
     npm test
     npm run test:coverage
@@ -107,15 +105,20 @@ flowchart TD
 
 ---
 
-### Faza 6: Teste End-to-End (Playwright)
-- [ ] **Configurare Playwright**:
-  - Configurare `playwright.config.ts` pentru rulare pe Chrome/Firefox headless și interactiv.
-- [ ] **Scenarii E2E Esențiale**:
-  - **Scenariu Conform**: Autentificare -> Scanare produs nou -> Introducere parametri în toleranță -> Validare trecere în starea `PASSED`.
-  - **Scenariu Defect**: Scanare produs -> Introducere valoare peste toleranță -> Verificare blocare automată în `QUARANTINED`.
-  - **Scenariu Istoric & Audit**: Consultare arbore de trasabilitate și verificare afișare corectă a valorilor înregistrate.
-- [ ] **Comenzi de Rulare**:
-  ```bash
-  npx playwright test
-  npx playwright test --ui
-  ```
+### Faza 5: Configurare Mediu de Testare End-to-End (Playwright)
+- [ ] **Instalare & Configurare Playwright**:
+  - Instalare pachet `@playwright/test` și descărcare binare browsere (`npx playwright install --with-deps`).
+  - Creare fișier `playwright.config.ts`:
+    - Definire `baseURL` local.
+    - Configurare pornire automată a serverului de test (webServer).
+    - Rulare pe browsere desktop (Chromium, Firefox, WebKit).
+- [ ] **Smoke Test Inițial E2E**:
+  - Creare test minimal de sănătate a stivei (verificare încărcare pagină rădăcină și răspuns HTTP 200).
+  - Verificare comenzi de rulare:
+    ```bash
+    # Rulare teste headless
+    npx playwright test
+
+    # Rulare interactiva cu UI
+    npx playwright test --ui
+    ```

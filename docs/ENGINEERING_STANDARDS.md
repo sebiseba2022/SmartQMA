@@ -1,29 +1,29 @@
 # SmartQMA — Standarde Tehnice de Dezvoltare
 
-Acest document cuprinde standardele obligatorii pentru proiectul **SmartQMA**, axate pe:
-1. **Mediul curent de dezvoltare (Antigravity, Laravel, React, PostgreSQL)**
-2. **Ghidul vizual industrial (Roșu, Portocaliu, Negru, Alb)**
-3. **Testele unitare (acoperire minimă 80%)**
-4. **Testele End-to-End (Playwright)**
+Acest document definește standardele tehnice obligatorii pentru configurarea și utilizarea **stack-ului tehnic** în proiectul **SmartQMA**:
+1. **Mediul curent de lucru (Antigravity, Laravel, React, PostgreSQL)**
+2. **Ghidul vizual & Design Tokens (Roșu, Portocaliu, Negru, Alb)**
+3. **Cerințele de testare unitară (acoperire minimă 80%)**
+4. **Cerințele de testare End-to-End (Playwright)**
 
 ---
 
 ## 1. 💻 Mediul Curent de Lucru
 
-Toată dezvoltarea se realizează exclusiv în **Antigravity**. Nu se utilizează și nu se configurează alte IDE-uri.
+Toată dezvoltarea se realizează exclusiv în **Antigravity**. Nu se utilizează și nu se configurează alte medii de dezvoltare.
 
-### Stack-ul Tehnic Local
+### Stack-ul Tehnic
 - **Backend**: **PHP 8.2+ / Laravel 11**
 - **Frontend**: **React + Vite (TypeScript)**
 - **Bază de Date**: **PostgreSQL 16**
-- **Autentificare**: **Google OAuth2 / OIDC** via Laravel Socialite (fără parole locale)
+- **Autentificare**: **Google OAuth2 / OIDC** via Laravel Socialite
 
 ### Calitatea Codului & Lintere Locale
 - **PHP / Laravel**:
   - Se folosește **Laravel Pint** pentru formatare automată și respectarea stilului Laravel/PSR-12.
   - Se folosește **PHPStan** pentru verificarea strictă a tipurilor.
   ```bash
-  # Verificare stil cod backend
+  # Verificare stil cod backend fără modificări
   ./vendor/bin/pint --test
 
   # Corectare automată stil backend
@@ -33,11 +33,12 @@ Toată dezvoltarea se realizează exclusiv în **Antigravity**. Nu se utilizeaz�
   ./vendor/bin/phpstan analyse
   ```
 - **React / TypeScript**:
-  - Se folosește **ESLint** și **Prettier**.
+  - Se folosește **ESLint** (cu reguli stricte TypeScript) și **Prettier**.
   ```bash
   # Verificare și corectare stil frontend
   npm run lint
   npm run lint:fix
+  npm run format:check
   ```
 - **Configurare Antigravity (`.vscode/`)**:
   - `settings.json`: Formatare automată la salvare (`formatOnSave`).
@@ -45,53 +46,41 @@ Toată dezvoltarea se realizează exclusiv în **Antigravity**. Nu se utilizeaz�
 
 ---
 
-## 2. 🎨 Ghidul Vizual (Visual Guidelines)
+## 2. 🎨 Ghidul Vizual & Design Tokens
 
-Interfața SmartQMA este dedicată mediului industrial de producție și respectă cerințele de accesibilitate **WCAG 2.1 AA** (contrast ridicat și identificare facilă la distanță).
+Sistemul vizual este configurat prin variabile globale și token-uri de stil, respectând standardul de accesibilitate **WCAG 2.1 AA**.
 
-### Paleta Cromatică
-- ⬛ **Negru (`#09090B`, `#18181B`)**: Fundal principal (Dark Theme), panouri de comandă ale stațiilor, contrast ridicat.
-- ⬜ **Alb (`#FFFFFF`, `#FAFAFA`)**: Text primar, fundaluri de carduri clare.
-- 🔴 **Roșu (`#DC2626`, `#991B1B`)**: Semnalare erori critice, piese respinse (`FAILED`), alerte de calitate, oprire linie sau rebuturi (`SCRAP`).
-- 🟠 **Portocaliu (`#EA580C`, `#F97316`)**: Etape în desfășurare (`IN_PROGRESS`), atenționări parametri la limită (`WARNING`), coadă de re-testare.
+### Paleta Cromatică Oficială
+- ⬛ **Negru (`#09090B`, `#18181B`)**: Fundal principal (Dark Theme), bare de navigare, containere structurale.
+- ⬜ **Alb (`#FFFFFF`, `#FAFAFA`)**: Text primar pe fundal dark, suprafețe card în Light Theme.
+- 🔴 **Roșu (`#DC2626`, `#991B1B`)**: Erori, alerte critice, stări respinse/eșuate.
+- 🟠 **Portocaliu (`#EA580C`, `#F97316`)**: Acțiuni în derulare, avertizări, elemente active de atenționare.
 
-### Reguli Tipografice & Componente
-- **Font Monospațiat (`JetBrains Mono` / `Roboto Mono`)**: Utilizat obligatoriu pentru:
-  - Numere de serie și coduri de bare / QR.
-  - Valori măsurate la teste (ex: `12.45 V`, `0.02 mm`, `85 °C`).
-  - Timestamp-uri și identificatori de lot.
-- **Badge-uri de Stare**:
-  - `PASSED`: Verde `#16A34A` (confirmare trecere test).
-  - `FAILED`: Roșu `#DC2626` (defect depistat).
-  - `IN_PROGRESS`: Portocaliu `#EA580C` (test în curs de execuție).
-  - `QUARANTINED`: Roșu închis `#991B1B` (produs blocat pe linie).
+### Reguli Tipografice
+- **Font UI General**: `Inter` sau `Roboto` (sans-serif) pentru structură și etichete.
+- **Font Monospațiat**: `JetBrains Mono` sau `Roboto Mono` pentru afișarea datelor brute, codurilor, identificatorilor și valorilor numerice.
 
 ---
 
-## 3. 🧪 Teste Unitare (Unit Testing)
+## 3. 🧪 Standarde de Testare Unitară (Unit Testing)
 
-Fiecare componentă logică de business trebuie acoperită prin teste unitare, respectând o acoperire minimă de **80%**.
+Orice modul de cod adăugat în proiect trebuie însoțit de teste unitare, respectând pragul minim obligatoriu de **80% acoperire**.
 
 ### Backend (Pest PHP / PHPUnit)
-- **Ce se testează**:
-  - Tranzițiile de stare din state machine (un produs nu poate avansa dacă testul curent a eșuat).
-  - Validarea toleranțelor parametrice (valori minime/maxime admise).
-  - Jurnalizarea automată în tabela de audit la orice modificare.
-  - Politicile de autorizare (Gate/Policy) pe baza rolului utilizatorului Google.
+- Testarea unitară a claselor de servicii, regulilor de validare, modelelor și controllerelor API.
+- Izolarea dependințelor externe prin mocks și factories.
 - **Comenzi de rulare**:
   ```bash
-  # Rulare suita completa de teste
+  # Rulare suită teste backend
   php artisan test
 
-  # Verificare acoperire cod (minim 80% impus)
+  # Verificare acoperire cod cu prag minim de 80%
   php artisan test --coverage --min=80
   ```
 
 ### Frontend (Vitest)
-- **Ce se testează**:
-  - Randarea corectă a badge-urilor de stare în funcție de paleta vizuală (Roșu/Portocaliu/Negru/Alb).
-  - Validarea formularelor de introducere a măsurătorilor la stația de lucru.
-  - Afișarea arborelui de trasabilitate a etapelor.
+- Testarea unitară a componentelor React, hook-urilor personalizate și utilitarelor TypeScript.
+- Rulare în mediu simulat DOM (`jsdom`).
 - **Comenzi de rulare**:
   ```bash
   npm test
@@ -100,29 +89,21 @@ Fiecare componentă logică de business trebuie acoperită prin teste unitare, r
 
 ---
 
-## 4. 🎭 Teste End-to-End (Playwright)
+## 4. 🎭 Standarde de Testare End-to-End (Playwright)
 
-Testele End-to-End validează scenariile complete ale utilizatorului pe un browser real.
+Testarea End-to-End asigură că stiva completă (Frontend React + Backend Laravel + Bază de Date PostgreSQL) funcționează corect în browser.
 
-### Scenarii Critice Obligatorii
-1. **Fluxul Produs Conform (Happy Path)**:
-   - Autentificare utilizator prin Google OAuth2.
-   - Scanare număr de serie produs nou la prima stație.
-   - Introducere măsurători de test în intervalul de toleranță.
-   - Validare salvare și avansare produs la etapa următoare cu starea `PASSED`.
-2. **Fluxul Produs Defect (Carantină)**:
-   - Scanare produs la stația de testare.
-   - Introducere valoare aflată în afara limitelor admise.
-   - Validare blocare automată a produsului în starea `QUARANTINED` cu badge roșu și împiedicarea avansării pe linie.
-3. **Fluxul de Trasabilitate & Audit**:
-   - Accesare panou istoric produs după serial number.
-   - Verificare afișare corectă a tuturor stagiilor parcurse, a valorilor de test și a utilizatorului care a operat stația.
+### Principii & Configurare
+- Framework: **Playwright** (`@playwright/test`).
+- Suport multi-browser: Chromium, Firefox, WebKit.
+- Structură bazată pe Page Object Model (POM) pentru mentenanță facilă.
+- Testarea rutelor principale, răspunsurilor HTTP și a stărilor de interfață.
 
 ### Comenzi Playwright:
 ```bash
-# Rulare teste E2E in modul headless
+# Rulare teste E2E în consolă (headless)
 npx playwright test
 
-# Rulare interactiva cu interfata grafica
+# Rulare interactivă cu interfață grafică
 npx playwright test --ui
 ```
