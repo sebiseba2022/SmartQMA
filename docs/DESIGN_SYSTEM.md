@@ -6,10 +6,6 @@ Sistemul vizual **SmartQMA** este un ghid complet de componente, token-uri de st
 
 ## 🖼️ Previzualizare Vizuală & Mockup-uri
 
-![Sistem de Componente SmartQMA](assets/components-preview.png)
-
-![Tablou de Bord Industrial SmartQMA](assets/dashboard-preview.png)
-
 ---
 
 ## 📑 Cuprins
