@@ -1,0 +1,165 @@
+<?php
+
+use App\Models\User;
+use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Hash;
+use Illuminate\Support\Facades\Route;
+
+/*
+|--------------------------------------------------------------------------
+| SmartQMA API Routes (v1)
+|--------------------------------------------------------------------------
+*/
+
+Route::prefix('v1')->group(function () {
+
+    // POST /api/v1/auth/login - Autentificare utilizator (Bcrypt hash check)
+    Route::post('/auth/login', function (Request $request) {
+        $validated = $request->validate([
+            'username' => 'required|string',
+            'password' => 'required|string',
+        ]);
+
+        $user = User::where('username', $validated['username'])->first();
+
+        if (! $user || ! Hash::check($validated['password'], $user->password)) {
+            return response()->json([
+                'status' => 'error',
+                'message' => 'Nume de utilizator sau parolă incorectă.',
+            ], 401);
+        }
+
+        if (! $user->is_active) {
+            return response()->json([
+                'status' => 'error',
+                'message' => 'Contul este dezactivat. Contactați administratorul (Owner).',
+            ], 403);
+        }
+
+        return response()->json([
+            'status' => 'success',
+            'message' => 'Autentificare reușită.',
+            'user' => [
+                'id' => $user->id,
+                'username' => $user->username,
+                'name' => $user->name,
+                'role' => $user->role,
+                'email' => $user->email,
+            ],
+            // Token simplu de sesiune pentru clientul React
+            'token' => base64_encode($user->id . ':' . $user->username . ':' . time()),
+        ]);
+    });
+
+    // GET /api/v1/workstations - Lista posturilor de lucru din linia de producție
+    Route::get('/workstations', function () {
+        $workstations = [
+            [
+                'id' => 1,
+                'slug' => 'magazie',
+                'title' => 'Zona de stocare - Magazie',
+                'code' => 'WS-MAG-01',
+                'category' => 'Stocare & Logistică',
+                'type' => 'storage',
+                'allowed_roles' => ['production', 'engineer', 'director', 'owner'],
+                'description' => 'Recepție și eliberare componente electronice, trasabilitate loturi și trasabilitate FIFO.',
+            ],
+            [
+                'id' => 2,
+                'slug' => 'receptie-marfa',
+                'title' => 'Punct de verificare - Receptie marfa',
+                'code' => 'WS-REC-02',
+                'category' => 'Control Calitate Ieșire/Intrare',
+                'type' => 'inspection',
+                'allowed_roles' => ['production', 'engineer', 'director', 'owner'],
+                'description' => 'Inspectare vizuală a ambalajelor, verificare conformitate Certificate de Conformitate (CoC).',
+            ],
+            [
+                'id' => 3,
+                'slug' => 'qr-laser',
+                'title' => 'Zona de marcare - QR Laser',
+                'code' => 'WS-LSR-03',
+                'category' => 'Identificare & Marcare',
+                'type' => 'marking',
+                'allowed_roles' => ['production', 'engineer', 'director', 'owner'],
+                'description' => 'Gravare laser cod DataMatrix 2D / QR pe PCB-uri pentru trasabilitate serializată unică.',
+            ],
+            [
+                'id' => 4,
+                'slug' => 'smd',
+                'title' => 'Zona de amplasare - SMD',
+                'code' => 'WS-SMD-04',
+                'category' => 'Asamblare Suprafață',
+                'type' => 'assembly',
+                'allowed_roles' => ['production', 'engineer', 'director', 'owner'],
+                'description' => 'Linii de pick-and-place automatizate, imprimare pastă de lipit și cuptoare reflow.',
+            ],
+            [
+                'id' => 5,
+                'slug' => 'aoi',
+                'title' => 'Punct de verificare - AOI',
+                'code' => 'WS-AOI-05',
+                'category' => 'Inspecție Optică Automată',
+                'type' => 'inspection',
+                'allowed_roles' => ['production', 'engineer', 'director', 'owner'],
+                'description' => 'Validare automată a alinierii componentelor, scurtcircuitelor și joncțiunilor de lipire.',
+            ],
+            [
+                'id' => 6,
+                'slug' => 'tht',
+                'title' => 'Zona de amplasare - THT',
+                'code' => 'WS-THT-06',
+                'category' => 'Asamblare Manuală / Through-Hole',
+                'type' => 'assembly',
+                'allowed_roles' => ['production', 'engineer', 'director', 'owner'],
+                'description' => 'Inserție manuală/robotizată a componentelor de putere through-hole și lipire selectivă.',
+            ],
+            [
+                'id' => 7,
+                'slug' => 'ict',
+                'title' => 'Punct de verificare - ICT',
+                'code' => 'WS-ICT-07',
+                'category' => 'Testare Electrică În Circuit',
+                'type' => 'testing',
+                'allowed_roles' => ['production', 'engineer', 'director', 'owner'],
+                'description' => 'Testare parametri pasivi/activi (In-Circuit Test) folosind pat de ace și semnale electrice.',
+            ],
+            [
+                'id' => 8,
+                'slug' => 'eol',
+                'title' => 'Punct de verificare - EOL',
+                'code' => 'WS-EOL-08',
+                'category' => 'Testare Funcțională Finală',
+                'type' => 'testing',
+                'allowed_roles' => ['production', 'engineer', 'director', 'owner'],
+                'description' => 'Testare finală End-Of-Line: alimentare la parametri nominali, calibrare senzori și testare firmware.',
+            ],
+            [
+                'id' => 9,
+                'slug' => 'export',
+                'title' => 'Zona de scanare - Export',
+                'code' => 'WS-EXP-09',
+                'category' => 'Scanare & Ambalare Finală',
+                'type' => 'export',
+                'allowed_roles' => ['production', 'engineer', 'director', 'owner'],
+                'description' => 'Validare împachetare, asociere cutie/palet, generare etichete de livrare și închidere comandă.',
+            ],
+            [
+                'id' => 10,
+                'slug' => 'statistica',
+                'title' => 'Statistica',
+                'code' => 'WS-STA-10',
+                'category' => 'Management & Analiză Producție',
+                'type' => 'statistics',
+                'allowed_roles' => ['engineer', 'director', 'owner'],
+                'description' => 'Panou executiv: indicatori FPY (First Pass Yield), Scrap Rate, timpi de tact și distribuția defectelor.',
+            ],
+        ];
+
+        return response()->json([
+            'status' => 'success',
+            'count' => count($workstations),
+            'data' => $workstations,
+        ]);
+    });
+});
