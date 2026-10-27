@@ -4,6 +4,7 @@ FROM php:8.4-cli-alpine
 RUN apk add --no-cache \
     postgresql-dev \
     libzip-dev \
+    icu-dev \
     zip \
     unzip \
     git \
@@ -11,7 +12,7 @@ RUN apk add --no-cache \
     linux-headers
 
 # Instalare extensii PHP necesare pentru Laravel si PostgreSQL
-RUN docker-php-ext-install pdo pdo_pgsql pgsql pcntl bcmath zip
+RUN docker-php-ext-configure intl && docker-php-ext-install pdo pdo_pgsql pgsql pcntl bcmath zip intl
 
 # Copiere composer din imaginea oficiala
 COPY --from=composer:2 /usr/bin/composer /usr/bin/composer
