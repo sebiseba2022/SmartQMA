@@ -89,7 +89,6 @@ function LoginPage({
         <div className="banner-center-content">
           <div className="red-accent-line"></div>
           <h1 className="banner-headline">{t.bannerHeadline}</h1>
-          <p className="banner-description">{t.bannerDescription}</p>
         </div>
 
         <div className="banner-footer">{t.bannerFooter}</div>
