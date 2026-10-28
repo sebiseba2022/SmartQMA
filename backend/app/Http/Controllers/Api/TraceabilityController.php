@@ -18,33 +18,36 @@ use Illuminate\Support\Carbon;
 
 class TraceabilityController extends Controller
 {
+    private const IDENT_NAMES = [
+        '10002' => 'ATmega328P (Microcontroler 8-bit AVR)',
+        '10003' => 'ATmega16U2 (Controller USB-la-Serial)',
+        '10004' => 'NCP1117ST50T3G (Regulator LDO 5.0V)',
+        '10005' => 'LP2985-33DBVR (Regulator LDO 3.3V)',
+        '10006' => 'LMV358IDGKR (Amplificator Operațional Dual)',
+        '10007' => 'FDN340P (Tranzistor MOSFET Canal-P)',
+        '10008' => 'MF-MSMF050-2 (Siguranță Resetabilă PTC 500mA)',
+        '10009' => 'CSTCE16M0V53-R0 (Rezonator Ceramic 16 MHz)',
+    ];
+
     /**
-     * Scanare QR serial number PCB:
-     * - Afiseaza fiecare testare de la AOI, ICT, EOL cu numarul de PASS / FAIL
-     * - Afiseaza pe fiecare pozitie Bestuck ce componenta (ident din magazie) a fost amplasata la SMD si THT
-     * - Afiseaza registrul componentelor (cate componente de ce ident sunt amplasate)
-     * - Afiseaza Hardware Version si Software Version deduse din identul final (EOL)
+     * Scanare QR serial number PCB
      */
     public function scanQr(string $qr): JsonResponse
     {
         $qr = trim($qr);
 
-        // 1. Rezultate AOI
         $aoiList = AoiResult::where('qr_serial_number', $qr)->orderBy('tested_at', 'asc')->get();
         $aoiPassCount = $aoiList->where('test_result', 'PASS')->count();
         $aoiFailCount = $aoiList->where('test_result', 'FAIL')->count();
 
-        // 2. Rezultate ICT
         $ictList = IctResult::where('qr_serial_number', $qr)->orderBy('tested_at', 'asc')->get();
         $ictPassCount = $ictList->where('test_result', 'PASS')->count();
         $ictFailCount = $ictList->where('test_result', 'FAIL')->count();
 
-        // 3. Rezultate EOL
         $eolList = EolResult::where('qr_serial_number', $qr)->orderBy('tested_at', 'asc')->get();
         $eolPassCount = $eolList->where('test_result', 'PASS')->count();
         $eolFailCount = $eolList->where('test_result', 'FAIL')->count();
 
-        // Hardware & Software version din ultimul test EOL sau din catalogul de produse
         $latestEol = $eolList->last();
         $productIdent = $latestEol ? $latestEol->product_ident : 'ARDUINO_UNO_R3';
         $productDef = ProductDefinition::where('product_ident', $productIdent)->first();
@@ -52,22 +55,18 @@ class TraceabilityController extends Controller
         $hardwareVersion = $latestEol?->hardware_version ?? $productDef?->hardware_version ?? 'N/A';
         $softwareVersion = $latestEol?->software_version ?? $productDef?->software_version ?? 'N/A';
 
-        // 4. Componente amplasate la SMD
         $smdPlacements = SmdPlacement::with('component')
             ->where('qr_serial_number', $qr)
             ->get()
             ->keyBy('bestuck_position');
 
-        // 5. Componente amplasate la THT
         $thtPlacements = ThtPlacement::with('component')
             ->where('qr_serial_number', $qr)
             ->get()
             ->keyBy('bestuck_position');
 
-        // 6. Bestuck positions pentru model
         $bestuckRecipe = BestuckPosition::where('product_model', $productIdent)->get();
 
-        // Daca nu exista configurat specific, luam toate pozitiile din reteta
         if ($bestuckRecipe->isEmpty()) {
             $bestuckRecipe = BestuckPosition::all();
         }
@@ -91,7 +90,7 @@ class TraceabilityController extends Controller
             if ($placed) {
                 $cInternalId = $placed->component_internal_id;
                 $cName = $placed->component ? $placed->component->part_name : 'Componentă #' . $cInternalId;
-                $cLot = $placed->component ? $placed->component->supplier_lot : 'N/A';
+                $cLot = $placed->component ? ($placed->component->supplier_lot ?? 'N/A') : 'N/A';
 
                 $allPositions[] = [
                     'position' => $pos,
@@ -105,7 +104,6 @@ class TraceabilityController extends Controller
                     'mounted_at' => $placed->mounted_at?->toIso8601String(),
                 ];
 
-                // Contorizam in registru dupa identul intern al componentei
                 if (!isset($registryCounts[$cInternalId])) {
                     $registryCounts[$cInternalId] = [
                         'internal_id' => $cInternalId,
@@ -168,11 +166,11 @@ class TraceabilityController extends Controller
     }
 
     /**
-     * Lista receptii din magazie
+     * Lista comenzi componente din magazie
      */
     public function getInventory(): JsonResponse
     {
-        $items = InventoryComponent::orderBy('internal_id', 'desc')->get();
+        $items = InventoryComponent::orderBy('id', 'asc')->get();
         return response()->json([
             'status' => 'success',
             'data' => $items,
@@ -180,27 +178,101 @@ class TraceabilityController extends Controller
     }
 
     /**
-     * Inregistrare lot/rola noua in magazie (genereaza automat internal_id > 10000)
+     * Inregistrare comanda noua de componente in magazie
      */
     public function storeInventory(Request $request): JsonResponse
     {
         $validated = $request->validate([
-            'part_name' => 'required|string',
-            'supplier_lot' => 'required|string',
-            'production_date' => 'nullable|date',
-            'reception_status' => 'required|string|in:conform,neconform,in_asteptare',
-            'reception_notes' => 'nullable|string',
+            'ident' => 'nullable|string',
+            'part_name' => 'nullable|string',
+            'ordered_at' => 'nullable|date',
             'quantity' => 'required|integer|min:1',
+            'arrived' => 'nullable|boolean',
+            'arrival_time' => 'nullable|date',
+            'tracking_number' => 'nullable|string',
+            'provider' => 'nullable|string',
+            'supplier_lot' => 'nullable|string',
+            'production_date' => 'nullable|date',
+            'reception_status' => 'nullable|string|in:conform,neconform,in_asteptare',
+            'reception_notes' => 'nullable|string',
             'received_by' => 'nullable|string',
         ]);
 
-        $item = InventoryComponent::create($validated);
+        $ident = $validated['ident'] ?? '10002';
+        $partName = $validated['part_name'] ?? (self::IDENT_NAMES[$ident] ?? ('Componentă #' . $ident));
+        $arrived = (bool) ($validated['arrived'] ?? false);
+        $orderedAt = !empty($validated['ordered_at']) ? Carbon::parse($validated['ordered_at']) : Carbon::now();
+        $arrivalTime = !empty($validated['arrival_time'])
+            ? Carbon::parse($validated['arrival_time'])->startOfDay()
+            : Carbon::now()->startOfDay();
+
+        $item = InventoryComponent::create([
+            'ident' => $ident,
+            'part_name' => $partName,
+            'ordered_at' => $orderedAt,
+            'quantity' => $validated['quantity'],
+            'arrived' => $arrived,
+            'arrival_time' => $arrivalTime,
+            'tracking_number' => $validated['tracking_number'] ?? ('AWB-' . $ident),
+            'provider' => $validated['provider'] ?? 'Mouser Electronics',
+            'supplier_lot' => $validated['supplier_lot'] ?? ('LOT-' . $ident),
+            'production_date' => $validated['production_date'] ?? null,
+            'entry_date' => $arrivalTime,
+            'reception_status' => $validated['reception_status'] ?? ($arrived ? 'conform' : 'in_asteptare'),
+            'reception_notes' => $validated['reception_notes'] ?? null,
+            'received_by' => $validated['received_by'] ?? 'operator',
+        ]);
 
         return response()->json([
             'status' => 'success',
-            'message' => 'Lotul de componente a fost receptionat cu succes in magazie.',
+            'message' => 'Comanda de componente a fost înregistrată în magazie.',
             'data' => $item,
         ], 201);
+    }
+
+    /**
+     * Actualizare status sosire in depozit (arrived & arrival_time) pentru o comanda
+     */
+    public function updateInventoryArrival(Request $request, int $id): JsonResponse
+    {
+        $item = InventoryComponent::findOrFail($id);
+
+        $validated = $request->validate([
+            'arrived' => 'required|boolean',
+            'arrival_time' => 'nullable|date',
+        ]);
+
+        $arrived = (bool) $validated['arrived'];
+        $arrivalTime = !empty($validated['arrival_time'])
+            ? Carbon::parse($validated['arrival_time'])->startOfDay()
+            : ($item->arrival_time ?? Carbon::now()->startOfDay());
+
+        $item->update([
+            'arrived' => $arrived,
+            'arrival_time' => $arrivalTime,
+            'entry_date' => $arrivalTime,
+            'reception_status' => $arrived ? 'conform' : 'in_asteptare',
+        ]);
+
+        return response()->json([
+            'status' => 'success',
+            'message' => 'Statusul comenzii a fost actualizat.',
+            'data' => $item->fresh(),
+        ]);
+    }
+
+    /**
+     * Anulare / stergere comanda din magazie
+     */
+    public function deleteInventory(int $id): JsonResponse
+    {
+        $item = InventoryComponent::findOrFail($id);
+        $item->delete();
+
+        return response()->json([
+            'status' => 'success',
+            'message' => 'Comanda a fost anulată.',
+        ]);
     }
 
     /**
@@ -220,7 +292,7 @@ class TraceabilityController extends Controller
     }
 
     /**
-     * Scanare rola / punga din magazie pe pozitie / alimentator la SMD sau THT (scanata o singura data)
+     * Scanare rola / punga din magazie pe pozitie / alimentator la SMD sau THT
      */
     public function loadFeeder(Request $request): JsonResponse
     {
@@ -371,7 +443,7 @@ class TraceabilityController extends Controller
     }
 
     /**
-     * Inregistrare test EOL (determina automat Hardware & Software Version in functie de product_ident)
+     * Inregistrare test EOL
      */
     public function recordEolTest(Request $request): JsonResponse
     {
@@ -385,7 +457,6 @@ class TraceabilityController extends Controller
             'operator_username' => 'nullable|string',
         ]);
 
-        // Cauta configuratia HW & SW version pentru identul produsului
         $def = ProductDefinition::where('product_ident', $validated['product_ident'])->first();
         $hwVersion = $def ? $def->hardware_version : 'Rev 1.0';
         $swVersion = $def ? $def->software_version : 'v1.0.0';

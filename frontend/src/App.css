@@ -314,12 +314,7 @@
 }
 
 /* ==============================================================================
-   2. PAGINA POSTULUI DE LUCRU (CONFORM CERINȚEI)
-   - Top Navbar-ul
-   - Stânga: Logo + Numele Postului Curent cu alb (fără textul 'SmartQMA')
-   - Dreapta: Ro/En discret + Buton 'X' pentru deconectare (fără cine e logat)
-   - Pe paginile posturilor 1-9: COMPLET ALB, nimic afișat!
-   - Pe pagina Statistică (doar Director și Owner): Meniu stânga cu Pagina 1 ... Pagina 6 (goale momentan)
+   2. PAGINA POSTULUI DE LUCRU
    ============================================================================== */
 .station-page-layout {
   min-height: 100vh;
@@ -364,7 +359,6 @@
   filter: drop-shadow(0 2px 8px rgba(234, 88, 12, 0.6));
 }
 
-/* Numele postului curent afișat cu alb lângă logo (în locul textului 'SmartQMA') */
 .navbar-station-name {
   font-size: 17px;
   font-weight: 700;
@@ -372,14 +366,12 @@
   letter-spacing: -0.3px;
 }
 
-/* Dreapta Navbar: selector discret RO/EN + buton X */
 .navbar-right-actions {
   display: flex;
   align-items: center;
   gap: 16px;
 }
 
-/* Buton X pentru deconectare conform cerinței */
 .btn-logout-x {
   background: transparent;
   border: 1.5px solid rgba(220, 38, 38, 0.5);
@@ -415,7 +407,297 @@
 }
 
 /* ==============================================================================
-   3. LAYOUT PAGINĂ STATISTICĂ (MENIU STÂNGA CU PAGINA 1 ... PAGINA 6)
+   3. ZONA DE STOCARE - MAGAZIE (STILIZARE STANDARD, FĂRĂ ELEMENTE FUTURISTICE)
+   ============================================================================== */
+.magazie-standard-container {
+  flex: 1;
+  background-color: #f8f9fa;
+  padding: 24px 32px;
+  color: #1f2937;
+  font-family: Arial, Helvetica, sans-serif;
+}
+
+.magazie-standard-wrapper {
+  max-width: 1320px;
+  margin: 0 auto;
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+}
+
+.magazie-page-title {
+  font-size: 20px;
+  font-weight: 700;
+  color: #111827;
+  margin: 0;
+  padding-bottom: 10px;
+  border-bottom: 1px solid #d1d5db;
+}
+
+.magazie-section-box {
+  background-color: #ffffff;
+  border: 1px solid #d1d5db;
+  border-radius: 4px;
+  padding: 18px 20px;
+}
+
+.magazie-section-heading {
+  font-size: 16px;
+  font-weight: 700;
+  color: #1f2937;
+  margin: 0 0 14px 0;
+}
+
+.magazie-standard-error {
+  background-color: #fef2f2;
+  border: 1px solid #f87171;
+  color: #991b1b;
+  padding: 8px 12px;
+  border-radius: 4px;
+  font-size: 13px;
+  margin-bottom: 14px;
+}
+
+.magazie-order-form {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(220px, 1fr));
+  gap: 14px;
+  align-items: end;
+}
+
+.magazie-form-field {
+  display: flex;
+  flex-direction: column;
+  gap: 5px;
+}
+
+.magazie-form-field label {
+  font-size: 13px;
+  font-weight: 600;
+  color: #374151;
+}
+
+.magazie-form-field input,
+.magazie-form-field select {
+  padding: 7px 10px;
+  font-size: 13px;
+  color: #111827;
+  background-color: #ffffff;
+  border: 1px solid #cbd5e1;
+  border-radius: 4px;
+}
+
+.magazie-form-field input:disabled,
+.magazie-form-field select:disabled {
+  background-color: #f3f4f6;
+  color: #6b7280;
+}
+
+.magazie-form-field input:focus,
+.magazie-form-field select:focus {
+  outline: none;
+  border-color: #2563eb;
+}
+
+.magazie-form-actions {
+  display: flex;
+  align-items: flex-end;
+}
+
+.magazie-btn-submit {
+  padding: 8px 16px;
+  font-size: 13px;
+  font-weight: 600;
+  color: #ffffff;
+  background-color: #2563eb;
+  border: 1px solid #1d4ed8;
+  border-radius: 4px;
+  cursor: pointer;
+}
+
+.magazie-btn-submit:hover:not(:disabled) {
+  background-color: #1d4ed8;
+}
+
+.magazie-btn-submit:disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
+}
+
+.magazie-table-header-row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 12px;
+}
+
+.magazie-table-header-row .magazie-section-heading {
+  margin-bottom: 0;
+}
+
+.magazie-count-label {
+  font-size: 13px;
+  color: #4b5563;
+}
+
+.magazie-loading-text {
+  font-size: 14px;
+  color: #4b5563;
+  margin: 12px 0;
+}
+
+.magazie-table-scroll {
+  overflow-x: auto;
+}
+
+.magazie-standard-table {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: 13px;
+  color: #1f2937;
+}
+
+.magazie-standard-table th,
+.magazie-standard-table td {
+  border: 1px solid #d1d5db;
+  padding: 8px 10px;
+  text-align: left;
+  vertical-align: middle;
+}
+
+.magazie-standard-table thead th {
+  background-color: #f3f4f6;
+  font-weight: 700;
+  color: #111827;
+  white-space: nowrap;
+}
+
+.magazie-standard-table tbody tr:nth-child(even) {
+  background-color: #f9fafb;
+}
+
+.magazie-standard-table tbody tr:hover {
+  background-color: #f3f4f6;
+}
+
+.magazie-ident-cell {
+  font-weight: 700;
+  color: #111827;
+}
+
+.magazie-mono-cell {
+  font-family: Consolas, monospace;
+}
+
+.magazie-empty-cell {
+  text-align: center;
+  padding: 20px;
+  color: #6b7280;
+}
+
+.magazie-status-label {
+  display: inline-block;
+  padding: 2px 8px;
+  font-size: 12px;
+  font-weight: 600;
+  border-radius: 3px;
+}
+
+.magazie-status-label.arrived-yes {
+  background-color: #dcfce7;
+  color: #166534;
+  border: 1px solid #86efac;
+}
+
+.magazie-status-label.arrived-no {
+  background-color: #fef3c7;
+  color: #92400e;
+  border: 1px solid #fcd34d;
+}
+
+.magazie-btn-secondary {
+  padding: 4px 10px;
+  font-size: 12px;
+  color: #1f2937;
+  background-color: #f3f4f6;
+  border: 1px solid #cbd5e1;
+  border-radius: 3px;
+  cursor: pointer;
+  white-space: nowrap;
+}
+
+.magazie-btn-secondary:hover {
+  background-color: #e5e7eb;
+}
+
+.magazie-context-row {
+  cursor: context-menu;
+}
+
+.magazie-name-cell {
+  font-weight: 600;
+  color: #111827;
+}
+
+/* Meniu contextual standard (Click Dreapta) */
+.magazie-context-menu {
+  position: fixed;
+  z-index: 9999;
+  min-width: 210px;
+  background-color: #ffffff;
+  border: 1px solid #9ca3af;
+  border-radius: 4px;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+  padding: 4px 0;
+  font-family: Arial, Helvetica, sans-serif;
+}
+
+.magazie-context-menu-header {
+  padding: 6px 12px;
+  font-size: 12px;
+  font-weight: 700;
+  color: #374151;
+  background-color: #f3f4f6;
+  border-bottom: 1px solid #e5e7eb;
+  margin-bottom: 4px;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  max-width: 280px;
+}
+
+.magazie-context-menu-item {
+  width: 100%;
+  display: block;
+  text-align: left;
+  background: none;
+  border: none;
+  padding: 7px 14px;
+  font-size: 13px;
+  color: #111827;
+  cursor: pointer;
+}
+
+.magazie-context-menu-item:hover {
+  background-color: #e5e7eb;
+}
+
+.magazie-context-menu-item.danger {
+  color: #b91c1c;
+}
+
+.magazie-context-menu-item.danger:hover {
+  background-color: #fee2e2;
+}
+
+.magazie-context-menu-divider {
+  height: 1px;
+  background-color: #e5e7eb;
+  margin: 4px 0;
+}
+
+/* ==============================================================================
+   4. LAYOUT PAGINĂ STATISTICĂ (MENIU STÂNGA CU PAGINA 1 ... PAGINA 6)
    ============================================================================== */
 .stats-workspace-layout {
   display: flex;
@@ -505,7 +787,7 @@
 }
 
 /* ==============================================================================
-   4. ECRAN ACCES RESTRICȚIONAT (403 - DOAR DIRECTOR ȘI OWNER PE STATISTICĂ)
+   5. ECRAN ACCES RESTRICȚIONAT (403 - DOAR DIRECTOR ȘI OWNER PE STATISTICĂ)
    ============================================================================== */
 .restricted-access-container {
   flex: 1;
@@ -589,5 +871,8 @@
   }
   .stats-nav-item {
     width: auto;
+  }
+  .magazie-standard-container {
+    padding: 16px;
   }
 }

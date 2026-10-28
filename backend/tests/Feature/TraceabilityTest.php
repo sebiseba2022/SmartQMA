@@ -24,63 +24,81 @@ class TraceabilityTest extends TestCase
         $response->assertStatus(200)
             ->assertJsonPath('status', 'success')
             ->assertJsonPath('qr_serial_number', 'ARD-UNO-2026-0001')
-            // Teste AOI
             ->assertJsonPath('tests_summary.aoi.pass_count', 1)
             ->assertJsonPath('tests_summary.aoi.fail_count', 1)
-            // Teste ICT
             ->assertJsonPath('tests_summary.ict.pass_count', 1)
             ->assertJsonPath('tests_summary.ict.fail_count', 1)
-            // Teste EOL
             ->assertJsonPath('tests_summary.eol.pass_count', 1)
             ->assertJsonPath('tests_summary.eol.fail_count', 0)
-            // HW si SW version determinate din identul final la EOL
             ->assertJsonPath('product_info.product_ident', 'ARDUINO_UNO_R3')
             ->assertJsonPath('product_info.hardware_version', 'Rev 3.0')
             ->assertJsonPath('product_info.software_version', 'v1.1.2');
 
         $data = $response->json();
 
-        // Verificam ca Bestuck contine pozitiile oficiale
         $this->assertNotEmpty($data['bestuck_placements']);
+        $u3 = collect($data['bestuck_placements'])->firstWhere('position', 'U3');
+        $this->assertNotNull($u3);
+        $this->assertTrue($u3['is_mounted']);
+        $this->assertEquals(10003, $u3['component_internal_id']);
+        $this->assertEquals('SMD', $u3['stage']);
+
         $u1 = collect($data['bestuck_placements'])->firstWhere('position', 'U1');
         $this->assertNotNull($u1);
         $this->assertTrue($u1['is_mounted']);
-        $this->assertEquals(10007, $u1['component_internal_id']);
-        $this->assertEquals('SMD', $u1['stage']);
+        $this->assertEquals(10002, $u1['component_internal_id']);
+        $this->assertEquals('THT', $u1['stage']);
 
-        // Verificam pozitie THT X1 (DC Jack)
-        $x1 = collect($data['bestuck_placements'])->firstWhere('position', 'X1');
-        $this->assertNotNull($x1);
-        $this->assertTrue($x1['is_mounted']);
-        $this->assertEquals(10001, $x1['component_internal_id']);
-        $this->assertEquals('THT', $x1['stage']);
-
-        // Verificam registrul de componente
         $this->assertNotEmpty($data['component_registry']);
     }
 
     /**
-     * Testeaza adaugarea unui lot in magazie cu internal_id > 10000 generat automat
+     * Testeaza popularea si comandarea componentelor in Magazie (ident 10002 - 10009)
      */
-    public function test_inventory_reception_auto_assigns_internal_id_above_10000(): void
+    public function test_inventory_contains_arduino_uno_orders_and_creates_new_order(): void
     {
+        $listResponse = $this->getJson('/api/v1/inventory');
+        $listResponse->assertStatus(200)
+            ->assertJsonPath('status', 'success')
+            ->assertJsonCount(8, 'data')
+            ->assertJsonPath('data.0.ident', '10002')
+            ->assertJsonPath('data.7.ident', '10009');
+
         $payload = [
-            'part_name' => 'Oscilator Quartz 16MHz SMD',
-            'supplier_lot' => 'LOT-ABR-2026Z',
-            'production_date' => '2026-02-20',
-            'reception_status' => 'conform',
-            'reception_notes' => 'Rola test 16MHz verificata',
-            'quantity' => 2000,
-            'received_by' => 'operator',
+            'ident' => '10002',
+            'part_name' => 'ATmega328P (Microcontroler 8-bit AVR)',
+            'ordered_at' => '2026-02-20 10:30:00',
+            'quantity' => 600,
+            'arrived' => false,
+            'arrival_time' => null,
+            'tracking_number' => 'DHL-775544332',
+            'provider' => 'Mouser Electronics',
         ];
 
         $response = $this->postJson('/api/v1/inventory', $payload);
 
         $response->assertStatus(201)
-            ->assertJsonPath('status', 'success');
+            ->assertJsonPath('status', 'success')
+            ->assertJsonPath('data.ident', '10002')
+            ->assertJsonPath('data.quantity', 600)
+            ->assertJsonPath('data.arrived', false)
+            ->assertJsonPath('data.tracking_number', 'DHL-775544332')
+            ->assertJsonPath('data.provider', 'Mouser Electronics');
 
-        $internalId = $response->json('data.internal_id');
-        $this->assertGreaterThan(10000, $internalId);
+        $id = $response->json('data.id');
+
+        $patchResponse = $this->patchJson("/api/v1/inventory/{$id}/arrival", [
+            'arrived' => true,
+            'arrival_time' => '2026-02-22 14:00:00',
+        ]);
+
+        $patchResponse->assertStatus(200)
+            ->assertJsonPath('status', 'success')
+            ->assertJsonPath('data.arrived', true);
+
+        $deleteResponse = $this->deleteJson("/api/v1/inventory/{$id}");
+        $deleteResponse->assertStatus(200)
+            ->assertJsonPath('status', 'success');
     }
 
     /**
@@ -90,8 +108,8 @@ class TraceabilityTest extends TestCase
     {
         $payload = [
             'station_id' => 'WS-SMD-04',
-            'position' => 'R3',
-            'component_internal_id' => 10001,
+            'position' => 'U3',
+            'component_internal_id' => 10003,
             'loaded_by' => 'operator',
         ];
 
@@ -99,8 +117,8 @@ class TraceabilityTest extends TestCase
 
         $response->assertStatus(200)
             ->assertJsonPath('status', 'success')
-            ->assertJsonPath('feeder.position', 'R3')
-            ->assertJsonPath('feeder.component_internal_id', 10001);
+            ->assertJsonPath('feeder.position', 'U3')
+            ->assertJsonPath('feeder.component_internal_id', 10003);
     }
 
     /**

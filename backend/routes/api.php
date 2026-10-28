@@ -171,9 +171,11 @@ Route::prefix('v1')->group(function () {
     // GET /api/v1/traceability/scan/{qr} -> Rezultate teste AOI, ICT, EOL (pass/fail) + Amplasare Bestück SMD/THT
     Route::get('/traceability/scan/{qr}', [TraceabilityController::class, 'scanQr']);
 
-    // Magazie & Recepție marfă (internal_id > 10000 generat automat)
+    // Magazie & Comenzi componente
     Route::get('/inventory', [TraceabilityController::class, 'getInventory']);
     Route::post('/inventory', [TraceabilityController::class, 'storeInventory']);
+    Route::patch('/inventory/{id}/arrival', [TraceabilityController::class, 'updateInventoryArrival']);
+    Route::delete('/inventory/{id}', [TraceabilityController::class, 'deleteInventory']);
 
     // Configurare alimentatoare (feeder / role scanate o singură dată la stație)
     Route::get('/feeders/{stationId}', [TraceabilityController::class, 'getStationFeeders']);

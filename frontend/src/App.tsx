@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect, useCallback } from 'react';
 import { BrowserRouter, Routes, Route, useNavigate, useParams, Navigate } from 'react-router-dom';
 import { WORKSTATIONS, STATS_MODEL_PAGES, translations, type Language } from './i18n';
 import './App.css';
@@ -8,6 +8,76 @@ interface User {
   username: string;
   name: string;
   role: string;
+}
+
+interface WarehouseOrder {
+  id: number;
+  internal_id: number;
+  ident: string;
+  part_name: string;
+  ordered_at: string;
+  quantity: number;
+  arrived: boolean;
+  arrival_time: string | null;
+  tracking_number: string | null;
+  provider: string | null;
+}
+
+const ARDUINO_COMPONENT_IDENTS = [
+  { ident: '10002', name: 'ATmega328P (Microcontroler 8-bit AVR)' },
+  { ident: '10003', name: 'ATmega16U2 (Controller USB-la-Serial)' },
+  { ident: '10004', name: 'NCP1117ST50T3G (Regulator LDO 5.0V)' },
+  { ident: '10005', name: 'LP2985-33DBVR (Regulator LDO 3.3V)' },
+  { ident: '10006', name: 'LMV358IDGKR (Amplificator Operațional Dual)' },
+  { ident: '10007', name: 'FDN340P (Tranzistor MOSFET Canal-P)' },
+  { ident: '10008', name: 'MF-MSMF050-2 (Siguranță Resetabilă PTC 500mA)' },
+  { ident: '10009', name: 'CSTCE16M0V53-R0 (Rezonator Ceramic 16 MHz)' },
+];
+
+function formatDateTime(isoString: string | null | undefined): string {
+  if (!isoString) return '';
+  const d = new Date(isoString);
+  if (Number.isNaN(d.getTime())) return isoString;
+  const yyyy = d.getFullYear();
+  const mm = String(d.getMonth() + 1).padStart(2, '0');
+  const dd = String(d.getDate()).padStart(2, '0');
+  const hh = String(d.getHours()).padStart(2, '0');
+  const min = String(d.getMinutes()).padStart(2, '0');
+  return `${yyyy}-${mm}-${dd} ${hh}:${min}`;
+}
+
+function formatDateOnly(isoString: string | null | undefined): string {
+  if (!isoString) {
+    const now = new Date();
+    const yyyy = now.getFullYear();
+    const mm = String(now.getMonth() + 1).padStart(2, '0');
+    const dd = String(now.getDate()).padStart(2, '0');
+    return `${yyyy}-${mm}-${dd}`;
+  }
+  const d = new Date(isoString);
+  if (Number.isNaN(d.getTime())) return isoString.slice(0, 10);
+  const yyyy = d.getFullYear();
+  const mm = String(d.getMonth() + 1).padStart(2, '0');
+  const dd = String(d.getDate()).padStart(2, '0');
+  return `${yyyy}-${mm}-${dd}`;
+}
+
+function getCurrentLocalDateTimeInput(): string {
+  const now = new Date();
+  const yyyy = now.getFullYear();
+  const mm = String(now.getMonth() + 1).padStart(2, '0');
+  const dd = String(now.getDate()).padStart(2, '0');
+  const hh = String(now.getHours()).padStart(2, '0');
+  const min = String(now.getMinutes()).padStart(2, '0');
+  return `${yyyy}-${mm}-${dd}T${hh}:${min}`;
+}
+
+function getCurrentDateInput(): string {
+  const now = new Date();
+  const yyyy = now.getFullYear();
+  const mm = String(now.getMonth() + 1).padStart(2, '0');
+  const dd = String(now.getDate()).padStart(2, '0');
+  return `${yyyy}-${mm}-${dd}`;
 }
 
 // =========================================================================
@@ -231,7 +301,462 @@ function LoginPage({
 }
 
 // =========================================================================
-// 2. PAGINA SEPARATĂ PENTRU FIECARE POST DE LUCRU (+ MENIU STÂNGA DOAR PE STATISTICĂ)
+// 2. ZONA DE STOCARE - MAGAZIE (STILIZARE STANDARD, MENIU CLICK DREAPTA)
+// =========================================================================
+function MagaziePage({ lang }: { lang: Language }) {
+  const [orders, setOrders] = useState<WarehouseOrder[]>([]);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState<string | null>(null);
+  const [submitting, setSubmitting] = useState(false);
+
+  // Formular comanda noua (toate campurile completate)
+  const [ident, setIdent] = useState('10002');
+  const [quantity, setQuantity] = useState('500');
+  const [orderedAt, setOrderedAt] = useState(() => getCurrentLocalDateTimeInput());
+  const [provider, setProvider] = useState('Mouser Electronics');
+  const [trackingNumber, setTrackingNumber] = useState('DHL-884920199');
+  const [arrived, setArrived] = useState(false);
+  const [arrivalTime, setArrivalTime] = useState(() => getCurrentDateInput());
+
+  // Stare meniu contextual (click dreapta pe nume / rand)
+  const [contextMenu, setContextMenu] = useState<{
+    x: number;
+    y: number;
+    order: WarehouseOrder;
+  } | null>(null);
+
+  const fetchOrders = useCallback(async () => {
+    setLoading(true);
+    setError(null);
+    try {
+      const res = await fetch('/api/v1/inventory', {
+        headers: { Accept: 'application/json' },
+      });
+      const json = await res.json();
+      if (!res.ok) {
+        throw new Error(json.message || 'Eroare la încărcarea comenzilor din magazie.');
+      }
+      setOrders(Array.isArray(json.data) ? json.data : []);
+    } catch (err: unknown) {
+      setError(err instanceof Error ? err.message : 'Eroare la încărcarea datelor.');
+    } finally {
+      setLoading(false);
+    }
+  }, []);
+
+  useEffect(() => {
+    fetchOrders();
+  }, [fetchOrders]);
+
+  // Inchidere meniu contextual la click oriunde sau tasta Escape
+  useEffect(() => {
+    const handleClose = () => setContextMenu(null);
+    const handleKeyDown = (e: KeyboardEvent) => {
+      if (e.key === 'Escape') {
+        setContextMenu(null);
+      }
+    };
+    window.addEventListener('click', handleClose);
+    window.addEventListener('keydown', handleKeyDown);
+    return () => {
+      window.removeEventListener('click', handleClose);
+      window.removeEventListener('keydown', handleKeyDown);
+    };
+  }, []);
+
+  const handleCreateOrder = async (e: React.FormEvent) => {
+    e.preventDefault();
+    setError(null);
+
+    const qtyNum = parseInt(quantity, 10);
+    if (
+      !ident.trim() ||
+      Number.isNaN(qtyNum) ||
+      qtyNum < 1 ||
+      !provider.trim() ||
+      !trackingNumber.trim() ||
+      !orderedAt ||
+      !arrivalTime
+    ) {
+      setError(
+        lang === 'ro'
+          ? 'Toate câmpurile sunt obligatorii.'
+          : 'All fields are required.'
+      );
+      return;
+    }
+
+    const selectedComp = ARDUINO_COMPONENT_IDENTS.find((c) => c.ident === ident);
+
+    setSubmitting(true);
+    try {
+      const response = await fetch('/api/v1/inventory', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+          Accept: 'application/json',
+        },
+        body: JSON.stringify({
+          ident: ident.trim(),
+          part_name: selectedComp ? selectedComp.name : `Componentă #${ident.trim()}`,
+          ordered_at: new Date(orderedAt).toISOString(),
+          quantity: qtyNum,
+          provider: provider.trim(),
+          tracking_number: trackingNumber.trim(),
+          arrived,
+          arrival_time: arrivalTime,
+        }),
+      });
+
+      const data = await response.json();
+      if (!response.ok) {
+        throw new Error(data.message || 'Eroare la salvarea comenzii.');
+      }
+
+      setOrderedAt(getCurrentLocalDateTimeInput());
+      setArrivalTime(getCurrentDateInput());
+      await fetchOrders();
+    } catch (err: unknown) {
+      setError(err instanceof Error ? err.message : 'Eroare la salvarea comenzii.');
+    } finally {
+      setSubmitting(false);
+    }
+  };
+
+  const handleRowContextMenu = (e: React.MouseEvent, order: WarehouseOrder) => {
+    e.preventDefault();
+    setContextMenu({
+      x: e.clientX,
+      y: e.clientY,
+      order,
+    });
+  };
+
+  const handleSetArrival = async (order: WarehouseOrder, targetArrived: boolean) => {
+    setContextMenu(null);
+    try {
+      const res = await fetch(`/api/v1/inventory/${order.id}/arrival`, {
+        method: 'PATCH',
+        headers: {
+          'Content-Type': 'application/json',
+          Accept: 'application/json',
+        },
+        body: JSON.stringify({
+          arrived: targetArrived,
+          arrival_time: formatDateOnly(order.arrival_time),
+        }),
+      });
+      if (res.ok) {
+        await fetchOrders();
+      }
+    } catch {
+      // ignore
+    }
+  };
+
+  const handleCancelOrder = async (order: WarehouseOrder) => {
+    setContextMenu(null);
+    try {
+      const res = await fetch(`/api/v1/inventory/${order.id}`, {
+        method: 'DELETE',
+        headers: {
+          Accept: 'application/json',
+        },
+      });
+      if (res.ok) {
+        await fetchOrders();
+      }
+    } catch {
+      // ignore
+    }
+  };
+
+  const handleCopyTrackingNumber = async (order: WarehouseOrder) => {
+    setContextMenu(null);
+    const tracking = order.tracking_number || '';
+    if (!tracking) return;
+    try {
+      if (navigator.clipboard && navigator.clipboard.writeText) {
+        await navigator.clipboard.writeText(tracking);
+      } else {
+        const tempInput = document.createElement('textarea');
+        tempInput.value = tracking;
+        document.body.appendChild(tempInput);
+        tempInput.select();
+        document.execCommand('copy');
+        document.body.removeChild(tempInput);
+      }
+    } catch {
+      // ignore
+    }
+  };
+
+  return (
+    <main className="magazie-standard-container">
+      <div className="magazie-standard-wrapper">
+        <h1 className="magazie-page-title">
+          {lang === 'ro'
+            ? 'Zona de stocare - Magazie (Comenzi Componente)'
+            : 'Storage Area - Warehouse (Component Orders)'}
+        </h1>
+
+        {/* Formular standard pentru plasare comanda */}
+        <section className="magazie-section-box">
+          <h2 className="magazie-section-heading">
+            {lang === 'ro' ? 'Înregistrare Comandă Nouă' : 'Register New Component Order'}
+          </h2>
+
+          {error && <div className="magazie-standard-error">{error}</div>}
+
+          <form onSubmit={handleCreateOrder} className="magazie-order-form">
+            <div className="magazie-form-field">
+              <label htmlFor="mag-ident">Ident Componentă</label>
+              <select
+                id="mag-ident"
+                value={ident}
+                onChange={(e) => setIdent(e.target.value)}
+                disabled={submitting}
+              >
+                {ARDUINO_COMPONENT_IDENTS.map((item) => (
+                  <option key={item.ident} value={item.ident}>
+                    {item.ident} — {item.name}
+                  </option>
+                ))}
+              </select>
+            </div>
+
+            <div className="magazie-form-field">
+              <label htmlFor="mag-qty">{lang === 'ro' ? 'Cantitate' : 'Quantity'}</label>
+              <input
+                id="mag-qty"
+                type="number"
+                min={1}
+                value={quantity}
+                onChange={(e) => setQuantity(e.target.value)}
+                disabled={submitting}
+                required
+              />
+            </div>
+
+            <div className="magazie-form-field">
+              <label htmlFor="mag-ordered-at">
+                {lang === 'ro' ? 'Data Comenzii' : 'Order Date'}
+              </label>
+              <input
+                id="mag-ordered-at"
+                type="datetime-local"
+                value={orderedAt}
+                onChange={(e) => setOrderedAt(e.target.value)}
+                disabled={submitting}
+                required
+              />
+            </div>
+
+            <div className="magazie-form-field">
+              <label htmlFor="mag-provider">
+                {lang === 'ro' ? 'Provider (Furnizor)' : 'Provider (Supplier)'}
+              </label>
+              <input
+                id="mag-provider"
+                type="text"
+                placeholder="ex: Mouser Electronics"
+                value={provider}
+                onChange={(e) => setProvider(e.target.value)}
+                disabled={submitting}
+                required
+              />
+            </div>
+
+            <div className="magazie-form-field">
+              <label htmlFor="mag-tracking">Tracking Number</label>
+              <input
+                id="mag-tracking"
+                type="text"
+                placeholder="ex: DHL-884920145"
+                value={trackingNumber}
+                onChange={(e) => setTrackingNumber(e.target.value)}
+                disabled={submitting}
+                required
+              />
+            </div>
+
+            <div className="magazie-form-field">
+              <label htmlFor="mag-arrived">
+                {lang === 'ro' ? 'Ajuns în depozit?' : 'Arrived in warehouse?'}
+              </label>
+              <select
+                id="mag-arrived"
+                value={arrived ? 'da' : 'nu'}
+                onChange={(e) => setArrived(e.target.value === 'da')}
+                disabled={submitting}
+              >
+                <option value="nu">{lang === 'ro' ? 'Nu (În tranzit)' : 'No (In transit)'}</option>
+                <option value="da">{lang === 'ro' ? 'Da (Sosit)' : 'Yes (Arrived)'}</option>
+              </select>
+            </div>
+
+            <div className="magazie-form-field">
+              <label htmlFor="mag-arrival-time">Arrival Time (Data)</label>
+              <input
+                id="mag-arrival-time"
+                type="date"
+                value={arrivalTime}
+                onChange={(e) => setArrivalTime(e.target.value)}
+                disabled={submitting}
+                required
+              />
+            </div>
+
+            <div className="magazie-form-actions">
+              <button type="submit" className="magazie-btn-submit" disabled={submitting}>
+                {submitting
+                  ? lang === 'ro'
+                    ? 'Se salvează...'
+                    : 'Saving...'
+                  : lang === 'ro'
+                    ? 'Plasează Comanda'
+                    : 'Place Order'}
+              </button>
+            </div>
+          </form>
+        </section>
+
+        {/* Tabel standard cu comenzile de componente pentru Arduino Uno R3 */}
+        <section className="magazie-section-box">
+          <div className="magazie-table-header-row">
+            <h2 className="magazie-section-heading">
+              {lang === 'ro'
+                ? 'Registru Comenzi Componente (Arduino Uno R3)'
+                : 'Component Orders Registry (Arduino Uno R3)'}
+            </h2>
+            <span className="magazie-count-label">
+              {lang === 'ro'
+                ? `Click dreapta pe nume pentru acțiuni • Total înregistrări: ${orders.length}`
+                : `Right-click on name for actions • Total records: ${orders.length}`}
+            </span>
+          </div>
+
+          {loading ? (
+            <p className="magazie-loading-text">
+              {lang === 'ro' ? 'Se încarcă datele...' : 'Loading data...'}
+            </p>
+          ) : (
+            <div className="magazie-table-scroll">
+              <table className="magazie-standard-table">
+                <thead>
+                  <tr>
+                    <th>#</th>
+                    <th>Ident</th>
+                    <th>{lang === 'ro' ? 'Componentă' : 'Component'}</th>
+                    <th>{lang === 'ro' ? 'Data Comenzii' : 'Ordered At'}</th>
+                    <th>{lang === 'ro' ? 'Cantitate' : 'Quantity'}</th>
+                    <th>{lang === 'ro' ? 'Provider (Furnizor)' : 'Provider'}</th>
+                    <th>Tracking Number</th>
+                    <th>{lang === 'ro' ? 'Ajuns în Depozit' : 'Arrived'}</th>
+                    <th>Arrival Time</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  {orders.length === 0 ? (
+                    <tr>
+                      <td colSpan={9} className="magazie-empty-cell">
+                        {lang === 'ro'
+                          ? 'Nu există comenzi înregistrate.'
+                          : 'No orders recorded.'}
+                      </td>
+                    </tr>
+                  ) : (
+                    orders.map((order, idx) => (
+                      <tr
+                        key={order.id}
+                        className="magazie-context-row"
+                        onContextMenu={(e) => handleRowContextMenu(e, order)}
+                        title={
+                          lang === 'ro'
+                            ? 'Click dreapta pentru acțiuni (Confirmă sosirea / Anulează sosirea / Anulează comanda)'
+                            : 'Right-click for actions'
+                        }
+                      >
+                        <td>{idx + 1}</td>
+                        <td className="magazie-ident-cell">{order.ident || order.internal_id}</td>
+                        <td className="magazie-name-cell">{order.part_name}</td>
+                        <td>{formatDateTime(order.ordered_at)}</td>
+                        <td>{order.quantity} buc.</td>
+                        <td>{order.provider}</td>
+                        <td className="magazie-mono-cell">{order.tracking_number}</td>
+                        <td>
+                          <span
+                            className={`magazie-status-label ${
+                              order.arrived ? 'arrived-yes' : 'arrived-no'
+                            }`}
+                          >
+                            {order.arrived
+                              ? lang === 'ro'
+                                ? 'Da'
+                                : 'Yes'
+                              : lang === 'ro'
+                                ? 'Nu'
+                                : 'No'}
+                          </span>
+                        </td>
+                        <td>{formatDateOnly(order.arrival_time)}</td>
+                      </tr>
+                    ))
+                  )}
+                </tbody>
+              </table>
+            </div>
+          )}
+        </section>
+      </div>
+
+      {/* Meniu contextual la click dreapta pe nume / rand */}
+      {contextMenu && (
+        <div
+          className="magazie-context-menu"
+          style={{ top: contextMenu.y, left: contextMenu.x }}
+          onClick={(e) => e.stopPropagation()}
+        >
+          <div className="magazie-context-menu-header">
+            {contextMenu.order.ident} — {contextMenu.order.part_name}
+          </div>
+          <button
+            type="button"
+            className="magazie-context-menu-item"
+            onClick={() => handleSetArrival(contextMenu.order, true)}
+          >
+            {lang === 'ro' ? 'Confirmă sosirea' : 'Confirm arrival'}
+          </button>
+          <button
+            type="button"
+            className="magazie-context-menu-item"
+            onClick={() => handleSetArrival(contextMenu.order, false)}
+          >
+            {lang === 'ro' ? 'Anulează sosirea' : 'Cancel arrival'}
+          </button>
+          <button
+            type="button"
+            className="magazie-context-menu-item"
+            onClick={() => handleCopyTrackingNumber(contextMenu.order)}
+          >
+            {lang === 'ro' ? 'Copiază tracking number' : 'Copy tracking number'}
+          </button>
+          <div className="magazie-context-menu-divider" />
+          <button
+            type="button"
+            className="magazie-context-menu-item danger"
+            onClick={() => handleCancelOrder(contextMenu.order)}
+          >
+            {lang === 'ro' ? 'Anulează comanda' : 'Cancel order'}
+          </button>
+        </div>
+      )}
+    </main>
+  );
+}
+
+// =========================================================================
+// 3. PAGINA SEPARATĂ PENTRU FIECARE POST DE LUCRU
 // =========================================================================
 function WorkstationPage({
   lang,
@@ -263,6 +788,7 @@ function WorkstationPage({
 
   const hasAccess = currentWs.allowedRoles.includes(currentUser.role);
   const isStatistics = currentWs.id === 'statistica';
+  const isMagazie = currentWs.id === 'magazie';
 
   // Pentru Statistică, validăm sub-pagina activă (pagina-1 ... pagina-6)
   const validSubPage = STATS_MODEL_PAGES.find((p) => p.id === subPageId);
@@ -353,6 +879,8 @@ function WorkstationPage({
           {/* Conținutul fiecărei pagini de opțiuni este complet gol momentan */}
           <main className="blank-page-white"></main>
         </div>
+      ) : isMagazie ? (
+        <MagaziePage lang={lang} />
       ) : (
         /* Pe celelalte posturi de lucru: complet alb, nimic afișat, doar topnavbarul */
         <main className="blank-page-white"></main>
@@ -362,7 +890,7 @@ function WorkstationPage({
 }
 
 // =========================================================================
-// 3. ROOT APP CU ROUTING
+// 4. ROOT APP CU ROUTING
 // =========================================================================
 function App() {
   const [lang, setLang] = useState<Language>(() => {

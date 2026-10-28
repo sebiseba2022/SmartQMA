@@ -5,6 +5,7 @@ namespace App\Models;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\HasMany;
+use Illuminate\Support\Carbon;
 
 class InventoryComponent extends Model
 {
@@ -14,21 +15,30 @@ class InventoryComponent extends Model
 
     protected $fillable = [
         'internal_id',
+        'ident',
         'part_name',
+        'ordered_at',
+        'quantity',
+        'arrived',
+        'arrival_time',
+        'tracking_number',
+        'provider',
         'supplier_lot',
         'production_date',
         'entry_date',
         'reception_status',
         'reception_notes',
-        'quantity',
         'received_by',
     ];
 
     protected $casts = [
         'internal_id' => 'integer',
+        'ordered_at' => 'datetime',
+        'quantity' => 'integer',
+        'arrived' => 'boolean',
+        'arrival_time' => 'datetime',
         'production_date' => 'date',
         'entry_date' => 'datetime',
-        'quantity' => 'integer',
     ];
 
     protected static function boot()
@@ -38,7 +48,13 @@ class InventoryComponent extends Model
         static::creating(function ($model) {
             if (empty($model->internal_id)) {
                 $max = static::max('internal_id');
-                $model->internal_id = ($max && $max >= 10000) ? $max + 1 : 10001;
+                $model->internal_id = ($max && $max >= 10001) ? $max + 1 : 10002;
+            }
+            if (empty($model->ident)) {
+                $model->ident = (string) $model->internal_id;
+            }
+            if (empty($model->ordered_at)) {
+                $model->ordered_at = Carbon::now();
             }
         });
     }
