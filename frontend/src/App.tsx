@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import { BrowserRouter, Routes, Route, useNavigate, useParams, Navigate } from 'react-router-dom';
-import { WORKSTATIONS, translations, type Language } from './i18n';
+import { WORKSTATIONS, STATS_MODEL_PAGES, translations, type Language } from './i18n';
 import './App.css';
 
 interface User {
@@ -49,13 +49,19 @@ function LoginPage({
           'Content-Type': 'application/json',
           'Accept': 'application/json',
         },
-        body: JSON.stringify({ username, password }),
+        body: JSON.stringify({ username: username.trim(), password }),
       });
 
       const data = await response.json();
 
       if (!response.ok) {
         throw new Error(data.message || t.authErrorDefault);
+      }
+
+      // Verificare acces pe bază de rol (ex: pe Statistică au acces doar director și owner)
+      const targetStation = WORKSTATIONS.find((w) => w.id === selectedStation);
+      if (targetStation && !targetStation.allowedRoles.includes(data.user.role)) {
+        throw new Error(t.statisticaAccessDenied);
       }
 
       onLoginSuccess(data.user, selectedStation);
@@ -225,13 +231,7 @@ function LoginPage({
 }
 
 // =========================================================================
-// 2. PAGINA SEPARATĂ PENTRU FIECARE POST DE LUCRU
-// Conform cerinței:
-// - Pagini complet separate (URL dedicat)
-// - Fără coloana din stânga (nu poți trece din magazie în alt post)
-// - Sus în navbar: Logo + NUMELE POSTULUI DE LUCRU (fără textul alb "SmartQMA")
-// - În dreapta: butonul RO/EN discret + buton 'X' pentru deconectare (fără cine este logat)
-// - Pe pagină: complet ALB, nimic afișat, doar topnavbarul!
+// 2. PAGINA SEPARATĂ PENTRU FIECARE POST DE LUCRU (+ MENIU STÂNGA DOAR PE STATISTICĂ)
 // =========================================================================
 function WorkstationPage({
   lang,
@@ -244,25 +244,38 @@ function WorkstationPage({
   currentUser: User | null;
   onLogout: () => void;
 }) {
-  const { stationId } = useParams<{ stationId: string }>();
+  const { stationId, subPageId } = useParams<{ stationId?: string; subPageId?: string }>();
+  const navigate = useNavigate();
+  const t = translations[lang];
 
   // Verificare dacă utilizatorul este autentificat; dacă nu, redirecționare la login
   if (!currentUser) {
     return <Navigate to="/" replace />;
   }
 
-  const currentWs = WORKSTATIONS.find((w) => w.id === stationId);
+  const effectiveStationId = stationId || 'statistica';
+  const currentWs = WORKSTATIONS.find((w) => w.id === effectiveStationId);
 
   // Dacă postul nu este valid, redirecționare la login
   if (!currentWs) {
     return <Navigate to="/" replace />;
   }
 
+  const hasAccess = currentWs.allowedRoles.includes(currentUser.role);
+  const isStatistics = currentWs.id === 'statistica';
+
+  // Pentru Statistică, validăm sub-pagina activă (pagina-1 ... pagina-6)
+  const validSubPage = STATS_MODEL_PAGES.find((p) => p.id === subPageId);
+  if (isStatistics && hasAccess && subPageId && !validSubPage) {
+    return <Navigate to="/statistica/pagina-1" replace />;
+  }
+  const activeStatsPageId = validSubPage ? validSubPage.id : STATS_MODEL_PAGES[0].id;
+
   return (
     <div className="station-page-layout">
       {/* Top Navbar */}
       <header className="portal-navbar">
-        {/* Stânga: Logo + Numele postului de lucru curent (fără textul alb 'SmartQMA') */}
+        {/* Stânga: Logo + Numele postului de lucru curent */}
         <div className="navbar-brand">
           <div className="logo-wrapper-small">
             <img src="/logo-transparent.png" alt="Logo" className="navbar-logo-img" />
@@ -270,7 +283,7 @@ function WorkstationPage({
           <span className="navbar-station-name">{currentWs.name[lang]}</span>
         </div>
 
-        {/* Dreapta: Selector discret RO/EN + Buton 'X' pentru Deconectare (fără nume utilizator) */}
+        {/* Dreapta: Selector discret RO/EN + Buton 'X' pentru Deconectare */}
         <div className="navbar-right-actions">
           <div className="lang-switcher-discreet" title="Language">
             <button
@@ -302,8 +315,48 @@ function WorkstationPage({
         </div>
       </header>
 
-      {/* Pe pagină este complet alb, nimic afișat, doar topnavbarul */}
-      <main className="blank-page-white"></main>
+      {/* Verificare acces pe bază de rol (ex: doar Director și Owner pe Statistică) */}
+      {!hasAccess ? (
+        <main className="restricted-access-container">
+          <div className="restricted-access-card">
+            <div className="restricted-badge">403</div>
+            <h2 className="restricted-title">{t.restrictedAccessTitle}</h2>
+            <p className="restricted-message">{t.statisticaAccessDenied}</p>
+            <button type="button" className="btn-signin" onClick={onLogout}>
+              {t.backToLogin}
+            </button>
+          </div>
+        </main>
+      ) : isStatistics ? (
+        /* Pagina Statistică: Meniu în stânga cu Pagina 1 ... Pagina 6 (toate goale momentan) */
+        <div className="stats-workspace-layout">
+          <aside className="stats-sidebar" aria-label={t.statsMenuTitle}>
+            <div className="stats-sidebar-header">{t.statsMenuTitle}</div>
+            <nav className="stats-sidebar-nav">
+              {STATS_MODEL_PAGES.map((page) => {
+                const isActive = activeStatsPageId === page.id;
+                return (
+                  <button
+                    key={page.id}
+                    type="button"
+                    className={`stats-nav-item ${isActive ? 'active' : ''}`}
+                    onClick={() => navigate(`/statistica/${page.id}`)}
+                  >
+                    <span className="stats-nav-dot" />
+                    <span className="stats-nav-text">{page.name[lang]}</span>
+                  </button>
+                );
+              })}
+            </nav>
+          </aside>
+
+          {/* Conținutul fiecărei pagini de opțiuni este complet gol momentan */}
+          <main className="blank-page-white"></main>
+        </div>
+      ) : (
+        /* Pe celelalte posturi de lucru: complet alb, nimic afișat, doar topnavbarul */
+        <main className="blank-page-white"></main>
+      )}
     </div>
   );
 }
@@ -346,7 +399,11 @@ function App() {
     } catch {
       // ignore
     }
-    navigate('/' + stationId);
+    if (stationId === 'statistica') {
+      navigate('/statistica/pagina-1');
+    } else {
+      navigate('/' + stationId);
+    }
   };
 
   const handleLogout = (navigate: (path: string) => void) => {
@@ -396,6 +453,18 @@ function AppRoutes({
             lang={lang}
             onLangChange={onLangChange}
             onLoginSuccess={(user, stationId) => onLoginSuccess(user, stationId, navigate)}
+          />
+        }
+      />
+
+      <Route
+        path="/statistica/:subPageId"
+        element={
+          <WorkstationPage
+            lang={lang}
+            onLangChange={onLangChange}
+            currentUser={currentUser}
+            onLogout={() => onLogout(navigate)}
           />
         }
       />

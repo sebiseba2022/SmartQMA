@@ -57,5 +57,7 @@ class DatabaseSeeder extends Seeder
                 $userData
             );
         }
+
+        $this->call(ProductionFlowSeeder::class);
     }
 }

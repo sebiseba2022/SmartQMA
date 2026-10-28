@@ -1,5 +1,6 @@
 <?php
 
+use App\Http\Controllers\Api\TraceabilityController;
 use App\Models\User;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Hash;
@@ -20,7 +21,8 @@ Route::prefix('v1')->group(function () {
             'password' => 'required|string',
         ]);
 
-        $user = User::where('username', $validated['username'])->first();
+        $cleanUsername = strtolower(trim($validated['username']));
+        $user = User::whereRaw('LOWER(username) = ?', [$cleanUsername])->first();
 
         if (! $user || ! Hash::check($validated['password'], $user->password)) {
             return response()->json([
@@ -151,7 +153,7 @@ Route::prefix('v1')->group(function () {
                 'code' => 'WS-STA-10',
                 'category' => 'Management & Analiză Producție',
                 'type' => 'statistics',
-                'allowed_roles' => ['engineer', 'director', 'owner'],
+                'allowed_roles' => ['director', 'owner'],
                 'description' => 'Panou executiv: indicatori FPY (First Pass Yield), Scrap Rate, timpi de tact și distribuția defectelor.',
             ],
         ];
@@ -162,4 +164,27 @@ Route::prefix('v1')->group(function () {
             'data' => $workstations,
         ]);
     });
+
+    // -------------------------------------------------------------
+    // Trasabilitate Industrială & Scanare Cod QR
+    // -------------------------------------------------------------
+    // GET /api/v1/traceability/scan/{qr} -> Rezultate teste AOI, ICT, EOL (pass/fail) + Amplasare Bestück SMD/THT
+    Route::get('/traceability/scan/{qr}', [TraceabilityController::class, 'scanQr']);
+
+    // Magazie & Recepție marfă (internal_id > 10000 generat automat)
+    Route::get('/inventory', [TraceabilityController::class, 'getInventory']);
+    Route::post('/inventory', [TraceabilityController::class, 'storeInventory']);
+
+    // Configurare alimentatoare (feeder / role scanate o singură dată la stație)
+    Route::get('/feeders/{stationId}', [TraceabilityController::class, 'getStationFeeders']);
+    Route::post('/feeders/load', [TraceabilityController::class, 'loadFeeder']);
+
+    // Înregistrare componente montate pe PCB
+    Route::post('/placements/smd', [TraceabilityController::class, 'recordSmdPlacement']);
+    Route::post('/placements/tht', [TraceabilityController::class, 'recordThtPlacement']);
+
+    // Înregistrare inspecții & teste industriale
+    Route::post('/tests/aoi', [TraceabilityController::class, 'recordAoiTest']);
+    Route::post('/tests/ict', [TraceabilityController::class, 'recordIctTest']);
+    Route::post('/tests/eol', [TraceabilityController::class, 'recordEolTest']);
 });

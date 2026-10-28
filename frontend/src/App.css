@@ -315,10 +315,11 @@
 
 /* ==============================================================================
    2. PAGINA POSTULUI DE LUCRU (CONFORM CERINȚEI)
-   - Doar Top Navbar-ul
+   - Top Navbar-ul
    - Stânga: Logo + Numele Postului Curent cu alb (fără textul 'SmartQMA')
    - Dreapta: Ro/En discret + Buton 'X' pentru deconectare (fără cine e logat)
-   - Pe pagină: COMPLET ALB, nimic afișat!
+   - Pe paginile posturilor 1-9: COMPLET ALB, nimic afișat!
+   - Pe pagina Statistică (doar Director și Owner): Meniu stânga cu Pagina 1 ... Pagina 6 (goale momentan)
    ============================================================================== */
 .station-page-layout {
   min-height: 100vh;
@@ -405,12 +406,155 @@
   box-shadow: 0 0 10px rgba(220, 38, 38, 0.5);
 }
 
-/* Pe pagină: COMPLET ALB, NIMIC AFIȘAT (fără coloană stânga, fără carduri) */
+/* Pe pagină: COMPLET ALB, NIMIC AFIȘAT */
 .blank-page-white {
   flex: 1;
   background-color: #ffffff;
   min-height: calc(100vh - 60px);
   width: 100%;
+}
+
+/* ==============================================================================
+   3. LAYOUT PAGINĂ STATISTICĂ (MENIU STÂNGA CU PAGINA 1 ... PAGINA 6)
+   ============================================================================== */
+.stats-workspace-layout {
+  display: flex;
+  flex: 1;
+  min-height: calc(100vh - 60px);
+  width: 100%;
+  background-color: #ffffff;
+}
+
+.stats-sidebar {
+  width: 250px;
+  flex-shrink: 0;
+  background-color: #181512;
+  border-right: 1px solid #2e2924;
+  padding: 24px 14px;
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.stats-sidebar-header {
+  font-size: 11px;
+  font-weight: 800;
+  letter-spacing: 0.9px;
+  color: #9c8f80;
+  padding: 0 12px 8px;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.08);
+  text-transform: uppercase;
+}
+
+.stats-sidebar-nav {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+
+.stats-nav-item {
+  width: 100%;
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 11px 14px;
+  border-radius: 10px;
+  border: 1px solid transparent;
+  background: transparent;
+  color: #d6cec2;
+  font-size: 14px;
+  font-weight: 600;
+  text-align: left;
+  cursor: pointer;
+  transition: all 0.18s ease;
+}
+
+.stats-nav-item:hover {
+  background-color: rgba(234, 88, 12, 0.12);
+  color: #ffffff;
+}
+
+.stats-nav-item.active {
+  background: linear-gradient(135deg, rgba(234, 88, 12, 0.24) 0%, rgba(220, 38, 38, 0.18) 100%);
+  border-color: rgba(234, 88, 12, 0.55);
+  color: #ffffff;
+  font-weight: 700;
+  box-shadow: 0 2px 10px rgba(234, 88, 12, 0.18);
+}
+
+.stats-nav-dot {
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+  background-color: #6b6156;
+  transition: all 0.18s ease;
+  flex-shrink: 0;
+}
+
+.stats-nav-item:hover .stats-nav-dot {
+  background-color: #f97316;
+}
+
+.stats-nav-item.active .stats-nav-dot {
+  background-color: #ea580c;
+  box-shadow: 0 0 8px rgba(234, 88, 12, 0.85);
+}
+
+.stats-nav-text {
+  line-height: 1.2;
+}
+
+/* ==============================================================================
+   4. ECRAN ACCES RESTRICȚIONAT (403 - DOAR DIRECTOR ȘI OWNER PE STATISTICĂ)
+   ============================================================================== */
+.restricted-access-container {
+  flex: 1;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 32px;
+  background-color: #faf8f5;
+  min-height: calc(100vh - 60px);
+}
+
+.restricted-access-card {
+  max-width: 440px;
+  width: 100%;
+  background-color: #ffffff;
+  border: 1.5px solid #fecdd3;
+  border-radius: 18px;
+  padding: 32px 28px;
+  text-align: center;
+  box-shadow: 0 10px 30px rgba(220, 38, 38, 0.08);
+}
+
+.restricted-badge {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  padding: 6px 14px;
+  border-radius: 999px;
+  background-color: #fff1f2;
+  color: #dc2626;
+  font-size: 13px;
+  font-weight: 800;
+  letter-spacing: 0.6px;
+  margin-bottom: 14px;
+  border: 1px solid #fecdd3;
+}
+
+.restricted-title {
+  font-size: 22px;
+  font-weight: 800;
+  color: #181512;
+  margin-bottom: 10px;
+}
+
+.restricted-message {
+  font-size: 14px;
+  color: #57534e;
+  line-height: 1.55;
+  margin-bottom: 20px;
 }
 
 /* Responsive */
@@ -429,5 +573,21 @@
   }
   .navbar-station-name {
     font-size: 14px;
+  }
+  .stats-workspace-layout {
+    flex-direction: column;
+  }
+  .stats-sidebar {
+    width: 100%;
+    border-right: none;
+    border-bottom: 1px solid #2e2924;
+    padding: 16px;
+  }
+  .stats-sidebar-nav {
+    flex-direction: row;
+    flex-wrap: wrap;
+  }
+  .stats-nav-item {
+    width: auto;
   }
 }
