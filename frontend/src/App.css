@@ -478,6 +478,192 @@
   overflow-y: auto;
 }
 
+.stats-main-content.dark-bg {
+  background-color: #0b1120;
+}
+
+/* ==============================================================================
+   6. LIVE STREAM BANNER & ACCORDION SUBTABLE STYLES
+   ============================================================================== */
+.live-stream-freeze-banner {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  background: #111827;
+  border: 1px solid #0284c7;
+  color: #f0f9ff;
+  padding: 8px 14px;
+  border-radius: 6px;
+  margin-bottom: 8px;
+  font-size: 13px;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3);
+  cursor: pointer;
+  transition: all 0.15s ease-in-out;
+}
+
+.live-stream-freeze-banner:hover {
+  background: #0f172a;
+  border-color: #38bdf8;
+}
+
+.live-stream-pulse-dot {
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+  background: #38bdf8;
+  flex-shrink: 0;
+  animation: pulse-dot 1.5s infinite;
+}
+
+.live-stream-banner-text {
+  flex: 1;
+  font-weight: 500;
+  color: #e0f2fe;
+}
+
+.live-stream-resume-pill {
+  background: #0284c7;
+  color: #ffffff;
+  border: none;
+  font-size: 12px;
+  font-weight: 600;
+  padding: 4px 10px;
+  border-radius: 4px;
+  cursor: pointer;
+  flex-shrink: 0;
+}
+
+.live-stream-resume-pill:hover {
+  background: #0369a1;
+}
+
+/* Animație Cascadă rânduri noi la intrare în top */
+@keyframes cascadeRowEnter {
+  0% {
+    background-color: rgba(14, 165, 233, 0.28) !important;
+    transform: translateY(-8px);
+  }
+  50% {
+    background-color: rgba(14, 165, 233, 0.16) !important;
+  }
+  100% {
+    background-color: transparent;
+    transform: translateY(0);
+  }
+}
+
+.row-cascade-new {
+  animation: cascadeRowEnter 2.4s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+/* Accordion Subtable Styles */
+.accordion-toggle-btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 22px;
+  height: 22px;
+  border-radius: 4px;
+  background: #1e293b;
+  border: 1px solid #334155;
+  color: #94a3b8;
+  cursor: pointer;
+  margin-right: 6px;
+  transition: all 0.15s ease;
+  vertical-align: middle;
+}
+
+.accordion-toggle-btn:hover {
+  background: #334155;
+  color: #ffffff;
+}
+
+.accordion-toggle-btn.expanded {
+  background: #ea580c;
+  border-color: #ea580c;
+  color: #ffffff;
+}
+
+.smd-count-pill {
+  display: inline-block;
+  font-size: 11px;
+  font-weight: 600;
+  padding: 1px 6px;
+  border-radius: 10px;
+  background: #1e293b;
+  border: 1px solid #334155;
+  color: #38bdf8;
+  margin-left: 6px;
+}
+
+.smd-subrow {
+  background: #0f172a !important;
+}
+
+.smd-subrow > td {
+  padding: 0 !important;
+  border-bottom: 2px solid #334155 !important;
+}
+
+.smd-subtable-container {
+  padding: 10px 16px 14px 38px;
+  background: linear-gradient(180deg, #090e1a 0%, #0f172a 100%);
+  border-left: 3px solid #ea580c;
+}
+
+.smd-subtable-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  font-size: 12px;
+  font-weight: 600;
+  color: #cbd5e1;
+  margin-bottom: 8px;
+}
+
+.smd-nested-table {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: 12px;
+  background: #1e293b;
+  border: 1px solid #334155;
+  border-radius: 4px;
+  overflow: hidden;
+}
+
+.smd-nested-table th {
+  background: #111827;
+  color: #94a3b8;
+  font-weight: 600;
+  text-align: left;
+  padding: 6px 10px;
+  border-bottom: 1px solid #334155;
+  font-size: 11px;
+  text-transform: uppercase;
+}
+
+.smd-nested-table td {
+  padding: 6px 10px;
+  border-bottom: 1px solid #2d3748;
+  color: #e2e8f0;
+}
+
+.smd-nested-table tr:last-child td {
+  border-bottom: none;
+}
+
+.badge-position {
+  display: inline-block;
+  font-weight: 700;
+  font-size: 11px;
+  color: #ea580c;
+  background: rgba(234, 88, 12, 0.12);
+  border: 1px solid rgba(234, 88, 12, 0.3);
+  padding: 2px 6px;
+  border-radius: 3px;
+}
+
 .stats-content-header {
   padding: 20px 28px;
   background: #fafaf9;
@@ -747,7 +933,7 @@
   font-weight: 700;
   font-size: 13px;
   letter-spacing: 0.01em;
-  padding: 13px 12px;
+  padding: 12px 8px;
   text-align: left;
   border-right: 1px solid #2e2924;
   border-bottom: 2px solid #ea580c;
@@ -761,29 +947,32 @@
 }
 
 .magazie-pro-table th.col-idx {
-  width: 48px;
+  width: 65px;
+  min-width: 65px;
+  max-width: 65px;
   text-align: center;
+  padding: 12px 4px;
 }
 .magazie-pro-table th.col-ident {
-  width: 130px;
+  width: 100px;
 }
 .magazie-pro-table th.col-name {
-  width: 24%;
+  min-width: 170px;
 }
 .magazie-pro-table th.col-date {
-  width: 145px;
+  width: 140px;
 }
 .magazie-pro-table th.col-qty {
-  width: 105px;
+  width: 95px;
 }
 .magazie-pro-table th.col-provider {
-  width: 16%;
+  width: 140px;
 }
 .magazie-pro-table th.col-tracking {
-  width: 150px;
+  width: 145px;
 }
 .magazie-pro-table th.col-arrived {
-  width: 130px;
+  width: 125px;
 }
 .magazie-pro-table th.col-arrival-time {
   width: 125px;
@@ -792,7 +981,7 @@
 /* Celule de tabel & Rânduri goale până în josul paginii */
 .magazie-pro-table tbody td {
   height: 36px;
-  padding: 0 12px;
+  padding: 0 8px;
   border-bottom: 1px solid #e2e8f0;
   border-right: 1px solid #e2e8f0;
   vertical-align: middle;
@@ -872,8 +1061,10 @@
 .col-idx-cell {
   text-align: center;
   color: #64748b;
-  font-weight: 600;
+  font-weight: 700;
   font-size: 12px;
+  padding: 0 4px !important;
+  white-space: nowrap;
 }
 
 /* Rânduri goale până în josul paginii */

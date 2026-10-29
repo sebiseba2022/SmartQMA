@@ -1,12 +1,14 @@
 import { useParams, useNavigate } from 'react-router-dom';
-import type { Language } from '../types';
+import type { Language, User } from '../types';
 import { STATS_MODEL_PAGES, translations } from '../i18n';
+import FlowGeneratorView from '../components/FlowGeneratorView';
 
 interface StatisticaPageProps {
   lang: Language;
+  currentUser?: User | null;
 }
 
-export function StatisticaPage({ lang }: StatisticaPageProps) {
+export function StatisticaPage({ lang, currentUser }: StatisticaPageProps) {
   const { subPageId } = useParams<{ subPageId?: string }>();
   const navigate = useNavigate();
   const t = translations[lang];
@@ -39,18 +41,24 @@ export function StatisticaPage({ lang }: StatisticaPageProps) {
       </aside>
 
       {/* Spațiu de lucru pentru pagina selectată */}
-      <main className="stats-main-content">
-        <div className="stats-content-header">
-          <h2 className="stats-content-title">{currentSubPageName}</h2>
-          <span className="stats-content-subtitle">
-            {lang === 'ro'
-              ? 'Modul de analiză și rapoarte de producție'
-              : 'Production analytics and yield reports module'}
-          </span>
-        </div>
-        <div className="stats-content-body blank-page-white">
-          {/* Zona curată pregătită pentru grafice și indicatori de performanță */}
-        </div>
+      <main className={`stats-main-content ${activeStatsPageId === 'pagina-6' ? 'dark-bg' : ''}`}>
+        {activeStatsPageId === 'pagina-6' ? (
+          <FlowGeneratorView lang={lang} currentUser={currentUser} />
+        ) : (
+          <>
+            <div className="stats-content-header">
+              <h2 className="stats-content-title">{currentSubPageName}</h2>
+              <span className="stats-content-subtitle">
+                {lang === 'ro'
+                  ? 'Modul de analiză și rapoarte de producție'
+                  : 'Production analytics and yield reports module'}
+              </span>
+            </div>
+            <div className="stats-content-body blank-page-white">
+              {/* Zona curată pregătită pentru grafice și indicatori de performanță */}
+            </div>
+          </>
+        )}
       </main>
     </div>
   );

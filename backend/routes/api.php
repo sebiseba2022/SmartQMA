@@ -1,6 +1,7 @@
 <?php
 
 use App\Http\Controllers\Api\TraceabilityController;
+use App\Http\Controllers\Api\FlowGeneratorController;
 use App\Models\User;
 use App\Models\UserStationAccess;
 use Illuminate\Http\Request;
@@ -392,4 +393,12 @@ Route::prefix('v1')->group(function () {
     Route::post('/tests/ict', [TraceabilityController::class, 'recordIctTest']);
     Route::get('/tests/eol', [TraceabilityController::class, 'getEolResults']);
     Route::post('/tests/eol', [TraceabilityController::class, 'recordEolTest']);
+
+    // Generator de flux producție (statistica / pagina-6)
+    Route::get('/generator/config', [FlowGeneratorController::class, 'getConfig']);
+    Route::post('/generator/config', [FlowGeneratorController::class, 'saveConfig']);
+    Route::post('/generator/reset-config', [FlowGeneratorController::class, 'resetConfig']);
+    Route::post('/generator/generate-batch', [FlowGeneratorController::class, 'generateBatch']);
+    Route::get('/generator/stats', [FlowGeneratorController::class, 'getStats']);
+    Route::post('/generator/check-warehouse', [FlowGeneratorController::class, 'checkWarehouseAndQc']);
 });

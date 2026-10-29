@@ -1,11 +1,12 @@
 import {
   useState,
-  useEffect,
   useCallback,
   useMemo,
   type FormEvent,
 } from 'react';
 import type { Language, User, AoiResultItem } from '../types';
+import { useRealtimeLiveFeed } from '../utils/useRealtimeLiveFeed';
+import { LiveStreamFreezeBanner } from '../components/LiveStreamFreezeBanner';
 
 interface AoiPageProps {
   lang: Language;
@@ -41,11 +42,42 @@ const STANDARD_DEFECT_CODES = [
 const MIN_EMPTY_TABLE_ROWS = 22;
 
 export function AoiPage({ lang, currentUser }: AoiPageProps) {
-  const [results, setResults] = useState<AoiResultItem[]>([]);
   const [totalCount, setTotalCount] = useState<number>(0);
   const [, setLoading] = useState<boolean>(true);
   const [error, setError] = useState<string | null>(null);
   const [notice, setNotice] = useState<string | null>(null);
+
+  // Funcție de preluare date pentru hook-ul de flux live
+  const fetchResultsCallback = useCallback(async () => {
+    try {
+      setLoading(true);
+      setError(null);
+      const res = await fetch('/api/v1/tests/aoi?limit=50');
+      if (!res.ok) throw new Error('Eroare la încărcarea inspecțiilor AOI');
+      const data = await res.json();
+      setTotalCount(data.total || (data.data ? data.data.length : 0));
+      return data.data || [];
+    } catch (err: any) {
+      setError(err.message || 'Eroare de rețea la preluarea inspecțiilor.');
+      return [];
+    } finally {
+      setLoading(false);
+    }
+  }, []);
+
+  // Hook flux realtime cu înghețare la derulare
+  const {
+    items: results,
+    pendingNewCount,
+    recentNewIds,
+    containerRef,
+    handleScroll,
+    resumeLiveStream,
+    refreshNow: fetchResults,
+  } = useRealtimeLiveFeed<AoiResultItem>({
+    fetchFn: fetchResultsCallback,
+    intervalMs: 2500,
+  });
 
   // Filtre pe coloane
   const [filters, setFilters] = useState<AoiFilters>(EMPTY_FILTERS);
@@ -63,27 +95,6 @@ export function AoiPage({ lang, currentUser }: AoiPageProps) {
   const [formResult, setFormResult] = useState<'PASS' | 'FAIL'>('PASS');
   const [formDefectCode, setFormDefectCode] = useState('BRIDGE_U3');
   const [formDetails, setFormDetails] = useState('');
-
-  // Preluare rezultate AOI
-  const fetchResults = useCallback(async () => {
-    try {
-      setLoading(true);
-      setError(null);
-      const res = await fetch('/api/v1/tests/aoi');
-      if (!res.ok) throw new Error('Eroare la încărcarea inspecțiilor AOI');
-      const data = await res.json();
-      setResults(data.data || []);
-      setTotalCount(data.total || (data.data ? data.data.length : 0));
-    } catch (err: any) {
-      setError(err.message || 'Eroare de rețea la preluarea inspecțiilor.');
-    } finally {
-      setLoading(false);
-    }
-  }, []);
-
-  useEffect(() => {
-    fetchResults();
-  }, [fetchResults]);
 
   // Salvare inspecție AOI nouă
   const handleRecordSubmit = async (e: FormEvent) => {
@@ -415,21 +426,28 @@ export function AoiPage({ lang, currentUser }: AoiPageProps) {
           </span>
         </div>
 
+        {/* Banner de avertizare la derulare - înghețare flux live */}
+        <LiveStreamFreezeBanner
+          pendingCount={pendingNewCount}
+          onResume={resumeLiveStream}
+          lang={lang}
+        />
+
         {/* Tabel */}
-        <div className="magazie-fulltable-container">
+        <div className="magazie-fulltable-container" ref={containerRef} onScroll={handleScroll}>
           <table className="magazie-pro-table">
             <thead>
               <tr>
-                <th className="col-idx">#</th>
-                <th style={{ width: '160px' }}>{lang === 'ro' ? 'Serie PCB' : 'PCB Serial'}</th>
-                <th style={{ width: '120px' }}>{lang === 'ro' ? 'Rezultat' : 'Verdict'}</th>
-                <th style={{ width: '160px' }}>{lang === 'ro' ? 'Cod defect' : 'Defect code'}</th>
-                <th style={{ width: '32%' }}>
-                  {lang === 'ro' ? 'Detalii optice / observatii cameră' : 'Optical details / observations'}
+                <th className="col-idx" style={{ width: '65px' }}>#</th>
+                <th style={{ width: '155px' }}>{lang === 'ro' ? 'Serie PCB' : 'PCB Serial'}</th>
+                <th style={{ width: '85px' }}>{lang === 'ro' ? 'Rezultat' : 'Verdict'}</th>
+                <th style={{ width: '135px' }}>{lang === 'ro' ? 'Cod defect' : 'Defect code'}</th>
+                <th style={{ minWidth: '160px' }}>
+                  {lang === 'ro' ? 'Detalii optice / observații cameră' : 'Optical details / observations'}
                 </th>
-                <th style={{ width: '130px' }}>{lang === 'ro' ? 'Operator' : 'Operator'}</th>
-                <th style={{ width: '165px' }}>{lang === 'ro' ? 'Data inspecției' : 'Tested at'}</th>
-                <th style={{ width: '100px', textAlign: 'center' }}>
+                <th style={{ width: '105px' }}>{lang === 'ro' ? 'Operator' : 'Operator'}</th>
+                <th style={{ width: '140px' }}>{lang === 'ro' ? 'Data inspecției' : 'Tested at'}</th>
+                <th style={{ width: '85px', textAlign: 'center' }}>
                   {lang === 'ro' ? 'Detalii' : 'Details'}
                 </th>
               </tr>
@@ -485,13 +503,15 @@ export function AoiPage({ lang, currentUser }: AoiPageProps) {
                 <td className="magazie-query-cell"></td>
               </tr>
 
-              {filteredResults.map((r, idx) => (
+              {filteredResults.map((r) => (
                 <tr
                   key={r.id}
-                  className="magazie-data-row"
+                  className={`magazie-data-row ${recentNewIds.has(r.id) ? 'row-cascade-new' : ''}`}
                   onClick={() => setSelectedResult(r)}
                 >
-                  <td className="col-idx-cell">{idx + 1}</td>
+                  <td className="col-idx-cell" style={{ fontWeight: 700, color: '#64748b' }}>
+                    #{r.id}
+                  </td>
                   <td className="magazie-mono-cell" style={{ fontWeight: 700, color: '#ea580c' }}>
                     {r.qr_serial_number}
                   </td>
@@ -527,7 +547,7 @@ export function AoiPage({ lang, currentUser }: AoiPageProps) {
 
               {Array.from({ length: emptyRowsCount }).map((_, i) => (
                 <tr key={`blank-${i}`} className="magazie-blank-row">
-                  <td className="col-idx-cell">{filteredResults.length + i + 1}</td>
+                  <td className="col-idx-cell">—</td>
                   <td></td>
                   <td></td>
                   <td></td>

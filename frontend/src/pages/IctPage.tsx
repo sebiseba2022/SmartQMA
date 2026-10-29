@@ -1,11 +1,12 @@
 import {
   useState,
-  useEffect,
   useCallback,
   useMemo,
   type FormEvent,
 } from 'react';
 import type { Language, User, IctResultItem } from '../types';
+import { useRealtimeLiveFeed } from '../utils/useRealtimeLiveFeed';
+import { LiveStreamFreezeBanner } from '../components/LiveStreamFreezeBanner';
 
 interface IctPageProps {
   lang: Language;
@@ -29,11 +30,42 @@ const EMPTY_FILTERS: IctFilters = {
 const MIN_EMPTY_TABLE_ROWS = 22;
 
 export function IctPage({ lang, currentUser }: IctPageProps) {
-  const [results, setResults] = useState<IctResultItem[]>([]);
   const [totalCount, setTotalCount] = useState<number>(0);
   const [, setLoading] = useState<boolean>(true);
   const [error, setError] = useState<string | null>(null);
   const [notice, setNotice] = useState<string | null>(null);
+
+  // Funcție de preluare date pentru hook-ul de flux live
+  const fetchResultsCallback = useCallback(async () => {
+    try {
+      setLoading(true);
+      setError(null);
+      const res = await fetch('/api/v1/tests/ict?limit=50');
+      if (!res.ok) throw new Error('Eroare la încărcarea testelor ICT');
+      const data = await res.json();
+      setTotalCount(data.total || (data.data ? data.data.length : 0));
+      return data.data || [];
+    } catch (err: any) {
+      setError(err.message || 'Eroare de rețea la preluarea testelor ICT.');
+      return [];
+    } finally {
+      setLoading(false);
+    }
+  }, []);
+
+  // Hook flux realtime cu înghețare la derulare
+  const {
+    items: results,
+    pendingNewCount,
+    recentNewIds,
+    containerRef,
+    handleScroll,
+    resumeLiveStream,
+    refreshNow: fetchResults,
+  } = useRealtimeLiveFeed<IctResultItem>({
+    fetchFn: fetchResultsCallback,
+    intervalMs: 2500,
+  });
 
   // Filtre pe coloane
   const [filters, setFilters] = useState<IctFilters>(EMPTY_FILTERS);
@@ -54,27 +86,6 @@ export function IctPage({ lang, currentUser }: IctPageProps) {
   const [formFreq, setFormFreq] = useState('16.000MHz');
   const [formVccGnd, setFormVccGnd] = useState('>100k');
   const [formFailedNets, setFormFailedNets] = useState('');
-
-  // Preluare rezultate ICT
-  const fetchResults = useCallback(async () => {
-    try {
-      setLoading(true);
-      setError(null);
-      const res = await fetch('/api/v1/tests/ict');
-      if (!res.ok) throw new Error('Eroare la încărcarea testelor ICT');
-      const data = await res.json();
-      setResults(data.data || []);
-      setTotalCount(data.total || (data.data ? data.data.length : 0));
-    } catch (err: any) {
-      setError(err.message || 'Eroare de rețea la preluarea testelor ICT.');
-    } finally {
-      setLoading(false);
-    }
-  }, []);
-
-  useEffect(() => {
-    fetchResults();
-  }, [fetchResults]);
 
   // Salvare test ICT nou
   const handleRecordSubmit = async (e: FormEvent) => {
@@ -424,21 +435,28 @@ export function IctPage({ lang, currentUser }: IctPageProps) {
           </span>
         </div>
 
+        {/* Banner de avertizare la derulare - înghețare flux live */}
+        <LiveStreamFreezeBanner
+          pendingCount={pendingNewCount}
+          onResume={resumeLiveStream}
+          lang={lang}
+        />
+
         {/* Tabel */}
-        <div className="magazie-fulltable-container">
+        <div className="magazie-fulltable-container" ref={containerRef} onScroll={handleScroll}>
           <table className="magazie-pro-table">
             <thead>
               <tr>
-                <th className="col-idx">#</th>
-                <th style={{ width: '160px' }}>{lang === 'ro' ? 'Serie PCB' : 'PCB Serial'}</th>
-                <th style={{ width: '120px' }}>{lang === 'ro' ? 'Rezultat' : 'Verdict'}</th>
-                <th style={{ width: '180px' }}>{lang === 'ro' ? 'Noduri eșuate' : 'Failed nets'}</th>
-                <th style={{ width: '32%' }}>
+                <th className="col-idx" style={{ width: '65px' }}>#</th>
+                <th style={{ width: '155px' }}>{lang === 'ro' ? 'Serie PCB' : 'PCB Serial'}</th>
+                <th style={{ width: '85px' }}>{lang === 'ro' ? 'Rezultat' : 'Verdict'}</th>
+                <th style={{ width: '130px' }}>{lang === 'ro' ? 'Noduri eșuate' : 'Failed nets'}</th>
+                <th style={{ minWidth: '160px' }}>
                   {lang === 'ro' ? 'Măsurători electrice (V / Freq / R)' : 'Electrical measurements'}
                 </th>
-                <th style={{ width: '130px' }}>{lang === 'ro' ? 'Operator' : 'Operator'}</th>
-                <th style={{ width: '165px' }}>{lang === 'ro' ? 'Data testării' : 'Tested at'}</th>
-                <th style={{ width: '100px', textAlign: 'center' }}>
+                <th style={{ width: '105px' }}>{lang === 'ro' ? 'Operator' : 'Operator'}</th>
+                <th style={{ width: '140px' }}>{lang === 'ro' ? 'Data testării' : 'Tested at'}</th>
+                <th style={{ width: '85px', textAlign: 'center' }}>
                   {lang === 'ro' ? 'Detalii' : 'Details'}
                 </th>
               </tr>
@@ -494,13 +512,15 @@ export function IctPage({ lang, currentUser }: IctPageProps) {
                 <td className="magazie-query-cell"></td>
               </tr>
 
-              {filteredResults.map((r, idx) => (
+              {filteredResults.map((r) => (
                 <tr
                   key={r.id}
-                  className="magazie-data-row"
+                  className={`magazie-data-row ${recentNewIds.has(r.id) ? 'row-cascade-new' : ''}`}
                   onClick={() => setSelectedResult(r)}
                 >
-                  <td className="col-idx-cell">{idx + 1}</td>
+                  <td className="col-idx-cell" style={{ fontWeight: 700, color: '#64748b' }}>
+                    #{r.id}
+                  </td>
                   <td className="magazie-mono-cell" style={{ fontWeight: 700, color: '#ea580c' }}>
                     {r.qr_serial_number}
                   </td>
@@ -538,7 +558,7 @@ export function IctPage({ lang, currentUser }: IctPageProps) {
 
               {Array.from({ length: emptyRowsCount }).map((_, i) => (
                 <tr key={`blank-${i}`} className="magazie-blank-row">
-                  <td className="col-idx-cell">{filteredResults.length + i + 1}</td>
+                  <td className="col-idx-cell">—</td>
                   <td></td>
                   <td></td>
                   <td></td>

@@ -398,17 +398,17 @@ export function PlmPage({ lang }: PlmPageProps) {
           <table className="magazie-pro-table" aria-label="Tabel nomenclator componente PLM">
             <thead>
               <tr>
-                <th className="col-idx">#</th>
-                <th className="col-ident">Ident</th>
-                <th className="col-name">
+                <th className="col-idx" style={{ width: '65px' }}>#</th>
+                <th className="col-ident" style={{ width: '95px' }}>Ident</th>
+                <th className="col-name" style={{ minWidth: '160px' }}>
                   {lang === 'ro' ? 'Denumire componentă' : 'Part name'}
                 </th>
-                <th>{lang === 'ro' ? 'Cod producător (MPN)' : 'MPN'}</th>
-                <th>{lang === 'ro' ? 'Furnizor' : 'Provider'}</th>
-                <th>{lang === 'ro' ? 'Tip capsulă' : 'Package type'}</th>
-                <th>{lang === 'ro' ? 'Producător' : 'Manufacturer'}</th>
-                <th>{lang === 'ro' ? 'Unitate' : 'Unit'}</th>
-                <th style={{ width: '130px', textAlign: 'center' }}>
+                <th style={{ width: '140px' }}>{lang === 'ro' ? 'Cod producător (MPN)' : 'MPN'}</th>
+                <th style={{ width: '130px' }}>{lang === 'ro' ? 'Furnizor' : 'Provider'}</th>
+                <th style={{ width: '110px' }}>{lang === 'ro' ? 'Tip capsulă' : 'Package type'}</th>
+                <th style={{ width: '130px' }}>{lang === 'ro' ? 'Producător' : 'Manufacturer'}</th>
+                <th style={{ width: '85px' }}>{lang === 'ro' ? 'Unitate' : 'Unit'}</th>
+                <th style={{ width: '110px', textAlign: 'center' }}>
                   {lang === 'ro' ? 'Fișă tehnică' : 'Datasheet'}
                 </th>
               </tr>

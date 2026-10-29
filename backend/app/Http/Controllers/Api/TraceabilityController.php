@@ -939,7 +939,7 @@ class TraceabilityController extends Controller
      */
     public function getSmdPlacements(Request $request): JsonResponse
     {
-        $query = SmdPlacement::with('component')->orderBy('mounted_at', 'desc')->orderBy('id', 'desc');
+        $query = SmdPlacement::with('component')->orderBy('id', 'desc');
 
         if ($request->filled('qr_serial_number')) {
             $val = trim($request->query('qr_serial_number'));
@@ -955,10 +955,14 @@ class TraceabilityController extends Controller
             $query->where('operator_username', $operator, "%{$val}%");
         }
 
-        $items = $query->limit(100)->get();
+        $total = (clone $query)->count();
+        $limit = max(1, min(200, (int) $request->query('limit', 50)));
+        $items = $query->limit($limit)->get();
+
         return response()->json([
             'status' => 'success',
-            'total' => $items->count(),
+            'total' => $total,
+            'limit' => $limit,
             'data' => $items,
         ]);
     }
@@ -968,7 +972,7 @@ class TraceabilityController extends Controller
      */
     public function getThtPlacements(Request $request): JsonResponse
     {
-        $query = ThtPlacement::with('component')->orderBy('mounted_at', 'desc')->orderBy('id', 'desc');
+        $query = ThtPlacement::with('component')->orderBy('id', 'desc');
 
         if ($request->filled('qr_serial_number')) {
             $val = trim($request->query('qr_serial_number'));
@@ -984,10 +988,14 @@ class TraceabilityController extends Controller
             $query->where('operator_username', $operator, "%{$val}%");
         }
 
-        $items = $query->limit(100)->get();
+        $total = (clone $query)->count();
+        $limit = max(1, min(200, (int) $request->query('limit', 50)));
+        $items = $query->limit($limit)->get();
+
         return response()->json([
             'status' => 'success',
-            'total' => $items->count(),
+            'total' => $total,
+            'limit' => $limit,
             'data' => $items,
         ]);
     }
@@ -997,7 +1005,7 @@ class TraceabilityController extends Controller
      */
     public function getAoiResults(Request $request): JsonResponse
     {
-        $query = AoiResult::orderBy('tested_at', 'desc')->orderBy('id', 'desc');
+        $query = AoiResult::orderBy('id', 'desc');
 
         if ($request->filled('qr_serial_number')) {
             $val = trim($request->query('qr_serial_number'));
@@ -1013,10 +1021,14 @@ class TraceabilityController extends Controller
             $query->where('defect_code', $operator, "%{$val}%");
         }
 
-        $items = $query->limit(100)->get();
+        $total = (clone $query)->count();
+        $limit = max(1, min(200, (int) $request->query('limit', 50)));
+        $items = $query->limit($limit)->get();
+
         return response()->json([
             'status' => 'success',
-            'total' => $items->count(),
+            'total' => $total,
+            'limit' => $limit,
             'data' => $items,
         ]);
     }
@@ -1026,7 +1038,7 @@ class TraceabilityController extends Controller
      */
     public function getIctResults(Request $request): JsonResponse
     {
-        $query = IctResult::orderBy('tested_at', 'desc')->orderBy('id', 'desc');
+        $query = IctResult::orderBy('id', 'desc');
 
         if ($request->filled('qr_serial_number')) {
             $val = trim($request->query('qr_serial_number'));
@@ -1037,10 +1049,14 @@ class TraceabilityController extends Controller
             $query->where('test_result', strtoupper(trim($request->query('test_result'))));
         }
 
-        $items = $query->limit(100)->get();
+        $total = (clone $query)->count();
+        $limit = max(1, min(200, (int) $request->query('limit', 50)));
+        $items = $query->limit($limit)->get();
+
         return response()->json([
             'status' => 'success',
-            'total' => $items->count(),
+            'total' => $total,
+            'limit' => $limit,
             'data' => $items,
         ]);
     }
@@ -1050,7 +1066,7 @@ class TraceabilityController extends Controller
      */
     public function getEolResults(Request $request): JsonResponse
     {
-        $query = EolResult::orderBy('tested_at', 'desc')->orderBy('id', 'desc');
+        $query = EolResult::orderBy('id', 'desc');
 
         if ($request->filled('qr_serial_number')) {
             $val = trim($request->query('qr_serial_number'));
@@ -1064,10 +1080,14 @@ class TraceabilityController extends Controller
             $query->where('product_ident', $request->query('product_ident'));
         }
 
-        $items = $query->limit(100)->get();
+        $total = (clone $query)->count();
+        $limit = max(1, min(200, (int) $request->query('limit', 50)));
+        $items = $query->limit($limit)->get();
+
         return response()->json([
             'status' => 'success',
-            'total' => $items->count(),
+            'total' => $total,
+            'limit' => $limit,
             'data' => $items,
         ]);
     }

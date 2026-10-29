@@ -1,11 +1,12 @@
 import {
   useState,
-  useEffect,
   useCallback,
   useMemo,
   type FormEvent,
 } from 'react';
 import type { Language, User, EolResultItem } from '../types';
+import { useRealtimeLiveFeed } from '../utils/useRealtimeLiveFeed';
+import { LiveStreamFreezeBanner } from '../components/LiveStreamFreezeBanner';
 
 interface EolPageProps {
   lang: Language;
@@ -29,11 +30,42 @@ const EMPTY_FILTERS: EolFilters = {
 const MIN_EMPTY_TABLE_ROWS = 22;
 
 export function EolPage({ lang, currentUser }: EolPageProps) {
-  const [results, setResults] = useState<EolResultItem[]>([]);
   const [totalCount, setTotalCount] = useState<number>(0);
   const [, setLoading] = useState<boolean>(true);
   const [error, setError] = useState<string | null>(null);
   const [notice, setNotice] = useState<string | null>(null);
+
+  // Funcție de preluare date pentru hook-ul de flux live
+  const fetchResultsCallback = useCallback(async () => {
+    try {
+      setLoading(true);
+      setError(null);
+      const res = await fetch('/api/v1/tests/eol?limit=50');
+      if (!res.ok) throw new Error('Eroare la încărcarea testelor EOL');
+      const data = await res.json();
+      setTotalCount(data.total || (data.data ? data.data.length : 0));
+      return data.data || [];
+    } catch (err: any) {
+      setError(err.message || 'Eroare de rețea la preluarea testelor EOL.');
+      return [];
+    } finally {
+      setLoading(false);
+    }
+  }, []);
+
+  // Hook flux realtime cu înghețare la derulare
+  const {
+    items: results,
+    pendingNewCount,
+    recentNewIds,
+    containerRef,
+    handleScroll,
+    resumeLiveStream,
+    refreshNow: fetchResults,
+  } = useRealtimeLiveFeed<EolResultItem>({
+    fetchFn: fetchResultsCallback,
+    intervalMs: 2500,
+  });
 
   // Filtre pe coloane
   const [filters, setFilters] = useState<EolFilters>(EMPTY_FILTERS);
@@ -55,27 +87,6 @@ export function EolPage({ lang, currentUser }: EolPageProps) {
   const [formBootloaderCheck, setFormBootloaderCheck] = useState(true);
   const [formUartLoopback, setFormUartLoopback] = useState(true);
   const [formGpioPass, setFormGpioPass] = useState(true);
-
-  // Preluare rezultate EOL
-  const fetchResults = useCallback(async () => {
-    try {
-      setLoading(true);
-      setError(null);
-      const res = await fetch('/api/v1/tests/eol');
-      if (!res.ok) throw new Error('Eroare la încărcarea testelor EOL');
-      const data = await res.json();
-      setResults(data.data || []);
-      setTotalCount(data.total || (data.data ? data.data.length : 0));
-    } catch (err: any) {
-      setError(err.message || 'Eroare de rețea la preluarea testelor EOL.');
-    } finally {
-      setLoading(false);
-    }
-  }, []);
-
-  useEffect(() => {
-    fetchResults();
-  }, [fetchResults]);
 
   // Salvare test EOL nou
   const handleRecordSubmit = async (e: FormEvent) => {
@@ -439,23 +450,30 @@ export function EolPage({ lang, currentUser }: EolPageProps) {
           </span>
         </div>
 
+        {/* Banner de avertizare la derulare - înghețare flux live */}
+        <LiveStreamFreezeBanner
+          pendingCount={pendingNewCount}
+          onResume={resumeLiveStream}
+          lang={lang}
+        />
+
         {/* Tabel */}
-        <div className="magazie-fulltable-container">
+        <div className="magazie-fulltable-container" ref={containerRef} onScroll={handleScroll}>
           <table className="magazie-pro-table">
             <thead>
               <tr>
-                <th className="col-idx">#</th>
-                <th style={{ width: '160px' }}>{lang === 'ro' ? 'Serie PCB' : 'PCB Serial'}</th>
-                <th style={{ width: '180px' }}>{lang === 'ro' ? 'Model produs' : 'Product model'}</th>
-                <th style={{ width: '130px' }}>{lang === 'ro' ? 'Versiuni HW / SW' : 'HW / SW Vers'}</th>
-                <th style={{ width: '110px' }}>{lang === 'ro' ? 'Rezultat' : 'Verdict'}</th>
-                <th style={{ width: '140px' }}>{lang === 'ro' ? 'Curent (mA)' : 'Current (mA)'}</th>
-                <th style={{ width: '28%' }}>
+                <th className="col-idx" style={{ width: '65px' }}>#</th>
+                <th style={{ width: '150px' }}>{lang === 'ro' ? 'Serie PCB' : 'PCB Serial'}</th>
+                <th style={{ width: '135px' }}>{lang === 'ro' ? 'Model produs' : 'Product model'}</th>
+                <th style={{ width: '105px' }}>{lang === 'ro' ? 'Versiuni HW / SW' : 'HW / SW Vers'}</th>
+                <th style={{ width: '80px' }}>{lang === 'ro' ? 'Rezultat' : 'Verdict'}</th>
+                <th style={{ width: '95px' }}>{lang === 'ro' ? 'Curent (mA)' : 'Current (mA)'}</th>
+                <th style={{ minWidth: '150px' }}>
                   {lang === 'ro' ? 'Verificări funcționale' : 'Functional checks'}
                 </th>
-                <th style={{ width: '130px' }}>{lang === 'ro' ? 'Operator' : 'Operator'}</th>
-                <th style={{ width: '165px' }}>{lang === 'ro' ? 'Data testării' : 'Tested at'}</th>
-                <th style={{ width: '100px', textAlign: 'center' }}>
+                <th style={{ width: '100px' }}>{lang === 'ro' ? 'Operator' : 'Operator'}</th>
+                <th style={{ width: '140px' }}>{lang === 'ro' ? 'Data testării' : 'Tested at'}</th>
+                <th style={{ width: '80px', textAlign: 'center' }}>
                   {lang === 'ro' ? 'Detalii' : 'Details'}
                 </th>
               </tr>
@@ -513,13 +531,15 @@ export function EolPage({ lang, currentUser }: EolPageProps) {
                 <td className="magazie-query-cell"></td>
               </tr>
 
-              {filteredResults.map((r, idx) => (
+              {filteredResults.map((r) => (
                 <tr
                   key={r.id}
-                  className="magazie-data-row"
+                  className={`magazie-data-row ${recentNewIds.has(r.id) ? 'row-cascade-new' : ''}`}
                   onClick={() => setSelectedResult(r)}
                 >
-                  <td className="col-idx-cell">{idx + 1}</td>
+                  <td className="col-idx-cell" style={{ fontWeight: 700, color: '#64748b' }}>
+                    #{r.id}
+                  </td>
                   <td className="magazie-mono-cell" style={{ fontWeight: 700, color: '#ea580c' }}>
                     {r.qr_serial_number}
                   </td>
@@ -561,7 +581,7 @@ export function EolPage({ lang, currentUser }: EolPageProps) {
 
               {Array.from({ length: emptyRowsCount }).map((_, i) => (
                 <tr key={`blank-${i}`} className="magazie-blank-row">
-                  <td className="col-idx-cell">{filteredResults.length + i + 1}</td>
+                  <td className="col-idx-cell">—</td>
                   <td></td>
                   <td></td>
                   <td></td>

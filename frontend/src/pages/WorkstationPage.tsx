@@ -113,7 +113,7 @@ export function WorkstationPage({
             case 'export':
               return <ExportPage lang={lang} />;
             case 'statistica':
-              return <StatisticaPage lang={lang} />;
+              return <StatisticaPage lang={lang} currentUser={currentUser} />;
             case 'plm':
               return <PlmPage lang={lang} />;
             default:

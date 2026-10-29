@@ -18,6 +18,14 @@ import type {
 } from '../types';
 import { EMPTY_FILTERS, PACKAGE_TYPE_OPTIONS } from '../types';
 import { formatDateTime, formatDateOnly, getCurrentDateInput } from '../utils/date';
+import {
+  SearchIcon,
+  CopyIcon,
+  EditIcon,
+  CheckCircleIcon,
+  UndoIcon,
+  TrashIcon,
+} from '../components/icons/IndustrialIcons';
 
 const MIN_EMPTY_TABLE_ROWS = 24;
 
@@ -746,7 +754,7 @@ export function MagaziePage({ lang, currentUser }: MagaziePageProps) {
               {/* Primul rând de sub antet: celule de interogare (se aplică la apăsarea tastei Enter) */}
               <tr className={`magazie-query-row ${hasActiveQuery ? 'has-query' : ''}`}>
                 <td className="magazie-query-idx-cell">
-                  {hasActiveQuery ? '🔎' : ''}
+                  {hasActiveQuery ? <SearchIcon size={13} style={{ verticalAlign: 'middle' }} /> : ''}
                 </td>
                 <td className="magazie-query-cell" onClick={() => focusColumnInput('ident')}>
                   <input
@@ -1316,7 +1324,8 @@ export function MagaziePage({ lang, currentUser }: MagaziePageProps) {
                   className="magazie-ctx-item"
                   onClick={() => handleCopyTrackingNumber(contextMenu.order)}
                 >
-                  📋 {lang === 'ro' ? 'Copiază numărul de urmărire' : 'Copy tracking number'}
+                  <CopyIcon size={14} style={{ verticalAlign: 'middle', marginRight: 6 }} />
+                  {lang === 'ro' ? 'Copiază numărul de urmărire' : 'Copy tracking number'}
                 </button>
               )}
             </>
@@ -1327,7 +1336,8 @@ export function MagaziePage({ lang, currentUser }: MagaziePageProps) {
                 className="magazie-ctx-item"
                 onClick={() => handleOpenEditOrder(contextMenu.order)}
               >
-                ✏️ {lang === 'ro' ? 'Editează livrarea / recepția' : 'Edit delivery / reception'}
+                <EditIcon size={14} style={{ verticalAlign: 'middle', marginRight: 6 }} />
+                {lang === 'ro' ? 'Editează livrarea / recepția' : 'Edit delivery / reception'}
               </button>
               {!contextMenu.order.arrived ? (
                 <button
@@ -1335,7 +1345,8 @@ export function MagaziePage({ lang, currentUser }: MagaziePageProps) {
                   className="magazie-ctx-item"
                   onClick={() => handleSetArrival(contextMenu.order, true)}
                 >
-                  ✅ {lang === 'ro' ? 'Marchează ca ajuns în depozit' : 'Mark as arrived'}
+                  <CheckCircleIcon size={14} style={{ verticalAlign: 'middle', marginRight: 6 }} />
+                  {lang === 'ro' ? 'Marchează ca ajuns în depozit' : 'Mark as arrived'}
                 </button>
               ) : (
                 <button
@@ -1343,7 +1354,8 @@ export function MagaziePage({ lang, currentUser }: MagaziePageProps) {
                   className="magazie-ctx-item"
                   onClick={() => handleSetArrival(contextMenu.order, false)}
                 >
-                  ↩️ {lang === 'ro' ? 'Revenire la starea «În tranzit»' : 'Revert to in transit'}
+                  <UndoIcon size={14} style={{ verticalAlign: 'middle', marginRight: 6 }} />
+                  {lang === 'ro' ? 'Revenire la starea «În tranzit»' : 'Revert to in transit'}
                 </button>
               )}
               {contextMenu.order.tracking_number && (
@@ -1352,7 +1364,8 @@ export function MagaziePage({ lang, currentUser }: MagaziePageProps) {
                   className="magazie-ctx-item"
                   onClick={() => handleCopyTrackingNumber(contextMenu.order)}
                 >
-                  📋 {lang === 'ro' ? 'Copiază numărul de urmărire' : 'Copy tracking number'}
+                  <CopyIcon size={14} style={{ verticalAlign: 'middle', marginRight: 6 }} />
+                  {lang === 'ro' ? 'Copiază numărul de urmărire' : 'Copy tracking number'}
                 </button>
               )}
               <div className="magazie-ctx-divider" />
@@ -1361,7 +1374,8 @@ export function MagaziePage({ lang, currentUser }: MagaziePageProps) {
                 className="magazie-ctx-item danger"
                 onClick={() => handleCancelOrder(contextMenu.order)}
               >
-                🗑️ {lang === 'ro' ? 'Șterge comanda' : 'Delete order'}
+                <TrashIcon size={14} style={{ verticalAlign: 'middle', marginRight: 6 }} />
+                {lang === 'ro' ? 'Șterge comanda' : 'Delete order'}
               </button>
             </>
           )}

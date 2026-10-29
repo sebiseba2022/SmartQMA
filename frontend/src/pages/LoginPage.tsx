@@ -1,6 +1,7 @@
 import { useState, type FormEvent } from 'react';
 import type { Language, User } from '../types';
 import { WORKSTATIONS, translations } from '../i18n';
+import { EyeIcon, EyeOffIcon } from '../components/icons/IndustrialIcons';
 
 interface LoginPageProps {
   lang: Language;
@@ -161,7 +162,7 @@ export function LoginPage({
                   tabIndex={-1}
                   title={showPassword ? 'Hide password' : 'Show password'}
                 >
-                  {showPassword ? '👁️' : '👁️‍🗨️'}
+                  {showPassword ? <EyeOffIcon size={16} /> : <EyeIcon size={16} />}
                 </button>
               </div>
             </div>

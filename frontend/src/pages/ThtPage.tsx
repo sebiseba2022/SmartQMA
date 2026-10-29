@@ -1,4 +1,4 @@
-import {
+import React, {
   useState,
   useEffect,
   useCallback,
@@ -11,6 +11,9 @@ import type {
   ThtPlacementItem,
   WarehouseOrder,
 } from '../types';
+import { useRealtimeLiveFeed } from '../utils/useRealtimeLiveFeed';
+import { LiveStreamFreezeBanner } from '../components/LiveStreamFreezeBanner';
+import { SearchIcon } from '../components/icons/IndustrialIcons';
 
 interface ThtPageProps {
   lang: Language;
@@ -36,12 +39,55 @@ const EMPTY_FILTERS: ThtFilters = {
 const MIN_EMPTY_TABLE_ROWS = 22;
 
 export function ThtPage({ lang, currentUser }: ThtPageProps) {
-  const [placements, setPlacements] = useState<ThtPlacementItem[]>([]);
   const [inventoryList, setInventoryList] = useState<WarehouseOrder[]>([]);
   const [totalCount, setTotalCount] = useState<number>(0);
   const [, setLoading] = useState<boolean>(true);
   const [error, setError] = useState<string | null>(null);
   const [notice, setNotice] = useState<string | null>(null);
+
+  // Set de plăci expandate pentru afișarea sublistei de componente THT
+  const [expandedSerials, setExpandedSerials] = useState<Set<string>>(new Set());
+
+  const toggleExpandSerial = (serial: string) => {
+    setExpandedSerials((prev) => {
+      const next = new Set(prev);
+      if (next.has(serial)) next.delete(serial);
+      else next.add(serial);
+      return next;
+    });
+  };
+
+  // Funcție de preluare date pentru hook-ul de flux live
+  const fetchPlacementsCallback = useCallback(async () => {
+    try {
+      setLoading(true);
+      setError(null);
+      const res = await fetch('/api/v1/placements/tht?limit=50');
+      if (!res.ok) throw new Error('Eroare la încărcarea amplasărilor THT');
+      const data = await res.json();
+      setTotalCount(data.total || (data.data ? data.data.length : 0));
+      return data.data || [];
+    } catch (err: any) {
+      setError(err.message || 'Eroare de rețea la preluarea amplasărilor THT.');
+      return [];
+    } finally {
+      setLoading(false);
+    }
+  }, []);
+
+  // Hook flux realtime cu înghețare la derulare
+  const {
+    items: placements,
+    pendingNewCount,
+    recentNewIds,
+    containerRef,
+    handleScroll,
+    resumeLiveStream,
+    refreshNow: fetchPlacements,
+  } = useRealtimeLiveFeed<ThtPlacementItem>({
+    fetchFn: fetchPlacementsCallback,
+    intervalMs: 2500,
+  });
 
   // Filtre pe coloane
   const [filters, setFilters] = useState<ThtFilters>(EMPTY_FILTERS);
@@ -67,23 +113,6 @@ export function ThtPage({ lang, currentUser }: ThtPageProps) {
   const [fluxType] = useState('No-Clean VOC-Free (Alcohol Based)');
   const [waveHeight] = useState('8.5 mm');
 
-  // Preluare amplasări THT
-  const fetchPlacements = useCallback(async () => {
-    try {
-      setLoading(true);
-      setError(null);
-      const res = await fetch('/api/v1/placements/tht');
-      if (!res.ok) throw new Error('Eroare la încărcarea amplasărilor THT');
-      const data = await res.json();
-      setPlacements(data.data || []);
-      setTotalCount(data.total || (data.data ? data.data.length : 0));
-    } catch (err: any) {
-      setError(err.message || 'Eroare de rețea la preluarea amplasărilor THT.');
-    } finally {
-      setLoading(false);
-    }
-  }, []);
-
   // Preluare componente disponibile
   const fetchInventory = useCallback(async () => {
     try {
@@ -97,9 +126,8 @@ export function ThtPage({ lang, currentUser }: ThtPageProps) {
   }, []);
 
   useEffect(() => {
-    fetchPlacements();
     fetchInventory();
-  }, [fetchPlacements, fetchInventory]);
+  }, [fetchInventory]);
 
   // Salvare inserție THT nouă
   const handleInsertSubmit = async (e: FormEvent) => {
@@ -215,7 +243,44 @@ export function ThtPage({ lang, currentUser }: ThtPageProps) {
     });
   }, [placements, filters]);
 
-  const emptyRowsCount = Math.max(0, MIN_EMPTY_TABLE_ROWS - filteredPlacements.length);
+  // Grupăm componentele THT pe baza seriei PCB unice de 12 cifre
+  const groupedBoards = useMemo(() => {
+    const map = new Map<
+      string,
+      {
+        id: number | string;
+        qr_serial_number: string;
+        items: ThtPlacementItem[];
+        positions: string[];
+        operator_username?: string | null;
+        mounted_at: string | null;
+        sampleComponent: any;
+      }
+    >();
+
+    for (const p of filteredPlacements) {
+      const serial = p.qr_serial_number;
+      if (!map.has(serial)) {
+        map.set(serial, {
+          id: p.id,
+          qr_serial_number: serial,
+          items: [],
+          positions: [],
+          operator_username: p.operator_username,
+          mounted_at: p.mounted_at,
+          sampleComponent: p.component,
+        });
+      }
+      const g = map.get(serial)!;
+      g.items.push(p);
+      if (!g.positions.includes(p.bestuck_position)) {
+        g.positions.push(p.bestuck_position);
+      }
+    }
+    return Array.from(map.values());
+  }, [filteredPlacements]);
+
+  const emptyRowsCount = Math.max(0, MIN_EMPTY_TABLE_ROWS - groupedBoards.length);
 
   // Export CSV
   const handleExportCsv = () => {
@@ -421,29 +486,36 @@ export function ThtPage({ lang, currentUser }: ThtPageProps) {
           </span>
           <span className="magazie-count-badge">
             {lang === 'ro'
-              ? `${filteredPlacements.length} din ${totalCount} componente THT afișate`
-              : `${filteredPlacements.length} of ${totalCount} THT components displayed`}
+              ? `${groupedBoards.length} plăci PCB (${filteredPlacements.length} componente THT) din ${totalCount} înregistrate`
+              : `${groupedBoards.length} PCBs (${filteredPlacements.length} THT components) of ${totalCount} recorded`}
           </span>
         </div>
 
+        {/* Banner de avertizare la derulare - înghețare flux live */}
+        <LiveStreamFreezeBanner
+          pendingCount={pendingNewCount}
+          onResume={resumeLiveStream}
+          lang={lang}
+        />
+
         {/* Tabel */}
-        <div className="magazie-fulltable-container">
+        <div className="magazie-fulltable-container" ref={containerRef} onScroll={handleScroll}>
           <table className="magazie-pro-table">
             <thead>
               <tr>
-                <th className="col-idx">#</th>
-                <th style={{ width: '160px' }}>{lang === 'ro' ? 'Serie PCB' : 'PCB Serial'}</th>
-                <th style={{ width: '120px' }}>{lang === 'ro' ? 'Poziție Bestück' : 'Position'}</th>
-                <th style={{ width: '110px' }}>{lang === 'ro' ? 'Ident' : 'Ident'}</th>
-                <th style={{ width: '28%' }}>
+                <th className="col-idx" style={{ width: '65px' }}>#</th>
+                <th style={{ width: '155px' }}>{lang === 'ro' ? 'Serie PCB' : 'PCB Serial'}</th>
+                <th style={{ width: '105px' }}>{lang === 'ro' ? 'Poziții Bestück' : 'Positions'}</th>
+                <th style={{ width: '75px' }}>{lang === 'ro' ? 'Ident' : 'Ident'}</th>
+                <th style={{ minWidth: '170px' }}>
                   {lang === 'ro' ? 'Denumire componentă THT' : 'THT component name'}
                 </th>
-                <th style={{ width: '160px' }}>{lang === 'ro' ? 'Lot furnizor' : 'Supplier lot'}</th>
-                <th style={{ width: '18%' }}>{lang === 'ro' ? 'Furnizor' : 'Provider'}</th>
-                <th style={{ width: '130px' }}>{lang === 'ro' ? 'Operator' : 'Operator'}</th>
-                <th style={{ width: '165px' }}>{lang === 'ro' ? 'Data montajului' : 'Mounted at'}</th>
-                <th style={{ width: '100px', textAlign: 'center' }}>
-                  {lang === 'ro' ? 'Detalii' : 'Details'}
+                <th style={{ width: '120px' }}>{lang === 'ro' ? 'Lot furnizor' : 'Supplier lot'}</th>
+                <th style={{ width: '130px' }}>{lang === 'ro' ? 'Furnizor' : 'Provider'}</th>
+                <th style={{ width: '100px' }}>{lang === 'ro' ? 'Operator' : 'Operator'}</th>
+                <th style={{ width: '140px' }}>{lang === 'ro' ? 'Data montajului' : 'Mounted at'}</th>
+                <th style={{ width: '85px', textAlign: 'center' }}>
+                  {lang === 'ro' ? 'Acțiuni' : 'Actions'}
                 </th>
               </tr>
             </thead>
@@ -508,62 +580,167 @@ export function ThtPage({ lang, currentUser }: ThtPageProps) {
                 <td className="magazie-query-cell"></td>
               </tr>
 
-              {filteredPlacements.map((p, idx) => (
-                <tr
-                  key={p.id || `${p.qr_serial_number}-${p.bestuck_position}`}
-                  className="magazie-data-row"
-                  onClick={() => setSelectedPlacement(p)}
-                >
-                  <td className="col-idx-cell">{idx + 1}</td>
-                  <td className="magazie-mono-cell" style={{ fontWeight: 700, color: '#ea580c' }}>
-                    {p.qr_serial_number}
-                  </td>
-                  <td>
-                    <span
-                      style={{
-                        padding: '2px 8px',
-                        background: '#f8fafc',
-                        border: '1px solid #cbd5e1',
-                        borderRadius: '4px',
-                        fontWeight: 700,
-                        fontFamily: 'monospace',
-                      }}
+              {/* Rânduri grupate pe PCB cu acordion pentru componente */}
+              {groupedBoards.map((board) => {
+                const isExpanded = expandedSerials.has(board.qr_serial_number);
+                const isNew = board.items.some((it) => recentNewIds.has(it.id));
+                return (
+                  <React.Fragment key={board.qr_serial_number}>
+                    <tr
+                      className={`magazie-data-row ${isNew ? 'row-cascade-new' : ''}`}
+                      onClick={() => toggleExpandSerial(board.qr_serial_number)}
+                      style={{ cursor: 'pointer' }}
                     >
-                      {p.bestuck_position}
-                    </span>
-                  </td>
-                  <td className="magazie-ident-cell">
-                    {p.component?.ident || p.component_internal_id}
-                  </td>
-                  <td className="magazie-name-cell">
-                    {p.component?.part_name || `Componentă #${p.component_internal_id}`}
-                  </td>
-                  <td className="magazie-mono-cell" style={{ fontSize: '12px', color: '#475569' }}>
-                    {p.component?.supplier_lot || '—'}
-                  </td>
-                  <td style={{ color: '#334155' }}>{p.component?.provider || '—'}</td>
-                  <td>{p.operator_username || '—'}</td>
-                  <td className="magazie-mono-cell" style={{ fontSize: '12px', color: '#64748b' }}>
-                    {p.mounted_at ? new Date(p.mounted_at).toLocaleString('ro-RO') : '—'}
-                  </td>
-                  <td style={{ textAlign: 'center' }}>
-                    <button
-                      type="button"
-                      className="quick-fill-pill"
-                      onClick={(e) => {
-                        e.stopPropagation();
-                        setSelectedPlacement(p);
-                      }}
-                    >
-                      {lang === 'ro' ? 'Detalii' : 'Details'}
-                    </button>
-                  </td>
-                </tr>
-              ))}
+                      <td className="col-idx-cell" style={{ fontWeight: 700, color: '#64748b' }}>
+                        #{board.id}
+                      </td>
+                      <td className="magazie-mono-cell" style={{ fontWeight: 700, color: '#ea580c' }}>
+                        <button
+                          type="button"
+                          className={`accordion-toggle-btn ${isExpanded ? 'expanded' : ''}`}
+                          onClick={(e) => {
+                            e.stopPropagation();
+                            toggleExpandSerial(board.qr_serial_number);
+                          }}
+                          title={isExpanded ? 'Restrânge componente THT' : 'Deschide componente THT'}
+                        >
+                          {isExpanded ? '▼' : '▶'}
+                        </button>
+                        <span>{board.qr_serial_number}</span>
+                        {board.items.length > 1 && (
+                          <span className="smd-count-pill">
+                            {board.items.length} {lang === 'ro' ? 'piese' : 'parts'}
+                          </span>
+                        )}
+                      </td>
+                      <td>
+                        <div style={{ display: 'flex', gap: '3px', flexWrap: 'wrap' }}>
+                          {board.positions.map((pos) => (
+                            <span key={pos} className="badge-position">
+                              {pos}
+                            </span>
+                          ))}
+                        </div>
+                      </td>
+                      <td className="magazie-ident-cell">
+                        {board.items.length === 1
+                          ? (board.items[0].component?.ident || board.items[0].component_internal_id)
+                          : `Set (${board.items.length})`}
+                      </td>
+                      <td className="magazie-name-cell">
+                        {board.items.length === 1
+                          ? (board.items[0].component?.part_name || `Componentă #${board.items[0].component_internal_id}`)
+                          : (lang === 'ro'
+                              ? `Set complet ${board.items.length} componente THT montate`
+                              : `Complete set of ${board.items.length} mounted THT parts`)}
+                      </td>
+                      <td className="magazie-mono-cell" style={{ fontSize: '12px', color: '#475569' }}>
+                        {board.sampleComponent?.supplier_lot || '—'}
+                      </td>
+                      <td style={{ color: '#334155' }}>{board.sampleComponent?.provider || '—'}</td>
+                      <td>{board.operator_username || '—'}</td>
+                      <td className="magazie-mono-cell" style={{ fontSize: '12px', color: '#64748b' }}>
+                        {board.mounted_at ? new Date(board.mounted_at).toLocaleString('ro-RO') : '—'}
+                      </td>
+                      <td style={{ textAlign: 'center' }}>
+                        <button
+                          type="button"
+                          className="quick-fill-pill"
+                          onClick={(e) => {
+                            e.stopPropagation();
+                            if (board.items.length > 1) {
+                              toggleExpandSerial(board.qr_serial_number);
+                            } else {
+                              setSelectedPlacement(board.items[0]);
+                            }
+                          }}
+                        >
+                          {board.items.length > 1
+                            ? (isExpanded ? (lang === 'ro' ? 'Închide' : 'Close') : (lang === 'ro' ? 'Componente' : 'Parts'))
+                            : (lang === 'ro' ? 'Detalii' : 'Details')}
+                        </button>
+                      </td>
+                    </tr>
+
+                    {/* Sublistă acordion cu componentele THT montate pe acest PCB */}
+                    {isExpanded && (
+                      <tr key={`sub-${board.qr_serial_number}`} className="smd-subrow">
+                        <td colSpan={10}>
+                          <div className="smd-subtable-container">
+                            <div className="smd-subtable-header">
+                              <span>
+                                <SearchIcon size={13} style={{ verticalAlign: 'middle', marginRight: '6px' }} />
+                                {lang === 'ro'
+                                  ? `Componente THT montate pe PCB ${board.qr_serial_number} (${board.items.length} poziții):`
+                                  : `THT components mounted on PCB ${board.qr_serial_number} (${board.items.length} positions):`}
+                              </span>
+                              <span style={{ fontSize: '11px', color: '#94a3b8' }}>
+                                {lang === 'ro' ? 'Fiecare piesă THT este înregistrată individual în baza de date' : 'Each THT part is individually tracked in DB'}
+                              </span>
+                            </div>
+                            <table className="smd-nested-table">
+                              <thead>
+                                <tr>
+                                  <th style={{ width: '80px' }}>{lang === 'ro' ? 'Poziție' : 'Position'}</th>
+                                  <th style={{ width: '100px' }}>{lang === 'ro' ? 'Ident' : 'Ident'}</th>
+                                  <th>{lang === 'ro' ? 'Denumire componentă' : 'Component name'}</th>
+                                  <th style={{ width: '150px' }}>{lang === 'ro' ? 'Lot furnizor' : 'Supplier lot'}</th>
+                                  <th style={{ width: '160px' }}>{lang === 'ro' ? 'Furnizor' : 'Provider'}</th>
+                                  <th style={{ width: '160px' }}>{lang === 'ro' ? 'Data montajului' : 'Mounted at'}</th>
+                                  <th style={{ width: '90px', textAlign: 'center' }}>{lang === 'ro' ? 'Fișă' : 'Doc'}</th>
+                                </tr>
+                              </thead>
+                              <tbody>
+                                {board.items.map((item) => (
+                                  <tr
+                                    key={item.id}
+                                    onClick={(e) => {
+                                      e.stopPropagation();
+                                      setSelectedPlacement(item);
+                                    }}
+                                    style={{ cursor: 'pointer' }}
+                                  >
+                                    <td>
+                                      <span className="badge-position">{item.bestuck_position}</span>
+                                    </td>
+                                    <td style={{ fontWeight: 600 }}>
+                                      {item.component?.ident || item.component_internal_id}
+                                    </td>
+                                    <td>{item.component?.part_name || `Componentă #${item.component_internal_id}`}</td>
+                                    <td style={{ fontFamily: 'monospace', fontSize: '11px' }}>
+                                      {item.component?.supplier_lot || '—'}
+                                    </td>
+                                    <td>{item.component?.provider || '—'}</td>
+                                    <td style={{ fontSize: '11px', color: '#94a3b8' }}>
+                                      {item.mounted_at ? new Date(item.mounted_at).toLocaleString('ro-RO') : '—'}
+                                    </td>
+                                    <td style={{ textAlign: 'center' }}>
+                                      <button
+                                        type="button"
+                                        className="quick-fill-pill"
+                                        onClick={(e) => {
+                                          e.stopPropagation();
+                                          setSelectedPlacement(item);
+                                        }}
+                                      >
+                                        Info
+                                      </button>
+                                    </td>
+                                  </tr>
+                                ))}
+                              </tbody>
+                            </table>
+                          </div>
+                        </td>
+                      </tr>
+                    )}
+                  </React.Fragment>
+                );
+              })}
 
               {Array.from({ length: emptyRowsCount }).map((_, i) => (
                 <tr key={`blank-${i}`} className="magazie-blank-row">
-                  <td className="col-idx-cell">{filteredPlacements.length + i + 1}</td>
+                  <td className="col-idx-cell">—</td>
                   <td></td>
                   <td></td>
                   <td></td>

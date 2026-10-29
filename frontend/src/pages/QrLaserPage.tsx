@@ -6,6 +6,8 @@ import {
   type FormEvent,
 } from 'react';
 import type { Language, User, QrLaserMarkingItem } from '../types';
+import { useRealtimeLiveFeed } from '../utils/useRealtimeLiveFeed';
+import { LiveStreamFreezeBanner } from '../components/LiveStreamFreezeBanner';
 
 interface QrLaserPageProps {
   lang: Language;
@@ -31,7 +33,6 @@ const EMPTY_FILTERS: QrLaserFilters = {
 const MIN_EMPTY_TABLE_ROWS = 22;
 
 export function QrLaserPage({ lang, currentUser }: QrLaserPageProps) {
-  const [markings, setMarkings] = useState<QrLaserMarkingItem[]>([]);
   const [totalCount, setTotalCount] = useState<number>(0);
   const [, setLoading] = useState<boolean>(true);
   const [error, setError] = useState<string | null>(null);
@@ -44,6 +45,54 @@ export function QrLaserPage({ lang, currentUser }: QrLaserPageProps) {
     next_serial: string;
     production_date: string;
   } | null>(null);
+
+  // Preluare următoarea serie automată din 12 cifre
+  const fetchNextSerial = useCallback(async () => {
+    try {
+      const res = await fetch('/api/v1/laser/next-serial');
+      if (!res.ok) return;
+      const data = await res.json();
+      if (data.status === 'success') {
+        setNextSerialInfo(data);
+      }
+    } catch {
+      // eroare ignorată pe fundal
+    }
+  }, []);
+
+  // Funcție de preluare date pentru hook-ul de flux live
+  const fetchMarkingsCallback = useCallback(async () => {
+    try {
+      setLoading(true);
+      setError(null);
+      const res = await fetch('/api/v1/laser/markings?limit=50');
+      if (!res.ok) throw new Error('Eroare la încărcarea marcajelor laser');
+      const data = await res.json();
+      setTotalCount(data.total || (data.data ? data.data.length : 0));
+      // Menținem actualizat și următorul serial
+      fetchNextSerial();
+      return data.data || [];
+    } catch (err: any) {
+      setError(err.message || 'Eroare de rețea la preluarea marcajelor.');
+      return [];
+    } finally {
+      setLoading(false);
+    }
+  }, [fetchNextSerial]);
+
+  // Hook flux realtime cu înghețare la derulare
+  const {
+    items: markings,
+    pendingNewCount,
+    recentNewIds,
+    containerRef,
+    handleScroll,
+    resumeLiveStream,
+    refreshNow: fetchMarkings,
+  } = useRealtimeLiveFeed<QrLaserMarkingItem>({
+    fetchFn: fetchMarkingsCallback,
+    intervalMs: 2500,
+  });
 
   // Filtre pe coloane
   const [filters, setFilters] = useState<QrLaserFilters>(EMPTY_FILTERS);
@@ -71,41 +120,9 @@ export function QrLaserPage({ lang, currentUser }: QrLaserPageProps) {
   const [rescanNotesInput, setRescanNotesInput] = useState('');
   const [rescanTraceabilityData, setRescanTraceabilityData] = useState<any | null>(null);
 
-  // Încărcare listă marcaje
-  const fetchMarkings = useCallback(async () => {
-    try {
-      setLoading(true);
-      setError(null);
-      const res = await fetch('/api/v1/laser/markings');
-      if (!res.ok) throw new Error('Eroare la încărcarea marcajelor laser');
-      const data = await res.json();
-      setMarkings(data.data || []);
-      setTotalCount(data.total || (data.data ? data.data.length : 0));
-    } catch (err: any) {
-      setError(err.message || 'Eroare de rețea la preluarea marcajelor.');
-    } finally {
-      setLoading(false);
-    }
-  }, []);
-
-  // Preluare următoarea serie automată din 12 cifre
-  const fetchNextSerial = useCallback(async () => {
-    try {
-      const res = await fetch('/api/v1/laser/next-serial');
-      if (!res.ok) return;
-      const data = await res.json();
-      if (data.status === 'success') {
-        setNextSerialInfo(data);
-      }
-    } catch {
-      // eroare ignorată pe fundal
-    }
-  }, []);
-
   useEffect(() => {
-    fetchMarkings();
     fetchNextSerial();
-  }, [fetchMarkings, fetchNextSerial]);
+  }, [fetchNextSerial]);
 
   // Executare marcare automată (+1)
   const handleAutoMark = async () => {
@@ -581,32 +598,39 @@ export function QrLaserPage({ lang, currentUser }: QrLaserPageProps) {
           </span>
         </div>
 
+        {/* Banner de avertizare la derulare - înghețare flux live */}
+        <LiveStreamFreezeBanner
+          pendingCount={pendingNewCount}
+          onResume={resumeLiveStream}
+          lang={lang}
+        />
+
         {/* Tabel profesional pe tot ecranul */}
-        <div className="magazie-fulltable-container">
+        <div className="magazie-fulltable-container" ref={containerRef} onScroll={handleScroll}>
           <table className="magazie-pro-table">
             <thead>
               <tr>
-                <th className="col-idx">#</th>
-                <th style={{ width: '160px' }}>
+                <th className="col-idx" style={{ width: '65px' }}>#</th>
+                <th style={{ width: '145px' }}>
                   {lang === 'ro' ? 'Număr serie (12 cifre)' : 'Serial number (12 digits)'}
                 </th>
-                <th style={{ width: '180px' }}>
+                <th style={{ width: '135px' }}>
                   {lang === 'ro' ? 'Model produs' : 'Product model'}
                 </th>
-                <th style={{ width: '90px' }}>{lang === 'ro' ? 'Față' : 'Side'}</th>
-                <th style={{ width: '165px' }}>
+                <th style={{ width: '75px' }}>{lang === 'ro' ? 'Față' : 'Side'}</th>
+                <th style={{ width: '140px' }}>
                   {lang === 'ro' ? 'Data și ora marcării' : 'Marking timestamp'}
                 </th>
-                <th style={{ width: '120px' }}>
+                <th style={{ width: '90px' }}>
                   {lang === 'ro' ? 'Putere laser (%)' : 'Laser power (%)'}
                 </th>
-                <th style={{ width: '110px' }}>
+                <th style={{ width: '85px' }}>
                   {lang === 'ro' ? 'Durată (ms)' : 'Duration (ms)'}
                 </th>
-                <th style={{ width: '130px' }}>{lang === 'ro' ? 'Operator' : 'Operator'}</th>
-                <th style={{ width: '120px' }}>{lang === 'ro' ? 'Status' : 'Status'}</th>
-                <th style={{ width: '22%' }}>{lang === 'ro' ? 'Note / detalii' : 'Notes / details'}</th>
-                <th style={{ width: '100px', textAlign: 'center' }}>
+                <th style={{ width: '100px' }}>{lang === 'ro' ? 'Operator' : 'Operator'}</th>
+                <th style={{ width: '85px' }}>{lang === 'ro' ? 'Status' : 'Status'}</th>
+                <th style={{ minWidth: '130px' }}>{lang === 'ro' ? 'Note / detalii' : 'Notes / details'}</th>
+                <th style={{ width: '80px', textAlign: 'center' }}>
                   {lang === 'ro' ? 'Detalii' : 'Details'}
                 </th>
               </tr>
@@ -674,13 +698,15 @@ export function QrLaserPage({ lang, currentUser }: QrLaserPageProps) {
               </tr>
 
               {/* Rânduri cu plăcile marcate */}
-              {filteredMarkings.map((m, idx) => (
+              {filteredMarkings.map((m) => (
                 <tr
                   key={m.id || m.qr_serial_number}
-                  className="magazie-data-row"
+                  className={`magazie-data-row ${recentNewIds.has(m.id) ? 'row-cascade-new' : ''}`}
                   onClick={() => setSelectedMarking(m)}
                 >
-                  <td className="col-idx-cell">{idx + 1}</td>
+                  <td className="col-idx-cell" style={{ fontWeight: 700, color: '#64748b' }}>
+                    #{m.id}
+                  </td>
                   <td className="magazie-mono-cell" style={{ fontWeight: 700, color: '#ea580c' }}>
                     {m.qr_serial_number}
                   </td>
@@ -730,7 +756,7 @@ export function QrLaserPage({ lang, currentUser }: QrLaserPageProps) {
               {/* Rânduri goale pentru umplerea tabelului până jos */}
               {Array.from({ length: emptyRowsCount }).map((_, i) => (
                 <tr key={`blank-${i}`} className="magazie-blank-row">
-                  <td className="col-idx-cell">{filteredMarkings.length + i + 1}</td>
+                  <td className="col-idx-cell">—</td>
                   <td></td>
                   <td></td>
                   <td></td>
