@@ -275,10 +275,79 @@ Route::prefix('v1')->group(function () {
             ], 404);
         }
 
-        return response()->file($path, [
+        $fileSize = filesize($path);
+        $downloadId = bin2hex(random_bytes(8));
+
+        $headers = [
             'Content-Type' => 'application/pdf',
             'Content-Disposition' => 'inline; filename="' . $safeIdent . '.pdf"',
-        ]);
+            'Content-Length' => (string) $fileSize,
+            'Accept-Ranges' => 'bytes',
+            'Cache-Control' => 'no-cache, must-revalidate',
+        ];
+
+        return response()->stream(function () use ($path, $downloadId) {
+            $handle = fopen($path, 'rb');
+            if (! $handle) {
+                return;
+            }
+
+            $chunkSize = 64 * 1024; // 64 KB per chunk
+            $isTesting = app()->runningUnitTests();
+
+            // Calculează viteza inițială bazată pe conexiunile active curente
+            $activeCount = \App\Services\DownloadBandwidthManager::heartbeat($downloadId);
+            $currentSpeed = \App\Services\DownloadBandwidthManager::calculateSpeed($activeCount);
+
+            $lastCheckTime = microtime(true);
+            $windowStartTime = microtime(true);
+            $bytesSentInWindow = 0;
+
+            try {
+                while (! feof($handle) && ! connection_aborted()) {
+                    $buffer = fread($handle, $chunkSize);
+                    if ($buffer === false || $buffer === '') {
+                        break;
+                    }
+
+                    echo $buffer;
+                    if (ob_get_level() > 0) {
+                        ob_flush();
+                    }
+                    flush();
+
+                    $chunkBytes = strlen($buffer);
+                    $bytesSentInWindow += $chunkBytes;
+
+                    $now = microtime(true);
+
+                    // Reevaluare periodică la fiecare 2 secunde: actualizează numărul de descărcări active și redistribuie viteza
+                    if (($now - $lastCheckTime) >= \App\Services\DownloadBandwidthManager::RECHECK_INTERVAL_SECONDS) {
+                        $activeCount = \App\Services\DownloadBandwidthManager::heartbeat($downloadId);
+                        $currentSpeed = \App\Services\DownloadBandwidthManager::calculateSpeed($activeCount);
+                        $lastCheckTime = $now;
+                        $windowStartTime = $now;
+                        $bytesSentInWindow = 0;
+                    }
+
+                    // Reglare dinamică a debitului dacă nu suntem în teste unitare
+                    if (! $isTesting && $currentSpeed > 0) {
+                        $elapsedInWindow = microtime(true) - $windowStartTime;
+                        $expectedTime = $bytesSentInWindow / $currentSpeed;
+
+                        if ($expectedTime > $elapsedInWindow) {
+                            $sleepUs = (int) (($expectedTime - $elapsedInWindow) * 1_000_000);
+                            if ($sleepUs > 0) {
+                                usleep($sleepUs);
+                            }
+                        }
+                    }
+                }
+            } finally {
+                fclose($handle);
+                \App\Services\DownloadBandwidthManager::release($downloadId);
+            }
+        }, 200, $headers);
     });
 
     Route::post('/idents/{ident}/datasheet', function (Request $request, string $ident) {
