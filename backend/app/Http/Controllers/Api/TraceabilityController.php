@@ -157,20 +157,108 @@ class TraceabilityController extends Controller
     }
 
     /**
-     * Nomenclator identuri componente (component_idents)
+     * Directorul unic centralizat unde sunt stocate toate fișele tehnice (datasheets) ale identurilor.
      */
-    public function getComponentIdents(): JsonResponse
+    public static function getIdentStorageDirectory(): string
     {
-        $idents = ComponentIdent::orderBy('ident', 'asc')->get();
+        $dir = base_path('ident-storage');
+        if (!is_dir($dir)) {
+            $parent = base_path('../ident-storage');
+            if (is_dir($parent)) {
+                return $parent;
+            }
+            @mkdir($dir, 0777, true);
+        }
+        return $dir;
+    }
+
+    /**
+     * Calea către fișierul PDF al unui ident specific din directorul unic ident-storage.
+     */
+    public static function getIdentPdfPath(string|int $ident): ?string
+    {
+        $safeIdent = preg_replace('/[^0-9A-Za-z_-]/', '', (string) $ident);
+        $candidates = [
+            base_path("ident-storage/{$safeIdent}.pdf"),
+            base_path("../ident-storage/{$safeIdent}.pdf"),
+        ];
+
+        foreach ($candidates as $cand) {
+            if (file_exists($cand)) {
+                return $cand;
+            }
+        }
+
+        return null;
+    }
+
+    /**
+     * Nomenclator identuri componente (component_idents) cu suport paginare si cautare wildcard pentru PLM
+     */
+    public function getComponentIdents(Request $request): JsonResponse
+    {
+        $query = ComponentIdent::orderBy('ident', 'asc');
+
+        if ($request->filled('ident')) {
+            $val = trim($request->query('ident'));
+            if ($val !== '' && $val !== '%%' && $val !== '%') {
+                $operator = DB::getDriverName() === 'pgsql' ? 'ILIKE' : 'LIKE';
+                if (str_contains($val, '%')) {
+                    $pattern = str_replace('%%', '%', $val);
+                    $query->whereRaw("CAST(ident AS TEXT) {$operator} ?", [$pattern]);
+                } else {
+                    $query->where('ident', '=', is_numeric($val) ? (int) $val : $val);
+                }
+            }
+        }
+
+        foreach (['part_name', 'manufacturer_part_number', 'provider', 'package_type', 'manufacturer', 'unit'] as $col) {
+            if ($request->filled($col)) {
+                $this->applyWildcardFilter($query, $col, $request->query($col));
+            }
+        }
+
+        $total = (clone $query)->count();
+
+        if ($request->has('limit')) {
+            $limit = max(1, (int) $request->query('limit', 50));
+            $offset = max(0, (int) $request->query('offset', 0));
+            $items = $query->skip($offset)->take($limit)->get();
+
+            $data = $items->map(function ($item) {
+                $hasPdf = self::getIdentPdfPath($item->ident) !== null;
+                $item->has_datasheet = $hasPdf;
+                $item->datasheet_url = $hasPdf ? "/api/v1/idents/{$item->ident}/datasheet" : null;
+                return $item;
+            });
+
+            return response()->json([
+                'status' => 'success',
+                'data' => $data,
+                'total' => $total,
+                'limit' => $limit,
+                'offset' => $offset,
+                'has_more' => ($offset + $items->count()) < $total,
+            ]);
+        }
+
+        $items = $query->get()->map(function ($item) {
+            $hasPdf = self::getIdentPdfPath($item->ident) !== null;
+            $item->has_datasheet = $hasPdf;
+            $item->datasheet_url = $hasPdf ? "/api/v1/idents/{$item->ident}/datasheet" : null;
+            return $item;
+        });
 
         return response()->json([
             'status' => 'success',
-            'data' => $idents,
+            'data' => $items,
+            'total' => $total,
         ]);
     }
 
     /**
      * Adaugare ident nou in nomenclator (component_idents, ident > 10000)
+     * Daca se furnizeaza fisierul PDF de datasheet, se salveaza exclusiv in folderul unic ident-storage.
      */
     public function storeComponentIdent(Request $request): JsonResponse
     {
@@ -182,6 +270,7 @@ class TraceabilityController extends Controller
             'package_type' => 'required|string|max:100',
             'manufacturer' => 'nullable|string|max:255',
             'unit' => 'nullable|string|max:50',
+            'datasheet' => 'nullable|file|mimes:pdf|max:20480',
         ]);
 
         $identItem = ComponentIdent::create([
@@ -193,6 +282,17 @@ class TraceabilityController extends Controller
             'manufacturer' => !empty($validated['manufacturer']) ? trim($validated['manufacturer']) : null,
             'unit' => !empty($validated['unit']) ? trim($validated['unit']) : 'buc.',
         ]);
+
+        if ($request->hasFile('datasheet')) {
+            $file = $request->file('datasheet');
+            if ($file->isValid()) {
+                $dir = self::getIdentStorageDirectory();
+                $file->move($dir, "{$identItem->ident}.pdf");
+            }
+        }
+
+        $identItem->has_datasheet = self::getIdentPdfPath($identItem->ident) !== null;
+        $identItem->datasheet_url = $identItem->has_datasheet ? "/api/v1/idents/{$identItem->ident}/datasheet" : null;
 
         return response()->json([
             'status' => 'success',

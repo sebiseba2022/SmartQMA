@@ -14,6 +14,7 @@ import type {
   WarehouseOrder,
   ComponentIdentItem,
   ColumnFilters,
+  User,
 } from '../types';
 import { EMPTY_FILTERS, PACKAGE_TYPE_OPTIONS } from '../types';
 import { formatDateTime, formatDateOnly, getCurrentDateInput } from '../utils/date';
@@ -22,9 +23,11 @@ const MIN_EMPTY_TABLE_ROWS = 24;
 
 interface MagaziePageProps {
   lang: Language;
+  currentUser?: User | null;
 }
 
-export function MagaziePage({ lang }: MagaziePageProps) {
+export function MagaziePage({ lang, currentUser }: MagaziePageProps) {
+  const isLimitedAnalyst = currentUser?.role === 'analist_calitate';
   const [orders, setOrders] = useState<WarehouseOrder[]>([]);
   const [totalCount, setTotalCount] = useState<number>(0);
   const [offset, setOffset] = useState<number>(0);
@@ -577,46 +580,50 @@ export function MagaziePage({ lang }: MagaziePageProps) {
       {/* Coloana din stânga: Butoane rotunde în coloană */}
       <aside className="magazie-left-rail" aria-label="Acțiuni magazie">
         <div className="magazie-rail-group">
-          <div className="magazie-round-btn-item">
-            <button
-              type="button"
-              className="magazie-round-btn primary"
-              onClick={() => {
-                setError(null);
-                setIsAddModalOpen(true);
-              }}
-              title={lang === 'ro' ? 'Adaugă comandă nouă' : 'Add new order'}
-            >
-              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.4" strokeLinecap="round" strokeLinejoin="round">
-                <line x1="12" y1="5" x2="12" y2="19" />
-                <line x1="5" y1="12" x2="19" y2="12" />
-              </svg>
-            </button>
-            <span className="magazie-round-btn-label">
-              {lang === 'ro' ? 'Adaugă comandă' : 'Add order'}
-            </span>
-          </div>
+          {!isLimitedAnalyst && (
+            <>
+              <div className="magazie-round-btn-item">
+                <button
+                  type="button"
+                  className="magazie-round-btn primary"
+                  onClick={() => {
+                    setError(null);
+                    setIsAddModalOpen(true);
+                  }}
+                  title={lang === 'ro' ? 'Adaugă comandă nouă' : 'Add new order'}
+                >
+                  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.4" strokeLinecap="round" strokeLinejoin="round">
+                    <line x1="12" y1="5" x2="12" y2="19" />
+                    <line x1="5" y1="12" x2="19" y2="12" />
+                  </svg>
+                </button>
+                <span className="magazie-round-btn-label">
+                  {lang === 'ro' ? 'Adaugă comandă' : 'Add order'}
+                </span>
+              </div>
 
-          <div className="magazie-round-btn-item">
-            <button
-              type="button"
-              className="magazie-round-btn"
-              onClick={() => {
-                setError(null);
-                setIsAddIdentModalOpen(true);
-              }}
-              title={lang === 'ro' ? 'Adaugă ident nou în nomenclator' : 'Add new ident to catalog'}
-            >
-              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.1" strokeLinecap="round" strokeLinejoin="round">
-                <ellipse cx="12" cy="5" rx="9" ry="3" />
-                <path d="M21 12c0 1.66-4 3-9 3s-9-1.34-9-3" />
-                <path d="M3 5v14c0 1.66 4 3 9 3s9-1.34 9-3V5" />
-              </svg>
-            </button>
-            <span className="magazie-round-btn-label">
-              {lang === 'ro' ? 'Adaugă ident' : 'Add ident'}
-            </span>
-          </div>
+              <div className="magazie-round-btn-item">
+                <button
+                  type="button"
+                  className="magazie-round-btn"
+                  onClick={() => {
+                    setError(null);
+                    setIsAddIdentModalOpen(true);
+                  }}
+                  title={lang === 'ro' ? 'Adaugă ident nou în nomenclator' : 'Add new ident to catalog'}
+                >
+                  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.1" strokeLinecap="round" strokeLinejoin="round">
+                    <ellipse cx="12" cy="5" rx="9" ry="3" />
+                    <path d="M21 12c0 1.66-4 3-9 3s-9-1.34-9-3" />
+                    <path d="M3 5v14c0 1.66 4 3 9 3s9-1.34 9-3V5" />
+                  </svg>
+                </button>
+                <span className="magazie-round-btn-label">
+                  {lang === 'ro' ? 'Adaugă ident' : 'Add ident'}
+                </span>
+              </div>
+            </>
+          )}
 
           <div className="magazie-round-btn-item">
             <button
@@ -1296,47 +1303,68 @@ export function MagaziePage({ lang }: MagaziePageProps) {
           <div className="magazie-ctx-header">
             Comandă #{contextMenu.order.ident || contextMenu.order.internal_id}
           </div>
-          <button
-            type="button"
-            className="magazie-ctx-item"
-            onClick={() => handleOpenEditOrder(contextMenu.order)}
-          >
-            ✏️ {lang === 'ro' ? 'Editează livrarea / recepția' : 'Edit delivery / reception'}
-          </button>
-          {!contextMenu.order.arrived ? (
-            <button
-              type="button"
-              className="magazie-ctx-item"
-              onClick={() => handleSetArrival(contextMenu.order, true)}
-            >
-              ✅ {lang === 'ro' ? 'Marchează ca ajuns în depozit' : 'Mark as arrived'}
-            </button>
+          {isLimitedAnalyst ? (
+            <>
+              <div style={{ padding: '8px 12px', fontSize: '11.5px', color: '#64748b' }}>
+                {lang === 'ro'
+                  ? 'Acces limitat (analist calitate): doar consultare / interogare.'
+                  : 'Limited access (quality analyst): query only.'}
+              </div>
+              {contextMenu.order.tracking_number && (
+                <button
+                  type="button"
+                  className="magazie-ctx-item"
+                  onClick={() => handleCopyTrackingNumber(contextMenu.order)}
+                >
+                  📋 {lang === 'ro' ? 'Copiază numărul de urmărire' : 'Copy tracking number'}
+                </button>
+              )}
+            </>
           ) : (
-            <button
-              type="button"
-              className="magazie-ctx-item"
-              onClick={() => handleSetArrival(contextMenu.order, false)}
-            >
-              ↩️ {lang === 'ro' ? 'Revenire la starea «În tranzit»' : 'Revert to in transit'}
-            </button>
+            <>
+              <button
+                type="button"
+                className="magazie-ctx-item"
+                onClick={() => handleOpenEditOrder(contextMenu.order)}
+              >
+                ✏️ {lang === 'ro' ? 'Editează livrarea / recepția' : 'Edit delivery / reception'}
+              </button>
+              {!contextMenu.order.arrived ? (
+                <button
+                  type="button"
+                  className="magazie-ctx-item"
+                  onClick={() => handleSetArrival(contextMenu.order, true)}
+                >
+                  ✅ {lang === 'ro' ? 'Marchează ca ajuns în depozit' : 'Mark as arrived'}
+                </button>
+              ) : (
+                <button
+                  type="button"
+                  className="magazie-ctx-item"
+                  onClick={() => handleSetArrival(contextMenu.order, false)}
+                >
+                  ↩️ {lang === 'ro' ? 'Revenire la starea «În tranzit»' : 'Revert to in transit'}
+                </button>
+              )}
+              {contextMenu.order.tracking_number && (
+                <button
+                  type="button"
+                  className="magazie-ctx-item"
+                  onClick={() => handleCopyTrackingNumber(contextMenu.order)}
+                >
+                  📋 {lang === 'ro' ? 'Copiază numărul de urmărire' : 'Copy tracking number'}
+                </button>
+              )}
+              <div className="magazie-ctx-divider" />
+              <button
+                type="button"
+                className="magazie-ctx-item danger"
+                onClick={() => handleCancelOrder(contextMenu.order)}
+              >
+                🗑️ {lang === 'ro' ? 'Șterge comanda' : 'Delete order'}
+              </button>
+            </>
           )}
-          {contextMenu.order.tracking_number && (
-            <button
-              type="button"
-              className="magazie-ctx-item"
-              onClick={() => handleCopyTrackingNumber(contextMenu.order)}
-            >
-              📋 {lang === 'ro' ? 'Copiază numărul de urmărire' : 'Copy tracking number'}
-            </button>
-          )}
-          <div className="magazie-ctx-divider" />
-          <button
-            type="button"
-            className="magazie-ctx-item danger"
-            onClick={() => handleCancelOrder(contextMenu.order)}
-          >
-            🗑️ {lang === 'ro' ? 'Șterge comanda' : 'Delete order'}
-          </button>
         </div>
       )}
     </div>

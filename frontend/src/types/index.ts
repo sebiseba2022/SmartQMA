@@ -5,6 +5,7 @@ export interface User {
   username: string;
   name: string;
   role: string;
+  barcode?: string | null;
 }
 
 export interface WarehouseOrder {
@@ -28,6 +29,8 @@ export interface ComponentIdentItem {
   package_type: string;
   manufacturer: string | null;
   unit: string;
+  has_datasheet?: boolean;
+  datasheet_url?: string | null;
 }
 
 export interface ColumnFilters {

@@ -49,10 +49,14 @@ export function LoginPage({
         throw new Error(data.message || t.authErrorDefault);
       }
 
-      // Verificare acces pe bază de rol (ex: pe Statistică au acces doar director și owner)
+      // Verificare acces pe bază de rol
       const targetStation = WORKSTATIONS.find((w) => w.id === selectedStation);
       if (targetStation && !targetStation.allowedRoles.includes(data.user.role)) {
-        throw new Error(t.statisticaAccessDenied);
+        throw new Error(
+          lang === 'ro'
+            ? `Acces refuzat: Rolul «${data.user.role}» nu are permisiunea de a accesa postul «${targetStation.name.ro}».`
+            : `Access denied: Role "${data.user.role}" is not authorized for workstation "${targetStation.name.en}".`
+        );
       }
 
       onLoginSuccess(data.user, selectedStation);
@@ -67,9 +71,12 @@ export function LoginPage({
     }
   };
 
-  const handleQuickFill = (user: string) => {
+  const handleQuickFill = (user: string, defaultStation?: string) => {
     setUsername(user);
     setPassword('Password123!');
+    if (defaultStation) {
+      setSelectedStation(defaultStation);
+    }
     setError(null);
   };
 
@@ -159,7 +166,7 @@ export function LoginPage({
               </div>
             </div>
 
-            {/* Dropdown-ul cu cele 10 posturi de lucru */}
+            {/* Dropdown-ul cu cele 11 posturi de lucru */}
             <div className="auth-form-group">
               <label htmlFor="auth-station">{t.stationLabel}</label>
               <select
@@ -179,34 +186,62 @@ export function LoginPage({
             {/* Autofill rapid pentru conturile de test */}
             <div className="test-autofill-box">
               <span className="autofill-label">{t.testAutofillLabel}</span>
-              <div className="autofill-buttons-row">
+              <div className="autofill-buttons-row" style={{ flexWrap: 'wrap' }}>
                 <button
                   type="button"
                   className="autofill-btn"
-                  onClick={() => handleQuickFill('owner')}
+                  onClick={() => handleQuickFill('owner', 'statistica')}
+                  title="Proprietar (Owner)"
                 >
-                  Owner
+                  Proprietar
                 </button>
                 <button
                   type="button"
                   className="autofill-btn"
-                  onClick={() => handleQuickFill('director')}
+                  onClick={() => handleQuickFill('director', 'statistica')}
+                  title="Director Fabricație"
                 >
                   Director
                 </button>
                 <button
                   type="button"
                   className="autofill-btn"
-                  onClick={() => handleQuickFill('engineer')}
+                  onClick={() => handleQuickFill('engineer', 'plm')}
+                  title="Inginer Proces & Calitate"
                 >
-                  Engineer
+                  Inginer
                 </button>
                 <button
                   type="button"
                   className="autofill-btn"
-                  onClick={() => handleQuickFill('operator')}
+                  onClick={() => handleQuickFill('magazioner', 'magazie')}
+                  title="Responsabil Magazie"
                 >
-                  Operator
+                  Magazioner
+                </button>
+                <button
+                  type="button"
+                  className="autofill-btn"
+                  onClick={() => handleQuickFill('analist_calitate', 'receptie-marfa')}
+                  title="Analist Calitate"
+                >
+                  Calitate
+                </button>
+                <button
+                  type="button"
+                  className="autofill-btn"
+                  onClick={() => handleQuickFill('operator_smd', 'smd')}
+                  title="Operator SMD"
+                >
+                  Op. SMD
+                </button>
+                <button
+                  type="button"
+                  className="autofill-btn"
+                  onClick={() => handleQuickFill('operator_aoi', 'aoi')}
+                  title="Operator AOI"
+                >
+                  Op. AOI
                 </button>
               </div>
             </div>

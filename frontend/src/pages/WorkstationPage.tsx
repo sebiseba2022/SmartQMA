@@ -1,8 +1,10 @@
+import { useState } from 'react';
 import { useParams, Navigate } from 'react-router-dom';
 import type { Language, User } from '../types';
 import { WORKSTATIONS } from '../i18n';
 import PortalNavbar from '../components/PortalNavbar';
 import RestrictedAccess from '../components/RestrictedAccess';
+import OperatorBarcodeModal from '../components/OperatorBarcodeModal';
 import MagaziePage from './MagaziePage';
 import ReceptieMarfaPage from './ReceptieMarfaPage';
 import QrLaserPage from './QrLaserPage';
@@ -13,6 +15,9 @@ import IctPage from './IctPage';
 import EolPage from './EolPage';
 import ExportPage from './ExportPage';
 import StatisticaPage from './StatisticaPage';
+import PlmPage from './PlmPage';
+
+const OPERATOR_GATED_STATIONS = ['qr-laser', 'smd', 'aoi', 'tht', 'ict', 'eol', 'export'];
 
 interface WorkstationPageProps {
   lang: Language;
@@ -29,6 +34,9 @@ export function WorkstationPage({
 }: WorkstationPageProps) {
   const { stationId } = useParams<{ stationId?: string; subPageId?: string }>();
 
+  // Set de posturi pentru care operatorul a validat deja codul de bare în această sesiune
+  const [unlockedStations, setUnlockedStations] = useState<Set<string>>(new Set());
+
   // Verificare dacă utilizatorul este autentificat; dacă nu, redirecționare la login
   if (!currentUser) {
     return <Navigate to="/" replace />;
@@ -44,6 +52,22 @@ export function WorkstationPage({
 
   const hasAccess = currentWs.allowedRoles.includes(currentUser.role);
 
+  // Verificare dacă utilizatorul are rol de operator și dacă postul necesită validare de legitimație (cod de bare)
+  const isOperator = currentUser.role === 'operator' || currentUser.role === 'production';
+  const requiresBarcodeGate =
+    isOperator &&
+    OPERATOR_GATED_STATIONS.includes(currentWs.id) &&
+    !unlockedStations.has(currentWs.id);
+
+  const handleStationUnlocked = () => {
+    setUnlockedStations((prev) => new Set(prev).add(currentWs.id));
+  };
+
+  const handleCancelBarcodeGate = () => {
+    // În caz de anulare a validării legitimației, revenire la ecranul de autentificare
+    onLogout();
+  };
+
   return (
     <div className="station-page-layout">
       {/* Top Navbar comun pentru toate posturile */}
@@ -58,12 +82,20 @@ export function WorkstationPage({
       {/* Verificare acces pe bază de rol */}
       {!hasAccess ? (
         <RestrictedAccess lang={lang} onLogout={onLogout} />
+      ) : requiresBarcodeGate ? (
+        <OperatorBarcodeModal
+          lang={lang}
+          currentUser={currentUser}
+          currentWs={currentWs}
+          onAuthorized={handleStationUnlocked}
+          onCancel={handleCancelBarcodeGate}
+        />
       ) : (
         /* Randare pagina dedicată pentru fiecare post de lucru */
         (() => {
           switch (currentWs.id) {
             case 'magazie':
-              return <MagaziePage lang={lang} />;
+              return <MagaziePage lang={lang} currentUser={currentUser} />;
             case 'receptie-marfa':
               return <ReceptieMarfaPage lang={lang} />;
             case 'qr-laser':
@@ -82,6 +114,8 @@ export function WorkstationPage({
               return <ExportPage lang={lang} />;
             case 'statistica':
               return <StatisticaPage lang={lang} />;
+            case 'plm':
+              return <PlmPage lang={lang} />;
             default:
               return <main className="blank-page-white"></main>;
           }

@@ -1,5 +1,6 @@
 import type { Language, User } from '../types';
 import type { WorkstationDef } from '../i18n';
+import { ROLE_NAMES } from '../i18n';
 
 interface PortalNavbarProps {
   lang: Language;
@@ -16,6 +17,10 @@ export function PortalNavbar({
   currentUser,
   onLogout,
 }: PortalNavbarProps) {
+  const roleDisplay = currentUser
+    ? ROLE_NAMES[currentUser.role]?.[lang] || currentUser.role
+    : '';
+
   return (
     <header className="portal-navbar">
       {/* Stânga: Logo + Numele postului de lucru curent */}
@@ -29,9 +34,9 @@ export function PortalNavbar({
       {/* Dreapta: Selector discret RO/EN + Utilizator curent + Buton 'X' pentru Deconectare */}
       <div className="navbar-right-actions">
         {currentUser && (
-          <div className="navbar-user-chip" title={`Rol: ${currentUser.role}`}>
+          <div className="navbar-user-chip" title={`Rol: ${roleDisplay}`}>
             <span className="navbar-user-name">{currentUser.name}</span>
-            <span className="navbar-user-role">({currentUser.role})</span>
+            <span className="navbar-user-role">({roleDisplay})</span>
           </div>
         )}
 

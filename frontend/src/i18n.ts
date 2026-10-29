@@ -23,11 +23,21 @@ export const STATS_MODEL_PAGES = [
   { id: 'pagina-6', name: { ro: 'Pagina 6', en: 'Page 6' } },
 ];
 
+export const ROLE_NAMES: Record<string, { ro: string; en: string }> = {
+  owner: { ro: 'Proprietar (Owner)', en: 'Owner' },
+  director: { ro: 'Director Fabricație', en: 'Production Director' },
+  engineer: { ro: 'Inginer Proces & Calitate', en: 'Process & Quality Engineer' },
+  magazioner: { ro: 'Magazioner', en: 'Warehouse Keeper' },
+  analist_calitate: { ro: 'Analist Calitate', en: 'Quality Analyst' },
+  operator: { ro: 'Operator Producție', en: 'Production Operator' },
+  production: { ro: 'Operator Producție', en: 'Production Operator' },
+};
+
 export const WORKSTATIONS: WorkstationDef[] = [
   {
     id: 'magazie',
     code: 'WS-MAG-01',
-    allowedRoles: ['production', 'engineer', 'director', 'owner'],
+    allowedRoles: ['magazioner', 'analist_calitate', 'engineer', 'director', 'owner'],
     name: {
       ro: 'Zona de stocare - Magazie',
       en: 'Storage Area - Warehouse',
@@ -40,7 +50,7 @@ export const WORKSTATIONS: WorkstationDef[] = [
   {
     id: 'receptie-marfa',
     code: 'WS-REC-02',
-    allowedRoles: ['production', 'engineer', 'director', 'owner'],
+    allowedRoles: ['analist_calitate', 'magazioner', 'engineer', 'director', 'owner'],
     name: {
       ro: 'Punct de verificare - Receptie marfa',
       en: 'Inspection Point - Goods Receipt',
@@ -53,7 +63,7 @@ export const WORKSTATIONS: WorkstationDef[] = [
   {
     id: 'qr-laser',
     code: 'WS-LSR-03',
-    allowedRoles: ['production', 'engineer', 'director', 'owner'],
+    allowedRoles: ['operator', 'production', 'engineer', 'director', 'owner'],
     name: {
       ro: 'Zona de marcare - QR Laser',
       en: 'Marking Area - QR Laser',
@@ -66,7 +76,7 @@ export const WORKSTATIONS: WorkstationDef[] = [
   {
     id: 'smd',
     code: 'WS-SMD-04',
-    allowedRoles: ['production', 'engineer', 'director', 'owner'],
+    allowedRoles: ['operator', 'production', 'engineer', 'director', 'owner'],
     name: {
       ro: 'Zona de amplasare - SMD',
       en: 'Placement Area - SMD',
@@ -79,7 +89,7 @@ export const WORKSTATIONS: WorkstationDef[] = [
   {
     id: 'aoi',
     code: 'WS-AOI-05',
-    allowedRoles: ['production', 'engineer', 'director', 'owner'],
+    allowedRoles: ['operator', 'production', 'engineer', 'director', 'owner'],
     name: {
       ro: 'Punct de verificare - AOI',
       en: 'Inspection Point - AOI',
@@ -92,7 +102,7 @@ export const WORKSTATIONS: WorkstationDef[] = [
   {
     id: 'tht',
     code: 'WS-THT-06',
-    allowedRoles: ['production', 'engineer', 'director', 'owner'],
+    allowedRoles: ['operator', 'production', 'engineer', 'director', 'owner'],
     name: {
       ro: 'Zona de amplasare - THT',
       en: 'Placement Area - THT',
@@ -105,7 +115,7 @@ export const WORKSTATIONS: WorkstationDef[] = [
   {
     id: 'ict',
     code: 'WS-ICT-07',
-    allowedRoles: ['production', 'engineer', 'director', 'owner'],
+    allowedRoles: ['operator', 'production', 'engineer', 'director', 'owner'],
     name: {
       ro: 'Punct de verificare - ICT',
       en: 'Inspection Point - ICT',
@@ -118,7 +128,7 @@ export const WORKSTATIONS: WorkstationDef[] = [
   {
     id: 'eol',
     code: 'WS-EOL-08',
-    allowedRoles: ['production', 'engineer', 'director', 'owner'],
+    allowedRoles: ['operator', 'production', 'engineer', 'director', 'owner'],
     name: {
       ro: 'Punct de verificare - EOL',
       en: 'Inspection Point - EOL',
@@ -131,7 +141,7 @@ export const WORKSTATIONS: WorkstationDef[] = [
   {
     id: 'export',
     code: 'WS-EXP-09',
-    allowedRoles: ['production', 'engineer', 'director', 'owner'],
+    allowedRoles: ['operator', 'production', 'engineer', 'director', 'owner'],
     name: {
       ro: 'Zona de scanare - Export',
       en: 'Scanning Area - Export',
@@ -152,6 +162,19 @@ export const WORKSTATIONS: WorkstationDef[] = [
     category: {
       ro: 'Management & Analiză Producție',
       en: 'Production & Yield Management',
+    },
+  },
+  {
+    id: 'plm',
+    code: 'WS-PLM-11',
+    allowedRoles: ['engineer', 'director', 'owner', 'magazioner', 'analist_calitate'],
+    name: {
+      ro: 'Product Lifetime Management (PLM)',
+      en: 'Product Lifetime Management (PLM)',
+    },
+    category: {
+      ro: 'Management Date Tehnice & Nomenclator',
+      en: 'Technical Data & Lifecycle Management',
     },
   },
 ];
