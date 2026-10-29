@@ -10,6 +10,7 @@ use App\Models\EolResult;
 use App\Models\IctResult;
 use App\Models\InventoryComponent;
 use App\Models\ProductDefinition;
+use App\Models\QrLaserMarking;
 use App\Models\SmdPlacement;
 use App\Models\StationFeeder;
 use App\Models\ThtPlacement;
@@ -153,6 +154,7 @@ class TraceabilityController extends Controller
             ],
             'bestuck_placements' => $allPositions,
             'component_registry' => array_values($registryCounts),
+            'laser_marking' => QrLaserMarking::where('qr_serial_number', $qr)->first(),
         ]);
     }
 
@@ -723,5 +725,350 @@ class TraceabilityController extends Controller
             'message' => 'Test EOL inregistrat.',
             'test' => $test,
         ], 201);
+    }
+
+    /**
+     * Lista plăcilor PCB marcate laser (serii de 12 cifre: YYMMDDxxxxxx)
+     */
+    public function getLaserMarkings(Request $request): JsonResponse
+    {
+        $query = QrLaserMarking::orderBy('marked_at', 'desc')->orderBy('id', 'desc');
+
+        if ($request->filled('qr_serial_number')) {
+            $val = trim($request->query('qr_serial_number'));
+            $operator = DB::getDriverName() === 'pgsql' ? 'ILIKE' : 'LIKE';
+            $query->where('qr_serial_number', $operator, "%{$val}%");
+        }
+        if ($request->filled('product_model')) {
+            $val = trim($request->query('product_model'));
+            $operator = DB::getDriverName() === 'pgsql' ? 'ILIKE' : 'LIKE';
+            $query->where('product_model', $operator, "%{$val}%");
+        }
+        if ($request->filled('status')) {
+            $query->where('status', $request->query('status'));
+        }
+        if ($request->filled('operator_username')) {
+            $val = trim($request->query('operator_username'));
+            $operator = DB::getDriverName() === 'pgsql' ? 'ILIKE' : 'LIKE';
+            $query->where('operator_username', $operator, "%{$val}%");
+        }
+
+        $total = (clone $query)->count();
+
+        if ($request->has('limit')) {
+            $limit = max(1, (int) $request->query('limit', 50));
+            $offset = max(0, (int) $request->query('offset', 0));
+            $items = $query->skip($offset)->take($limit)->get();
+
+            return response()->json([
+                'status' => 'success',
+                'data' => $items,
+                'total' => $total,
+                'limit' => $limit,
+                'offset' => $offset,
+                'has_more' => ($offset + $items->count()) < $total,
+            ]);
+        }
+
+        $items = $query->get();
+        return response()->json([
+            'status' => 'success',
+            'data' => $items,
+            'total' => $total,
+        ]);
+    }
+
+    /**
+     * Calculează următorul număr de serie din 12 cifre: YYMMDD + 6 cifre incrementabile
+     */
+    public function getNextLaserSerial(Request $request): JsonResponse
+    {
+        $dateParam = $request->query('date');
+        $date = !empty($dateParam) ? Carbon::parse($dateParam) : Carbon::now();
+        $prefix = $date->format('ymd'); // 6 cifre: YYMMDD ex: 261029 sau 260902
+
+        $lastMarking = QrLaserMarking::where('qr_serial_number', 'LIKE', $prefix . '%')
+            ->orderBy('qr_serial_number', 'desc')
+            ->first();
+
+        $nextSeq = 1;
+        if ($lastMarking) {
+            $suffix = substr($lastMarking->qr_serial_number, 6);
+            if (is_numeric($suffix)) {
+                $nextSeq = ((int) $suffix) + 1;
+            }
+        }
+
+        $nextSerial = $prefix . sprintf('%06d', $nextSeq);
+
+        return response()->json([
+            'status' => 'success',
+            'prefix' => $prefix,
+            'sequence' => $nextSeq,
+            'next_serial' => $nextSerial,
+            'production_date' => $date->toDateString(),
+        ]);
+    }
+
+    /**
+     * Înregistrare marcare laser PCB (automată sau manuală cu 12 cifre)
+     */
+    public function recordLaserMarking(Request $request): JsonResponse
+    {
+        $validated = $request->validate([
+            'qr_serial_number' => ['nullable', 'string', 'regex:/^\d{12}$/'],
+            'product_model' => 'nullable|string',
+            'pcb_side' => 'nullable|string|in:TOP,BOTTOM',
+            'laser_power_pct' => 'nullable|numeric|min:1|max:100',
+            'mark_duration_ms' => 'nullable|integer|min:50',
+            'operator_username' => 'nullable|string',
+            'notes' => 'nullable|string',
+        ], [
+            'qr_serial_number.regex' => 'Numărul de serie trebuie să aibă exact 12 cifre numerice (YYMMDD + 6 cifre incrementabile).',
+        ]);
+
+        $serial = $validated['qr_serial_number'] ?? null;
+
+        // Dacă nu a fost introdus manual, calculăm automat pe baza datei curente
+        if (empty($serial)) {
+            $prefix = Carbon::now()->format('ymd');
+            $lastMarking = QrLaserMarking::where('qr_serial_number', 'LIKE', $prefix . '%')
+                ->orderBy('qr_serial_number', 'desc')
+                ->first();
+
+            $nextSeq = 1;
+            if ($lastMarking) {
+                $suffix = substr($lastMarking->qr_serial_number, 6);
+                if (is_numeric($suffix)) {
+                    $nextSeq = ((int) $suffix) + 1;
+                }
+            }
+            $serial = $prefix . sprintf('%06d', $nextSeq);
+        }
+
+        // Verificăm unicitatea
+        $exists = QrLaserMarking::where('qr_serial_number', $serial)->first();
+        if ($exists) {
+            return response()->json([
+                'status' => 'error',
+                'message' => "Seria de 12 cifre {$serial} a fost deja marcată pe PCB la {$exists->marked_at?->format('d.m.Y H:i')}.",
+                'existing' => $exists,
+            ], 422);
+        }
+
+        $marking = QrLaserMarking::create([
+            'qr_serial_number' => $serial,
+            'product_model' => $validated['product_model'] ?? 'ARDUINO_UNO_R3',
+            'pcb_side' => $validated['pcb_side'] ?? 'TOP',
+            'laser_power_pct' => $validated['laser_power_pct'] ?? 85.00,
+            'mark_duration_ms' => $validated['mark_duration_ms'] ?? 420,
+            'operator_username' => $validated['operator_username'] ?? 'operator',
+            'marked_at' => Carbon::now(),
+            'status' => 'OK',
+            'notes' => $validated['notes'] ?? null,
+        ]);
+
+        return response()->json([
+            'status' => 'success',
+            'message' => "Placa PCB a fost marcată cu succes cu seria {$serial}.",
+            'data' => $marking,
+        ], 201);
+    }
+
+    /**
+     * Rescanare piesă / PCB la stația QR Laser
+     */
+    public function rescanLaserPcb(Request $request): JsonResponse
+    {
+        $validated = $request->validate([
+            'qr_serial_number' => 'required|string',
+            'operator_username' => 'nullable|string',
+            'notes' => 'nullable|string',
+        ]);
+
+        $serial = trim($validated['qr_serial_number']);
+
+        $marking = QrLaserMarking::where('qr_serial_number', $serial)->first();
+
+        if (! $marking) {
+            // Dacă seria are 12 cifre și nu este în sistem, o putem înregistra automat la rescanare
+            if (preg_match('/^\d{12}$/', $serial)) {
+                $marking = QrLaserMarking::create([
+                    'qr_serial_number' => $serial,
+                    'product_model' => 'ARDUINO_UNO_R3',
+                    'pcb_side' => 'TOP',
+                    'laser_power_pct' => 85.00,
+                    'mark_duration_ms' => 420,
+                    'operator_username' => $validated['operator_username'] ?? 'operator',
+                    'marked_at' => Carbon::now(),
+                    'status' => 'RESCANAT',
+                    'notes' => 'Identificat și adăugat la rescanare: ' . ($validated['notes'] ?? 'Fără note suplimentare'),
+                ]);
+
+                return response()->json([
+                    'status' => 'success',
+                    'is_new' => true,
+                    'message' => "Seria de 12 cifre {$serial} a fost rescanată și înregistrată în sistem.",
+                    'data' => $marking,
+                ]);
+            }
+
+            return response()->json([
+                'status' => 'error',
+                'is_new' => false,
+                'message' => "Codul {$serial} nu a fost găsit în baza de date și nu corespunde formatului strict de 12 cifre.",
+            ], 404);
+        }
+
+        // Actualizăm starea la RESCANAT și adăugăm nota
+        $marking->update([
+            'status' => 'RESCANAT',
+            'notes' => trim(($marking->notes ? $marking->notes . ' | ' : '') . 'Rescanat la ' . Carbon::now()->format('d.m.Y H:i:s') . ' de ' . ($validated['operator_username'] ?? 'operator')),
+        ]);
+
+        return response()->json([
+            'status' => 'success',
+            'is_new' => false,
+            'message' => "PCB {$serial} rescanat și confirmat cu succes.",
+            'data' => $marking->fresh(),
+        ]);
+    }
+
+    /**
+     * Listare amplasări SMD
+     */
+    public function getSmdPlacements(Request $request): JsonResponse
+    {
+        $query = SmdPlacement::with('component')->orderBy('mounted_at', 'desc')->orderBy('id', 'desc');
+
+        if ($request->filled('qr_serial_number')) {
+            $val = trim($request->query('qr_serial_number'));
+            $operator = DB::getDriverName() === 'pgsql' ? 'ILIKE' : 'LIKE';
+            $query->where('qr_serial_number', $operator, "%{$val}%");
+        }
+        if ($request->filled('bestuck_position')) {
+            $query->where('bestuck_position', $request->query('bestuck_position'));
+        }
+        if ($request->filled('operator_username')) {
+            $val = trim($request->query('operator_username'));
+            $operator = DB::getDriverName() === 'pgsql' ? 'ILIKE' : 'LIKE';
+            $query->where('operator_username', $operator, "%{$val}%");
+        }
+
+        $items = $query->limit(100)->get();
+        return response()->json([
+            'status' => 'success',
+            'total' => $items->count(),
+            'data' => $items,
+        ]);
+    }
+
+    /**
+     * Listare amplasări THT
+     */
+    public function getThtPlacements(Request $request): JsonResponse
+    {
+        $query = ThtPlacement::with('component')->orderBy('mounted_at', 'desc')->orderBy('id', 'desc');
+
+        if ($request->filled('qr_serial_number')) {
+            $val = trim($request->query('qr_serial_number'));
+            $operator = DB::getDriverName() === 'pgsql' ? 'ILIKE' : 'LIKE';
+            $query->where('qr_serial_number', $operator, "%{$val}%");
+        }
+        if ($request->filled('bestuck_position')) {
+            $query->where('bestuck_position', $request->query('bestuck_position'));
+        }
+        if ($request->filled('operator_username')) {
+            $val = trim($request->query('operator_username'));
+            $operator = DB::getDriverName() === 'pgsql' ? 'ILIKE' : 'LIKE';
+            $query->where('operator_username', $operator, "%{$val}%");
+        }
+
+        $items = $query->limit(100)->get();
+        return response()->json([
+            'status' => 'success',
+            'total' => $items->count(),
+            'data' => $items,
+        ]);
+    }
+
+    /**
+     * Listare rezultate inspecții AOI
+     */
+    public function getAoiResults(Request $request): JsonResponse
+    {
+        $query = AoiResult::orderBy('tested_at', 'desc')->orderBy('id', 'desc');
+
+        if ($request->filled('qr_serial_number')) {
+            $val = trim($request->query('qr_serial_number'));
+            $operator = DB::getDriverName() === 'pgsql' ? 'ILIKE' : 'LIKE';
+            $query->where('qr_serial_number', $operator, "%{$val}%");
+        }
+        if ($request->filled('test_result')) {
+            $query->where('test_result', strtoupper(trim($request->query('test_result'))));
+        }
+        if ($request->filled('defect_code')) {
+            $val = trim($request->query('defect_code'));
+            $operator = DB::getDriverName() === 'pgsql' ? 'ILIKE' : 'LIKE';
+            $query->where('defect_code', $operator, "%{$val}%");
+        }
+
+        $items = $query->limit(100)->get();
+        return response()->json([
+            'status' => 'success',
+            'total' => $items->count(),
+            'data' => $items,
+        ]);
+    }
+
+    /**
+     * Listare rezultate teste ICT
+     */
+    public function getIctResults(Request $request): JsonResponse
+    {
+        $query = IctResult::orderBy('tested_at', 'desc')->orderBy('id', 'desc');
+
+        if ($request->filled('qr_serial_number')) {
+            $val = trim($request->query('qr_serial_number'));
+            $operator = DB::getDriverName() === 'pgsql' ? 'ILIKE' : 'LIKE';
+            $query->where('qr_serial_number', $operator, "%{$val}%");
+        }
+        if ($request->filled('test_result')) {
+            $query->where('test_result', strtoupper(trim($request->query('test_result'))));
+        }
+
+        $items = $query->limit(100)->get();
+        return response()->json([
+            'status' => 'success',
+            'total' => $items->count(),
+            'data' => $items,
+        ]);
+    }
+
+    /**
+     * Listare rezultate teste EOL
+     */
+    public function getEolResults(Request $request): JsonResponse
+    {
+        $query = EolResult::orderBy('tested_at', 'desc')->orderBy('id', 'desc');
+
+        if ($request->filled('qr_serial_number')) {
+            $val = trim($request->query('qr_serial_number'));
+            $operator = DB::getDriverName() === 'pgsql' ? 'ILIKE' : 'LIKE';
+            $query->where('qr_serial_number', $operator, "%{$val}%");
+        }
+        if ($request->filled('test_result')) {
+            $query->where('test_result', strtoupper(trim($request->query('test_result'))));
+        }
+        if ($request->filled('product_ident')) {
+            $query->where('product_ident', $request->query('product_ident'));
+        }
+
+        $items = $query->limit(100)->get();
+        return response()->json([
+            'status' => 'success',
+            'total' => $items->count(),
+            'data' => $items,
+        ]);
     }
 }

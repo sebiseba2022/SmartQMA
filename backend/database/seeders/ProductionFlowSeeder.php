@@ -9,6 +9,7 @@ use App\Models\EolResult;
 use App\Models\IctResult;
 use App\Models\InventoryComponent;
 use App\Models\ProductDefinition;
+use App\Models\QrLaserMarking;
 use App\Models\SmdPlacement;
 use App\Models\StationFeeder;
 use App\Models\ThtPlacement;
@@ -233,8 +234,93 @@ class ProductionFlowSeeder extends Seeder
             );
         }
 
-        // 5. Exemplu complet trasabilitate PCB: ARD-UNO-2026-0001
-        $sampleQr = 'ARD-UNO-2026-0001';
+        // 5. Marcaje QR Laser (Serii de 12 cifre: YYMMDDxxxxxx)
+        $todayPrefix = Carbon::now()->format('ymd'); // 261029 pentru 29 Oct 2026
+        $laserSerials = [
+            [
+                'qr_serial_number' => $todayPrefix . '000001',
+                'product_model' => 'ARDUINO_UNO_R3',
+                'pcb_side' => 'TOP',
+                'laser_power_pct' => 85.00,
+                'mark_duration_ms' => 415,
+                'operator_username' => 'operator',
+                'marked_at' => Carbon::now()->subHours(5),
+                'status' => 'OK',
+                'notes' => 'Panou 1 / Bază marcare automată',
+            ],
+            [
+                'qr_serial_number' => $todayPrefix . '000002',
+                'product_model' => 'ARDUINO_UNO_R3',
+                'pcb_side' => 'TOP',
+                'laser_power_pct' => 85.50,
+                'mark_duration_ms' => 420,
+                'operator_username' => 'operator',
+                'marked_at' => Carbon::now()->subHours(4)->subMinutes(30),
+                'status' => 'OK',
+                'notes' => 'Panou 1 / PCB #2',
+            ],
+            [
+                'qr_serial_number' => $todayPrefix . '000003',
+                'product_model' => 'ARDUINO_UNO_R3',
+                'pcb_side' => 'TOP',
+                'laser_power_pct' => 84.80,
+                'mark_duration_ms' => 418,
+                'operator_username' => 'operator',
+                'marked_at' => Carbon::now()->subHours(3)->subMinutes(50),
+                'status' => 'OK',
+                'notes' => 'Panou 2 / Marcare automată',
+            ],
+            [
+                'qr_serial_number' => $todayPrefix . '000004',
+                'product_model' => 'ARDUINO_UNO_R3',
+                'pcb_side' => 'TOP',
+                'laser_power_pct' => 85.00,
+                'mark_duration_ms' => 422,
+                'operator_username' => 'operator',
+                'marked_at' => Carbon::now()->subHours(2)->subMinutes(15),
+                'status' => 'OK',
+                'notes' => 'Panou 2 / Marcare automată',
+            ],
+            [
+                'qr_serial_number' => $todayPrefix . '000005',
+                'product_model' => 'ARDUINO_UNO_R3',
+                'pcb_side' => 'TOP',
+                'laser_power_pct' => 85.20,
+                'mark_duration_ms' => 419,
+                'operator_username' => 'operator',
+                'marked_at' => Carbon::now()->subMinutes(45),
+                'status' => 'OK',
+                'notes' => 'Panou 3 / Gravare de verificare',
+            ],
+            [
+                'qr_serial_number' => '260902000001', // Exemplul cerut de utilizator: 2 Septembrie 2026
+                'product_model' => 'ARDUINO_UNO_R3',
+                'pcb_side' => 'TOP',
+                'laser_power_pct' => 85.00,
+                'mark_duration_ms' => 410,
+                'operator_username' => 'operator',
+                'marked_at' => Carbon::create(2026, 9, 2, 8, 30, 0),
+                'status' => 'RESCANAT',
+                'notes' => 'Lot pilot 2 septembrie 2026 rescanat',
+            ],
+        ];
+
+        foreach ($laserSerials as $ls) {
+            QrLaserMarking::updateOrCreate(
+                ['qr_serial_number' => $ls['qr_serial_number']],
+                $ls
+            );
+        }
+
+        // Curățare date vechi care nu respectă formatul strict YYMMDDNNNNNN
+        SmdPlacement::where('qr_serial_number', 'LIKE', 'ARD-%')->delete();
+        ThtPlacement::where('qr_serial_number', 'LIKE', 'ARD-%')->delete();
+        AoiResult::where('qr_serial_number', 'LIKE', 'ARD-%')->delete();
+        IctResult::where('qr_serial_number', 'LIKE', 'ARD-%')->delete();
+        EolResult::where('qr_serial_number', 'LIKE', 'ARD-%')->delete();
+
+        // 6. Exemplu complet trasabilitate PCB conform standardului unic YYMMDDNNNNNN
+        $tracedSerials = [$todayPrefix . '000001', '260902000001'];
 
         $smdPlacements = [
             ['position' => 'U3', 'internal_id' => 10003],
@@ -245,89 +331,92 @@ class ProductionFlowSeeder extends Seeder
             ['position' => 'F1', 'internal_id' => 10008],
             ['position' => 'Y1', 'internal_id' => 10009],
         ];
-        foreach ($smdPlacements as $smd) {
-            SmdPlacement::updateOrCreate(
-                ['qr_serial_number' => $sampleQr, 'bestuck_position' => $smd['position']],
+
+        foreach ($tracedSerials as $sampleQr) {
+            foreach ($smdPlacements as $smd) {
+                SmdPlacement::updateOrCreate(
+                    ['qr_serial_number' => $sampleQr, 'bestuck_position' => $smd['position']],
+                    [
+                        'station_id' => 'WS-SMD-04',
+                        'component_internal_id' => $smd['internal_id'],
+                        'operator_username' => 'operator',
+                        'mounted_at' => Carbon::now()->subHours(4),
+                    ]
+                );
+            }
+
+            AoiResult::updateOrCreate(
+                ['qr_serial_number' => $sampleQr, 'station_id' => 'WS-AOI-05', 'tested_at' => Carbon::now()->subHours(3)->subMinutes(30)->toDateTimeString()],
                 [
-                    'station_id' => 'WS-SMD-04',
-                    'component_internal_id' => $smd['internal_id'],
+                    'test_result' => 'FAIL',
+                    'defect_code' => 'BRIDGE_U3',
+                    'details' => 'Scurtcircuit pasta reflow pini 5-6 ATmega16U2 QFN-32',
                     'operator_username' => 'operator',
-                    'mounted_at' => Carbon::now()->subHours(4),
+                ]
+            );
+            AoiResult::updateOrCreate(
+                ['qr_serial_number' => $sampleQr, 'station_id' => 'WS-AOI-05', 'tested_at' => Carbon::now()->subHours(3)->toDateTimeString()],
+                [
+                    'test_result' => 'PASS',
+                    'defect_code' => null,
+                    'details' => 'Remediat reflow & curatare cu ultrasunete. Inspectie optica 100% OK',
+                    'operator_username' => 'operator',
+                ]
+            );
+
+            $thtPlacements = [
+                ['position' => 'U1', 'internal_id' => 10002],
+            ];
+            foreach ($thtPlacements as $tht) {
+                ThtPlacement::updateOrCreate(
+                    ['qr_serial_number' => $sampleQr, 'bestuck_position' => $tht['position']],
+                    [
+                        'station_id' => 'WS-THT-06',
+                        'component_internal_id' => $tht['internal_id'],
+                        'operator_username' => 'operator',
+                        'mounted_at' => Carbon::now()->subHours(2),
+                    ]
+                );
+            }
+
+            IctResult::updateOrCreate(
+                ['qr_serial_number' => $sampleQr, 'station_id' => 'WS-ICT-07', 'tested_at' => Carbon::now()->subHours(1)->subMinutes(40)->toDateTimeString()],
+                [
+                    'test_result' => 'FAIL',
+                    'measured_values' => ['U5_VOUT' => '5.01V', 'U2_VOUT' => 'SHORT'],
+                    'failed_nets' => 'NET_3V3_SHORT',
+                    'operator_username' => 'operator',
+                ]
+            );
+            IctResult::updateOrCreate(
+                ['qr_serial_number' => $sampleQr, 'station_id' => 'WS-ICT-07', 'tested_at' => Carbon::now()->subHours(1)->subMinutes(20)->toDateTimeString()],
+                [
+                    'test_result' => 'PASS',
+                    'measured_values' => ['U5_VOUT' => '5.01V', 'U2_VOUT' => '3.30V', 'Y1_FREQ' => '16.000MHz', 'VCC_GND' => '>100k'],
+                    'failed_nets' => null,
+                    'operator_username' => 'operator',
+                ]
+            );
+
+            EolResult::updateOrCreate(
+                ['qr_serial_number' => $sampleQr, 'station_id' => 'WS-EOL-08'],
+                [
+                    'product_ident' => 'ARDUINO_UNO_R3',
+                    'hardware_version' => 'Rev 3.0',
+                    'software_version' => 'v1.1.2',
+                    'test_result' => 'PASS',
+                    'current_draw_ma' => 47.85,
+                    'functional_checks' => [
+                        'usb_enumeration' => true,
+                        'bootloader_checksum' => 'OK',
+                        'uart_loopback' => true,
+                        'adc_reference_v' => 5.01,
+                        'gpio_all_pass' => true,
+                    ],
+                    'operator_username' => 'operator',
+                    'tested_at' => Carbon::now()->subMinutes(30),
                 ]
             );
         }
-
-        AoiResult::updateOrCreate(
-            ['qr_serial_number' => $sampleQr, 'station_id' => 'WS-AOI-05', 'tested_at' => Carbon::now()->subHours(3)->subMinutes(30)->toDateTimeString()],
-            [
-                'test_result' => 'FAIL',
-                'defect_code' => 'BRIDGE_U3',
-                'details' => 'Scurtcircuit pasta reflow pini 5-6 ATmega16U2 QFN-32',
-                'operator_username' => 'operator',
-            ]
-        );
-        AoiResult::updateOrCreate(
-            ['qr_serial_number' => $sampleQr, 'station_id' => 'WS-AOI-05', 'tested_at' => Carbon::now()->subHours(3)->toDateTimeString()],
-            [
-                'test_result' => 'PASS',
-                'defect_code' => null,
-                'details' => 'Remediat reflow & curatare cu ultrasunete. Inspectie optica 100% OK',
-                'operator_username' => 'operator',
-            ]
-        );
-
-        $thtPlacements = [
-            ['position' => 'U1', 'internal_id' => 10002],
-        ];
-        foreach ($thtPlacements as $tht) {
-            ThtPlacement::updateOrCreate(
-                ['qr_serial_number' => $sampleQr, 'bestuck_position' => $tht['position']],
-                [
-                    'station_id' => 'WS-THT-06',
-                    'component_internal_id' => $tht['internal_id'],
-                    'operator_username' => 'operator',
-                    'mounted_at' => Carbon::now()->subHours(2),
-                ]
-            );
-        }
-
-        IctResult::updateOrCreate(
-            ['qr_serial_number' => $sampleQr, 'station_id' => 'WS-ICT-07', 'tested_at' => Carbon::now()->subHours(1)->subMinutes(40)->toDateTimeString()],
-            [
-                'test_result' => 'FAIL',
-                'measured_values' => ['U5_VOUT' => '5.01V', 'U2_VOUT' => 'SHORT'],
-                'failed_nets' => 'NET_3V3_SHORT',
-                'operator_username' => 'operator',
-            ]
-        );
-        IctResult::updateOrCreate(
-            ['qr_serial_number' => $sampleQr, 'station_id' => 'WS-ICT-07', 'tested_at' => Carbon::now()->subHours(1)->subMinutes(20)->toDateTimeString()],
-            [
-                'test_result' => 'PASS',
-                'measured_values' => ['U5_VOUT' => '5.01V', 'U2_VOUT' => '3.30V', 'Y1_FREQ' => '16.000MHz', 'VCC_GND' => '>100k'],
-                'failed_nets' => null,
-                'operator_username' => 'operator',
-            ]
-        );
-
-        EolResult::updateOrCreate(
-            ['qr_serial_number' => $sampleQr, 'station_id' => 'WS-EOL-08'],
-            [
-                'product_ident' => 'ARDUINO_UNO_R3',
-                'hardware_version' => 'Rev 3.0',
-                'software_version' => 'v1.1.2',
-                'test_result' => 'PASS',
-                'current_draw_ma' => 47.85,
-                'functional_checks' => [
-                    'usb_enumeration' => true,
-                    'bootloader_checksum' => 'OK',
-                    'uart_loopback' => true,
-                    'adc_reference_v' => 5.01,
-                    'gpio_all_pass' => true,
-                ],
-                'operator_username' => 'operator',
-                'tested_at' => Carbon::now()->subMinutes(30),
-            ]
-        );
     }
 }

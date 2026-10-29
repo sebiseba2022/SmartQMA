@@ -1,26 +1,752 @@
-import type { Language } from '../types';
+import {
+  useState,
+  useEffect,
+  useCallback,
+  useMemo,
+  type FormEvent,
+} from 'react';
+import type { Language, User, AoiResultItem } from '../types';
 
-interface StationPageProps {
+interface AoiPageProps {
   lang: Language;
+  currentUser?: User | null;
 }
 
-export function AoiPage({ lang }: StationPageProps) {
+interface AoiFilters {
+  qr_serial_number: string;
+  test_result: string;
+  defect_code: string;
+  operator_username: string;
+}
+
+const EMPTY_FILTERS: AoiFilters = {
+  qr_serial_number: '',
+  test_result: '',
+  defect_code: '',
+  operator_username: '',
+};
+
+const STANDARD_DEFECT_CODES = [
+  { code: 'BRIDGE_U3', label: 'Punte cositor (Solder bridge) pini U3' },
+  { code: 'BRIDGE_U1', label: 'Punte cositor pini microcontroler U1' },
+  { code: 'MISSING_R1', label: 'Componentă lipsă (Missing component) R1' },
+  { code: 'MISSING_C1', label: 'Componentă lipsă C1' },
+  { code: 'TOMBSTONE_C2', label: 'Componentă ridicată (Tombstoning) C2' },
+  { code: 'OFFSET_U2', label: 'Deplasare aliniere (Misalignment) U2' },
+  { code: 'POLARITY_D1', label: 'Polaritate inversată (Reverse polarity) D1' },
+  { code: 'INSUFFICIENT_SOLDER', label: 'Cositor insuficient pe pad' },
+  { code: 'EXCESS_SOLDER', label: 'Exces de cositor / bilă liberă' },
+];
+
+const MIN_EMPTY_TABLE_ROWS = 22;
+
+export function AoiPage({ lang, currentUser }: AoiPageProps) {
+  const [results, setResults] = useState<AoiResultItem[]>([]);
+  const [totalCount, setTotalCount] = useState<number>(0);
+  const [, setLoading] = useState<boolean>(true);
+  const [error, setError] = useState<string | null>(null);
+  const [notice, setNotice] = useState<string | null>(null);
+
+  // Filtre pe coloane
+  const [filters, setFilters] = useState<AoiFilters>(EMPTY_FILTERS);
+
+  // Bară rapidă
+  const [quickPcbSerial, setQuickPcbSerial] = useState<string>('');
+
+  // Modale
+  const [isRecordModalOpen, setIsRecordModalOpen] = useState(false);
+  const [selectedResult, setSelectedResult] = useState<AoiResultItem | null>(null);
+  const [submitting, setSubmitting] = useState(false);
+
+  // Formular inspecție nouă
+  const [formSerial, setFormSerial] = useState('');
+  const [formResult, setFormResult] = useState<'PASS' | 'FAIL'>('PASS');
+  const [formDefectCode, setFormDefectCode] = useState('BRIDGE_U3');
+  const [formDetails, setFormDetails] = useState('');
+
+  // Preluare rezultate AOI
+  const fetchResults = useCallback(async () => {
+    try {
+      setLoading(true);
+      setError(null);
+      const res = await fetch('/api/v1/tests/aoi');
+      if (!res.ok) throw new Error('Eroare la încărcarea inspecțiilor AOI');
+      const data = await res.json();
+      setResults(data.data || []);
+      setTotalCount(data.total || (data.data ? data.data.length : 0));
+    } catch (err: any) {
+      setError(err.message || 'Eroare de rețea la preluarea inspecțiilor.');
+    } finally {
+      setLoading(false);
+    }
+  }, []);
+
+  useEffect(() => {
+    fetchResults();
+  }, [fetchResults]);
+
+  // Salvare inspecție AOI nouă
+  const handleRecordSubmit = async (e: FormEvent) => {
+    e.preventDefault();
+    const cleanSerial = formSerial.trim();
+    if (!cleanSerial) return;
+
+    try {
+      setSubmitting(true);
+      setError(null);
+      const res = await fetch('/api/v1/tests/aoi', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          station_id: 'WS-AOI-05',
+          qr_serial_number: cleanSerial,
+          test_result: formResult,
+          defect_code: formResult === 'FAIL' ? formDefectCode : null,
+          details: formDetails.trim() || (formResult === 'PASS' ? 'Inspecție optică conformă 100%' : 'Defect optic identificat'),
+          operator_username: currentUser?.username || 'operator',
+        }),
+      });
+
+      const data = await res.json();
+      if (!res.ok) throw new Error(data.message || 'Eroare la salvare.');
+
+      setNotice(
+        lang === 'ro'
+          ? `Inspecția optică pentru PCB ${cleanSerial} a fost înregistrată: ${formResult}.`
+          : `AOI inspection for PCB ${cleanSerial} recorded: ${formResult}.`
+      );
+      setIsRecordModalOpen(false);
+      setFormSerial('');
+      setFormDetails('');
+      fetchResults();
+    } catch (err: any) {
+      setError(err.message);
+    } finally {
+      setSubmitting(false);
+    }
+  };
+
+  // Marcaj rapid PASS din bara de sus
+  const handleQuickVerdict = async (verdict: 'PASS' | 'FAIL') => {
+    const cleanSerial = quickPcbSerial.trim();
+    if (!cleanSerial) return;
+
+    try {
+      setSubmitting(true);
+      setError(null);
+      const res = await fetch('/api/v1/tests/aoi', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          station_id: 'WS-AOI-05',
+          qr_serial_number: cleanSerial,
+          test_result: verdict,
+          defect_code: verdict === 'FAIL' ? 'BRIDGE_U3' : null,
+          details: verdict === 'PASS' ? 'Inspecție optică automată PASS' : 'Defect semnalat la verificare rapidă',
+          operator_username: currentUser?.username || 'operator',
+        }),
+      });
+
+      const data = await res.json();
+      if (!res.ok) throw new Error(data.message || 'Eroare.');
+
+      setNotice(
+        lang === 'ro'
+          ? `PCB ${cleanSerial} marcat cu ${verdict} la AOI.`
+          : `PCB ${cleanSerial} marked as ${verdict} at AOI.`
+      );
+      setQuickPcbSerial('');
+      fetchResults();
+    } catch (err: any) {
+      setError(err.message);
+    } finally {
+      setSubmitting(false);
+    }
+  };
+
+  // Calcul statistici FPY
+  const passCount = useMemo(() => results.filter((r) => r.test_result === 'PASS').length, [results]);
+  const failCount = useMemo(() => results.filter((r) => r.test_result === 'FAIL').length, [results]);
+  const fpyRate = useMemo(() => {
+    if (results.length === 0) return '100.0%';
+    return `${((passCount / results.length) * 100).toFixed(1)}%`;
+  }, [results, passCount]);
+
+  // Filtrare tabel
+  const filteredResults = useMemo(() => {
+    return results.filter((r) => {
+      if (
+        filters.qr_serial_number &&
+        !r.qr_serial_number.toLowerCase().includes(filters.qr_serial_number.toLowerCase())
+      ) {
+        return false;
+      }
+      if (filters.test_result && r.test_result !== filters.test_result) {
+        return false;
+      }
+      if (
+        filters.defect_code &&
+        !(r.defect_code || '').toLowerCase().includes(filters.defect_code.toLowerCase())
+      ) {
+        return false;
+      }
+      if (
+        filters.operator_username &&
+        !(r.operator_username || '').toLowerCase().includes(filters.operator_username.toLowerCase())
+      ) {
+        return false;
+      }
+      return true;
+    });
+  }, [results, filters]);
+
+  const emptyRowsCount = Math.max(0, MIN_EMPTY_TABLE_ROWS - filteredResults.length);
+
+  // Export CSV
+  const handleExportCsv = () => {
+    const headers = [
+      'Nr_Crt',
+      'Serie_PCB',
+      'Rezultat_Test',
+      'Cod_Defect',
+      'Detalii_Optice',
+      'Operator',
+      'Data_Inspectie',
+      'Statie',
+    ];
+    const rows = filteredResults.map((r, idx) => [
+      idx + 1,
+      r.qr_serial_number,
+      r.test_result,
+      r.defect_code || '',
+      `"${(r.details || '').replace(/"/g, '""')}"`,
+      r.operator_username || '',
+      r.tested_at,
+      r.station_id,
+    ]);
+
+    const csvContent =
+      'data:text/csv;charset=utf-8,' +
+      [headers.join(','), ...rows.map((row) => row.join(','))].join('\n');
+    const encodedUri = encodeURI(csvContent);
+    const link = document.createElement('a');
+    link.setAttribute('href', encodedUri);
+    link.setAttribute('download', `inspectii_aoi_${new Date().toISOString().slice(0, 10)}.csv`);
+    document.body.appendChild(link);
+    link.click();
+    document.body.removeChild(link);
+  };
+
   return (
-    <div className="station-content-wrapper">
-      <div className="station-banner-card">
-        <div className="station-code-pill">WS-AOI-05</div>
-        <h2 className="station-headline">
-          {lang === 'ro' ? 'Punct de verificare — AOI' : 'Inspection point — AOI'}
-        </h2>
-        <p className="station-description">
-          {lang === 'ro'
-            ? 'Inspecție optică automată post-reflow pentru verificarea lipiturilor, alinierii și orientării componentelor SMD.'
-            : 'Post-reflow automated optical inspection for solder joints, component orientation, and placement accuracy.'}
-        </p>
-      </div>
-      <div className="station-workspace-area blank-page-white">
-        {/* Spațiu pregătit pentru stația de inspecție optică AOI */}
-      </div>
+    <div className="magazie-workspace-split">
+      {/* Coloana din stânga */}
+      <aside className="magazie-left-rail" aria-label="Acțiuni AOI">
+        <div className="magazie-rail-group">
+          {/* Înregistrează inspecție nouă */}
+          <div className="magazie-round-btn-item">
+            <button
+              type="button"
+              className="magazie-round-btn primary"
+              title={lang === 'ro' ? 'Înregistrează inspecție AOI nouă' : 'Record new AOI test'}
+              onClick={() => setIsRecordModalOpen(true)}
+            >
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5">
+                <path strokeLinecap="round" strokeLinejoin="round" d="M12 4v16m8-8H4" />
+              </svg>
+            </button>
+            <span className="magazie-round-btn-label">
+              {lang === 'ro' ? 'Inspecție nouă' : 'New test'}
+            </span>
+          </div>
+
+          {/* Filtru doar FAIL */}
+          <div className="magazie-round-btn-item">
+            <button
+              type="button"
+              className={`magazie-round-btn ${filters.test_result === 'FAIL' ? 'active' : ''}`}
+              title={lang === 'ro' ? 'Afișează doar defecte (FAIL)' : 'Show FAIL only'}
+              onClick={() =>
+                setFilters({
+                  ...filters,
+                  test_result: filters.test_result === 'FAIL' ? '' : 'FAIL',
+                })
+              }
+            >
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+                <path
+                  strokeLinecap="round"
+                  strokeLinejoin="round"
+                  d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z"
+                />
+              </svg>
+            </button>
+            <span className="magazie-round-btn-label">
+              {lang === 'ro' ? 'Doar defecte' : 'Defects only'}
+            </span>
+          </div>
+
+          {/* Reîmprospătează lista */}
+          <div className="magazie-round-btn-item">
+            <button
+              type="button"
+              className="magazie-round-btn"
+              title={lang === 'ro' ? 'Reîmprospătează lista' : 'Refresh list'}
+              onClick={fetchResults}
+            >
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+                <path
+                  strokeLinecap="round"
+                  strokeLinejoin="round"
+                  d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15"
+                />
+              </svg>
+            </button>
+            <span className="magazie-round-btn-label">
+              {lang === 'ro' ? 'Reîmprospătare' : 'Refresh'}
+            </span>
+          </div>
+
+          {/* Export CSV */}
+          <div className="magazie-round-btn-item">
+            <button
+              type="button"
+              className="magazie-round-btn"
+              title={lang === 'ro' ? 'Exportă CSV' : 'Export CSV'}
+              onClick={handleExportCsv}
+            >
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+                <path
+                  strokeLinecap="round"
+                  strokeLinejoin="round"
+                  d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-4l-4 4m0 0l-4-4m4 4V4"
+                />
+              </svg>
+            </button>
+            <span className="magazie-round-btn-label">
+              {lang === 'ro' ? 'Exportă CSV' : 'Export CSV'}
+            </span>
+          </div>
+        </div>
+      </aside>
+
+      {/* Zona principală */}
+      <main className="magazie-table-fullpage">
+        {error && (
+          <div className="magazie-table-notice" style={{ background: '#fef2f2', color: '#991b1b' }}>
+            <span>{error}</span>
+            <button type="button" className="magazie-notice-close" onClick={() => setError(null)}>
+              ✕
+            </button>
+          </div>
+        )}
+        {notice && (
+          <div className="magazie-table-notice" style={{ background: '#ecfdf5', color: '#065f46' }}>
+            <span>{notice}</span>
+            <button type="button" className="magazie-notice-close" onClick={() => setNotice(null)}>
+              ✕
+            </button>
+          </div>
+        )}
+
+        {/* Bară rapidă de inspecție optică */}
+        <section className="station-quick-bar" aria-label="Operare rapidă AOI">
+          <div className="station-quick-group">
+            <span className="station-quick-label">
+              {lang === 'ro' ? 'Verificare PCB:' : 'PCB check:'}
+            </span>
+            <input
+              type="text"
+              className="station-quick-input"
+              placeholder="ex: 261029000001"
+              value={quickPcbSerial}
+              onChange={(e) => setQuickPcbSerial(e.target.value)}
+            />
+            <button
+              type="button"
+              className="station-quick-btn"
+              style={{ background: '#16a34a' }}
+              disabled={submitting || !quickPcbSerial.trim()}
+              onClick={() => handleQuickVerdict('PASS')}
+            >
+              ✓ PASS
+            </button>
+            <button
+              type="button"
+              className="station-quick-btn"
+              style={{ background: '#dc2626' }}
+              disabled={submitting || !quickPcbSerial.trim()}
+              onClick={() => handleQuickVerdict('FAIL')}
+            >
+              ✕ FAIL
+            </button>
+          </div>
+
+          <div className="station-kpi-group">
+            <div className="station-kpi-chip success">
+              <span>{lang === 'ro' ? 'Rată FPY:' : 'FPY Yield:'}</span>
+              <strong>{fpyRate}</strong>
+            </div>
+            <div className="station-kpi-chip">
+              <span>PASS:</span>
+              <strong style={{ color: '#4ade80' }}>{passCount}</strong>
+            </div>
+            <div className="station-kpi-chip danger">
+              <span>FAIL:</span>
+              <strong>{failCount}</strong>
+            </div>
+            <div className="station-kpi-chip">
+              <span>{lang === 'ro' ? 'Total inspectate:' : 'Total inspected:'}</span>
+              <strong>{totalCount}</strong>
+            </div>
+          </div>
+        </section>
+
+        {/* Toolbar informativ */}
+        <div className="magazie-table-toolbar-info">
+          <span>
+            {lang === 'ro'
+              ? 'Punct de verificare AOI — Inspecție optică automată post-reflow & control joncțiuni'
+              : 'AOI Inspection Point — Post-Reflow Automated Optical Inspection & Joint Control'}
+          </span>
+          <span className="magazie-count-badge">
+            {lang === 'ro'
+              ? `${filteredResults.length} din ${totalCount} inspecții afișate`
+              : `${filteredResults.length} of ${totalCount} inspections displayed`}
+          </span>
+        </div>
+
+        {/* Tabel */}
+        <div className="magazie-fulltable-container">
+          <table className="magazie-pro-table">
+            <thead>
+              <tr>
+                <th className="col-idx">#</th>
+                <th style={{ width: '160px' }}>{lang === 'ro' ? 'Serie PCB' : 'PCB Serial'}</th>
+                <th style={{ width: '120px' }}>{lang === 'ro' ? 'Rezultat' : 'Verdict'}</th>
+                <th style={{ width: '160px' }}>{lang === 'ro' ? 'Cod defect' : 'Defect code'}</th>
+                <th style={{ width: '32%' }}>
+                  {lang === 'ro' ? 'Detalii optice / observatii cameră' : 'Optical details / observations'}
+                </th>
+                <th style={{ width: '130px' }}>{lang === 'ro' ? 'Operator' : 'Operator'}</th>
+                <th style={{ width: '165px' }}>{lang === 'ro' ? 'Data inspecției' : 'Tested at'}</th>
+                <th style={{ width: '100px', textAlign: 'center' }}>
+                  {lang === 'ro' ? 'Detalii' : 'Details'}
+                </th>
+              </tr>
+            </thead>
+            <tbody>
+              {/* Rând interogare */}
+              <tr className="magazie-query-row">
+                <td className="magazie-query-idx-cell">⌕</td>
+                <td className="magazie-query-cell">
+                  <input
+                    type="text"
+                    className="magazie-cell-input ident-input"
+                    placeholder={lang === 'ro' ? 'Filtrează serie...' : 'Filter serial...'}
+                    value={filters.qr_serial_number}
+                    onChange={(e) =>
+                      setFilters({ ...filters, qr_serial_number: e.target.value })
+                    }
+                  />
+                </td>
+                <td className="magazie-query-cell">
+                  <select
+                    className="magazie-cell-input"
+                    value={filters.test_result}
+                    onChange={(e) => setFilters({ ...filters, test_result: e.target.value })}
+                  >
+                    <option value="">{lang === 'ro' ? 'Toate' : 'All'}</option>
+                    <option value="PASS">PASS</option>
+                    <option value="FAIL">FAIL</option>
+                  </select>
+                </td>
+                <td className="magazie-query-cell">
+                  <input
+                    type="text"
+                    className="magazie-cell-input"
+                    placeholder={lang === 'ro' ? 'Cod defect...' : 'Defect code...'}
+                    value={filters.defect_code}
+                    onChange={(e) => setFilters({ ...filters, defect_code: e.target.value })}
+                  />
+                </td>
+                <td className="magazie-query-cell"></td>
+                <td className="magazie-query-cell">
+                  <input
+                    type="text"
+                    className="magazie-cell-input"
+                    placeholder="Operator..."
+                    value={filters.operator_username}
+                    onChange={(e) =>
+                      setFilters({ ...filters, operator_username: e.target.value })
+                    }
+                  />
+                </td>
+                <td className="magazie-query-cell"></td>
+                <td className="magazie-query-cell"></td>
+              </tr>
+
+              {filteredResults.map((r, idx) => (
+                <tr
+                  key={r.id}
+                  className="magazie-data-row"
+                  onClick={() => setSelectedResult(r)}
+                >
+                  <td className="col-idx-cell">{idx + 1}</td>
+                  <td className="magazie-mono-cell" style={{ fontWeight: 700, color: '#ea580c' }}>
+                    {r.qr_serial_number}
+                  </td>
+                  <td>
+                    <span
+                      className={`status-badge ${r.test_result === 'PASS' ? 'pass' : 'fail'}`}
+                    >
+                      {r.test_result}
+                    </span>
+                  </td>
+                  <td className="magazie-mono-cell" style={{ fontWeight: 600, color: r.defect_code ? '#b91c1c' : '#64748b' }}>
+                    {r.defect_code || '—'}
+                  </td>
+                  <td style={{ color: '#334155', fontSize: '13px' }}>{r.details || '—'}</td>
+                  <td>{r.operator_username || '—'}</td>
+                  <td className="magazie-mono-cell" style={{ fontSize: '12px', color: '#64748b' }}>
+                    {r.tested_at ? new Date(r.tested_at).toLocaleString('ro-RO') : '—'}
+                  </td>
+                  <td style={{ textAlign: 'center' }}>
+                    <button
+                      type="button"
+                      className="quick-fill-pill"
+                      onClick={(e) => {
+                        e.stopPropagation();
+                        setSelectedResult(r);
+                      }}
+                    >
+                      {lang === 'ro' ? 'Detalii' : 'Details'}
+                    </button>
+                  </td>
+                </tr>
+              ))}
+
+              {Array.from({ length: emptyRowsCount }).map((_, i) => (
+                <tr key={`blank-${i}`} className="magazie-blank-row">
+                  <td className="col-idx-cell">{filteredResults.length + i + 1}</td>
+                  <td></td>
+                  <td></td>
+                  <td></td>
+                  <td></td>
+                  <td></td>
+                  <td></td>
+                  <td></td>
+                </tr>
+              ))}
+            </tbody>
+          </table>
+        </div>
+      </main>
+
+      {/* Modal: Înregistrare test AOI */}
+      {isRecordModalOpen && (
+        <div className="magazie-modal-backdrop" onClick={() => setIsRecordModalOpen(false)}>
+          <div className="magazie-modal-card" onClick={(e) => e.stopPropagation()}>
+            <div className="magazie-modal-header">
+              <h3 className="magazie-modal-title">
+                {lang === 'ro' ? 'Înregistrare inspecție optică AOI' : 'Record AOI inspection'}
+              </h3>
+              <button
+                type="button"
+                className="magazie-modal-close"
+                onClick={() => setIsRecordModalOpen(false)}
+              >
+                ✕
+              </button>
+            </div>
+
+            <form onSubmit={handleRecordSubmit}>
+              <div className="magazie-modal-form">
+                <div className="magazie-form-field" style={{ gridColumn: 'span 2' }}>
+                  <label>{lang === 'ro' ? 'Serie placă PCB (12 cifre)*' : 'PCB serial (12 digits)*'}</label>
+                  <input
+                    type="text"
+                    required
+                    autoFocus
+                    placeholder="ex: 261029000001"
+                    value={formSerial}
+                    onChange={(e) => setFormSerial(e.target.value)}
+                    style={{
+                      fontFamily: 'JetBrains Mono, monospace',
+                      fontSize: '15px',
+                      fontWeight: 700,
+                    }}
+                  />
+                </div>
+
+                <div className="magazie-form-field">
+                  <label>{lang === 'ro' ? 'Rezultat test optice*' : 'Optical verdict*'}</label>
+                  <select
+                    value={formResult}
+                    onChange={(e) => setFormResult(e.target.value as any)}
+                  >
+                    <option value="PASS">PASS (Conform)</option>
+                    <option value="FAIL">FAIL (Neconform)</option>
+                  </select>
+                </div>
+
+                {formResult === 'FAIL' ? (
+                  <div className="magazie-form-field">
+                    <label>{lang === 'ro' ? 'Cod defect identificat*' : 'Defect code*'}</label>
+                    <select
+                      value={formDefectCode}
+                      onChange={(e) => setFormDefectCode(e.target.value)}
+                    >
+                      {STANDARD_DEFECT_CODES.map((d) => (
+                        <option key={d.code} value={d.code}>
+                          {d.code} — {d.label}
+                        </option>
+                      ))}
+                    </select>
+                  </div>
+                ) : (
+                  <div className="magazie-form-field">
+                    <label>{lang === 'ro' ? 'Stare conformitate' : 'Status'}</label>
+                    <input type="text" disabled value="Lipituri & Aliniere 100% OK" />
+                  </div>
+                )}
+
+                <div className="magazie-form-field" style={{ gridColumn: 'span 2' }}>
+                  <label>{lang === 'ro' ? 'Detalii observate la cameră' : 'Camera observations'}</label>
+                  <input
+                    type="text"
+                    placeholder={
+                      lang === 'ro'
+                        ? 'Observații specifice / pini analizați...'
+                        : 'Specific observations...'
+                    }
+                    value={formDetails}
+                    onChange={(e) => setFormDetails(e.target.value)}
+                  />
+                </div>
+              </div>
+
+              <div className="magazie-modal-actions">
+                <button
+                  type="button"
+                  className="magazie-btn-cancel"
+                  onClick={() => setIsRecordModalOpen(false)}
+                >
+                  {lang === 'ro' ? 'Anulează' : 'Cancel'}
+                </button>
+                <button
+                  type="submit"
+                  className="magazie-btn-submit"
+                  disabled={submitting || !formSerial.trim()}
+                >
+                  {submitting
+                    ? lang === 'ro'
+                      ? 'Se salvează...'
+                      : 'Saving...'
+                    : lang === 'ro'
+                    ? 'Confirmă rezultat AOI'
+                    : 'Confirm AOI test'}
+                </button>
+              </div>
+            </form>
+          </div>
+        </div>
+      )}
+
+      {/* Modal: Detalii inspecție */}
+      {selectedResult && (
+        <div className="magazie-modal-backdrop" onClick={() => setSelectedResult(null)}>
+          <div className="magazie-modal-card" onClick={(e) => e.stopPropagation()}>
+            <div className="magazie-modal-header">
+              <h3 className="magazie-modal-title">
+                {lang === 'ro' ? 'Fișă inspecție optică AOI' : 'AOI inspection card'}
+              </h3>
+              <button
+                type="button"
+                className="magazie-modal-close"
+                onClick={() => setSelectedResult(null)}
+              >
+                ✕
+              </button>
+            </div>
+
+            <div
+              style={{
+                display: 'grid',
+                gridTemplateColumns: '1fr 1fr',
+                gap: '12px',
+                background: '#f8fafc',
+                border: '1px solid #e2e8f0',
+                borderRadius: '8px',
+                padding: '14px',
+                fontSize: '13px',
+              }}
+            >
+              <div>
+                <span style={{ color: '#64748b' }}>{lang === 'ro' ? 'Serie PCB:' : 'PCB Serial:'}</span>
+                <div style={{ fontFamily: 'monospace', fontWeight: 700, color: '#ea580c' }}>
+                  {selectedResult.qr_serial_number}
+                </div>
+              </div>
+
+              <div>
+                <span style={{ color: '#64748b' }}>{lang === 'ro' ? 'Rezultat:' : 'Verdict:'}</span>
+                <div>
+                  <span
+                    className={`status-badge ${
+                      selectedResult.test_result === 'PASS' ? 'pass' : 'fail'
+                    }`}
+                  >
+                    {selectedResult.test_result}
+                  </span>
+                </div>
+              </div>
+
+              <div>
+                <span style={{ color: '#64748b' }}>{lang === 'ro' ? 'Cod defect:' : 'Defect code:'}</span>
+                <div style={{ fontFamily: 'monospace', fontWeight: 700, color: selectedResult.defect_code ? '#b91c1c' : '#64748b' }}>
+                  {selectedResult.defect_code || '— (Niciun defect)'}
+                </div>
+              </div>
+
+              <div>
+                <span style={{ color: '#64748b' }}>{lang === 'ro' ? 'Stație inspecție:' : 'Station ID:'}</span>
+                <div style={{ fontWeight: 600 }}>{selectedResult.station_id}</div>
+              </div>
+
+              <div style={{ gridColumn: 'span 2' }}>
+                <span style={{ color: '#64748b' }}>{lang === 'ro' ? 'Observații optice:' : 'Observations:'}</span>
+                <div style={{ color: '#0f172a', fontWeight: 500 }}>
+                  {selectedResult.details || '—'}
+                </div>
+              </div>
+
+              <div>
+                <span style={{ color: '#64748b' }}>{lang === 'ro' ? 'Operator:' : 'Operator:'}</span>
+                <div>{selectedResult.operator_username || '—'}</div>
+              </div>
+
+              <div>
+                <span style={{ color: '#64748b' }}>{lang === 'ro' ? 'Data testării:' : 'Tested at:'}</span>
+                <div>
+                  {selectedResult.tested_at
+                    ? new Date(selectedResult.tested_at).toLocaleString('ro-RO')
+                    : '—'}
+                </div>
+              </div>
+            </div>
+
+            <div className="magazie-modal-actions">
+              <button
+                type="button"
+                className="magazie-btn-cancel"
+                onClick={() => setSelectedResult(null)}
+              >
+                {lang === 'ro' ? 'Închide' : 'Close'}
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
     </div>
   );
 }

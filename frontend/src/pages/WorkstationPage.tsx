@@ -99,17 +99,17 @@ export function WorkstationPage({
             case 'receptie-marfa':
               return <ReceptieMarfaPage lang={lang} />;
             case 'qr-laser':
-              return <QrLaserPage lang={lang} />;
+              return <QrLaserPage lang={lang} currentUser={currentUser} />;
             case 'smd':
-              return <SmdPage lang={lang} />;
+              return <SmdPage lang={lang} currentUser={currentUser} />;
             case 'aoi':
-              return <AoiPage lang={lang} />;
+              return <AoiPage lang={lang} currentUser={currentUser} />;
             case 'tht':
-              return <ThtPage lang={lang} />;
+              return <ThtPage lang={lang} currentUser={currentUser} />;
             case 'ict':
-              return <IctPage lang={lang} />;
+              return <IctPage lang={lang} currentUser={currentUser} />;
             case 'eol':
-              return <EolPage lang={lang} />;
+              return <EolPage lang={lang} currentUser={currentUser} />;
             case 'export':
               return <ExportPage lang={lang} />;
             case 'statistica':

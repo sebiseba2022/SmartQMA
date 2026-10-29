@@ -369,16 +369,27 @@ Route::prefix('v1')->group(function () {
     Route::patch('/inventory/{id}/arrival', [TraceabilityController::class, 'updateInventoryArrival']);
     Route::delete('/inventory/{id}', [TraceabilityController::class, 'deleteInventory']);
 
+    // Marcare Laser QR PCB (12 cifre: YYMMDDxxxxxx)
+    Route::get('/laser/markings', [TraceabilityController::class, 'getLaserMarkings']);
+    Route::get('/laser/next-serial', [TraceabilityController::class, 'getNextLaserSerial']);
+    Route::post('/laser/mark', [TraceabilityController::class, 'recordLaserMarking']);
+    Route::post('/laser/rescan', [TraceabilityController::class, 'rescanLaserPcb']);
+
     // Configurare alimentatoare (feeder / role scanate o singură dată la stație)
     Route::get('/feeders/{stationId}', [TraceabilityController::class, 'getStationFeeders']);
     Route::post('/feeders/load', [TraceabilityController::class, 'loadFeeder']);
 
-    // Înregistrare componente montate pe PCB
+    // Înregistrare & listare componente montate pe PCB
+    Route::get('/placements/smd', [TraceabilityController::class, 'getSmdPlacements']);
     Route::post('/placements/smd', [TraceabilityController::class, 'recordSmdPlacement']);
+    Route::get('/placements/tht', [TraceabilityController::class, 'getThtPlacements']);
     Route::post('/placements/tht', [TraceabilityController::class, 'recordThtPlacement']);
 
-    // Înregistrare inspecții & teste industriale
+    // Înregistrare & listare inspecții & teste industriale
+    Route::get('/tests/aoi', [TraceabilityController::class, 'getAoiResults']);
     Route::post('/tests/aoi', [TraceabilityController::class, 'recordAoiTest']);
+    Route::get('/tests/ict', [TraceabilityController::class, 'getIctResults']);
     Route::post('/tests/ict', [TraceabilityController::class, 'recordIctTest']);
+    Route::get('/tests/eol', [TraceabilityController::class, 'getEolResults']);
     Route::post('/tests/eol', [TraceabilityController::class, 'recordEolTest']);
 });

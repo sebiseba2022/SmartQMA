@@ -235,11 +235,57 @@ Clasa de serviciu [`DownloadBandwidthManager`](file:///f:/Licenta/SmartQMA/backe
 - `DELETE /api/v1/inventory/{id}`: Ștergere/anulare comandă de componente.
 
 ### Producție & Trasabilitate Serializată
-- `GET /api/v1/traceability/scan/{qr}`: Istoric complet PCB (amplasări componente Bestück SMD/THT și rezultate teste).
+- `GET /api/v1/laser/markings`: Listă plăci PCB gravate cu filtru pe serie 12 cifre, model, operator, status.
+- `GET /api/v1/laser/next-serial`: Calcul automat serie următoare de 12 cifre (`YYMMDD` + 6 cifre incrementabile zilnic).
+- `POST /api/v1/laser/mark`: Gravare laser automată (+1) sau manuală cu validare strictă a formatului de 12 cifre.
+- `POST /api/v1/laser/rescan`: Rescanare și verificare conformitate marcaj laser DataMatrix 2D PCB.
+- `GET /api/v1/placements/smd`: Listă amplasări componente SMD efectuate pe linia Pick & Place.
+- `POST /api/v1/placements/smd`: Înregistrare amplasare componentă SMD pe PCB.
+- `GET /api/v1/feeders/{stationId}`: Listă alimentatoare (feeder rack) active pe linia de producție.
 - `POST /api/v1/feeders/load`: Înregistrare scanare rolă de componente pe alimentatorul liniei.
-- `POST /api/v1/placements/smd`: Înregistrare plasare componentă SMD pe PCB.
+- `GET /api/v1/placements/tht`: Listă componente Through-Hole inserate și lipite.
 - `POST /api/v1/placements/tht`: Înregistrare inserție componentă THT pe PCB.
+- `GET /api/v1/tests/aoi`: Listă inspecții optice automate post-reflow.
 - `POST /api/v1/tests/aoi`: Înregistrare rezultat inspecție AOI (`PASS` / `FAIL`).
+- `GET /api/v1/tests/ict`: Listă rezultate teste electrice pe pat de ace (Bed of Nails).
 - `POST /api/v1/tests/ict`: Înregistrare rezultat testare electrică ICT (`PASS` / `FAIL`).
+- `GET /api/v1/tests/eol`: Listă rezultate teste funcționale finale la capăt de linie.
 - `POST /api/v1/tests/eol`: Înregistrare rezultat testare funcțională finală EOL (`PASS` / `FAIL`).
+- `GET /api/v1/traceability/scan/{qr}`: Istoric complet PCB (amplasări componente Bestück SMD/THT și rezultate teste).
+
+---
+
+## 9. Arhitectura Posturilor de Lucru Industriale
+
+### 1. Zona de marcare — QR Laser (`WS-LSR-03`)
+- **Format serie PCB**: Exact **12 cifre numerice**, compuse din data fabricației în format `YYMMDD` (ex: `260902` pentru 2 septembrie 2026 sau `261029` pentru 29 octombrie 2026), urmate de un număr secvențial zilnic de **6 cifre** (`000001` - `999999`). Exemplu complet: `261029000001`.
+- **Mecanisme**:
+  - Gravare automată (+1): calculează instant următorul număr secvențial al zilei și gravează codul DataMatrix 2D.
+  - Introducere manuală: zonă rapidă dedicată și formular modal cu validare strictă prin regex (`^\d{12}$`).
+  - Rescanare piesă: scanează codul de pe PCB pentru confirmarea calității gravării și afișează istoricul de trasabilitate.
+- **Tabel**: Afișează în timp real ultimele serii marcate, puterea laserului (85%), durata impulsului (420 ms), operatorul și statusul (`OK` / `RESCANAT`).
+
+### 2. Zona de amplasare — SMD (`WS-SMD-04`)
+- **Management alimentatoare (Feeder Rack)**: Permite scanarea și asocierea rolelor din magazie (identuri >10000) pe sloturile active ale mașinii Pick & Place (ex: `U3`, `U5`, `U2`, `U4`, `T1`, `F1`, `Y1`).
+- **Tabel amplasări**: Monitorizează piesele montate pe fiecare serie de PCB, afișând denumirea componentei, lotul furnizorului, slotul și operatorul.
+
+### 3. Punct de verificare — AOI (`WS-AOI-05`)
+- **Inspecție optică automată**: Verifică conformitatea joncțiunilor de lipire post-reflow.
+- **Indicatori de performanță (FPY)**: Calculează automat rata *First Pass Yield* (FPY %), numărul de plăci acceptate (`PASS`) și respinse (`FAIL`).
+- **Coduri industriale de defect**: `BRIDGE_U3` (punte cositor), `MISSING_R1` (componentă lipsă), `TOMBSTONE_C2` (componentă ridicată), `OFFSET_U2` (deplasare axă X/Y), `POLARITY_D1` (polaritate inversată), `INSUFFICIENT_SOLDER`.
+
+### 4. Zona de amplasare — THT (`WS-THT-06`)
+- **Inserție Through-Hole & Lipire selectivă**: Gestionarea montajului componentelor voluminoase (ex: microcontroler DIP-28 `U1`, conectori `J1`/`J2`, jack DC).
+- **Control parametri proces**: Monitorizare temperatură cuvă cositor (`260°C`), aliaj ecologic fără plumb `SAC305`, fluxant no-clean și înălțime val.
+
+### 5. Punct de verificare — ICT (`WS-ICT-07`)
+- **Testare pe pat de ace (Bed of Nails Fixture)**: Măsurare parametri pasivi și tensiuni de alimentare pe trasee electrice.
+- **Măsurători verificate**: Tensiune regulator 5V (`U5_VOUT: 5.01V`), 3.3V (`U2_VOUT: 3.30V`), frecvență rezonator (`Y1_FREQ: 16.000MHz`), izolație alimentare VCC-GND (`>100kΩ`).
+- **Semnalare net-uri eșuate**: Izolare scurtcircuite (ex: `NET_3V3_SHORT`).
+
+### 6. Punct de verificare — EOL (`WS-EOL-08`)
+- **Testare funcțională finală**: Validare completă a produsului gata asamblat la parametri nominali.
+- **Verificări automate**: Consum de curent în funcționare (normal: `47.85 mA`), enumerare USB cu verificare VID/PID, integritate flash bootloader CRC, buclă UART TX/RX Loopback la 115200 baud și comutare pini I/O (D0-D13, A0-A5).
+- **Certificare lot**: Asigură acordarea verdictului final `PASS` înainte de ambalare și expediere.
+
 

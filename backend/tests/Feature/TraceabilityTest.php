@@ -15,15 +15,16 @@ class TraceabilityTest extends TestCase
     }
 
     /**
-     * Testeaza scanarea codului QR pentru trasabilitate completa PCB
+     * Testeaza scanarea codului QR pentru trasabilitate completa PCB conform standardului unic YYMMDDNNNNNN
      */
     public function test_scan_qr_returns_test_counts_and_bestuck_placements(): void
     {
-        $response = $this->getJson('/api/v1/traceability/scan/ARD-UNO-2026-0001');
+        $todaySerial = \Illuminate\Support\Carbon::now()->format('ymd') . '000001';
+        $response = $this->getJson('/api/v1/traceability/scan/' . $todaySerial);
 
         $response->assertStatus(200)
             ->assertJsonPath('status', 'success')
-            ->assertJsonPath('qr_serial_number', 'ARD-UNO-2026-0001')
+            ->assertJsonPath('qr_serial_number', $todaySerial)
             ->assertJsonPath('tests_summary.aoi.pass_count', 1)
             ->assertJsonPath('tests_summary.aoi.fail_count', 1)
             ->assertJsonPath('tests_summary.ict.pass_count', 1)
@@ -163,9 +164,10 @@ class TraceabilityTest extends TestCase
      */
     public function test_record_eol_test_automatically_resolves_hw_and_sw_version(): void
     {
+        $testSerial = \Illuminate\Support\Carbon::now()->format('ymd') . '000099';
         $payload = [
             'station_id' => 'WS-EOL-08',
-            'qr_serial_number' => 'ARD-UNO-2026-0099',
+            'qr_serial_number' => $testSerial,
             'product_ident' => 'ARDUINO_UNO_R3',
             'test_result' => 'PASS',
             'current_draw_ma' => 46.50,

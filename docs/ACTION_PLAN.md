@@ -120,3 +120,38 @@ flowchart TD
   - Server HTTP PHP cu 8 procese worker paralele concurente (`PHP_CLI_SERVER_WORKERS=8` via `pcntl`).
   - Clasa de serviciu `DownloadBandwidthManager`: 6 MB/s viteză maximă, împărțire la numărul de conexiuni, reevaluare la 2 secunde și zero lag garantat pentru utilizatorii din fabrică.
   - Documentație tehnică dedicată: `docs/ARCHITECTURE_AND_STATIONS.md`.
+
+---
+
+### Faza 7: Finalizare Posturi Industriale Operaționale (Finalizată)
+- [x] **Zona de marcare — QR Laser (`QrLaserPage.tsx`)**:
+  - Mecanism de marcare secvențială automată (+1).
+  - Format strict de serie de **12 cifre**: data producției în format `YYMMDD` (ex: `260902` pentru 2 septembrie 2026, `261029` pentru 29 octombrie 2026), urmat de 6 cifre incrementabile pe zi.
+  - Zonă rapidă de introducere manuală serie (validare strictă 12 cifre numerice).
+  - Rescanare piesă / verificare QR cu afișare istoric trasabilitate integrat.
+  - Tabel complet dark-theme cu filtrare pe fiecare coloană și export CSV.
+- [x] **Zona de amplasare — SMD (`SmdPage.tsx`)**:
+  - Management alimentatoare role (Feeder Rack sloturi F01-F12+).
+  - Tabel amplasări Bestück SMD cu serie PCB, poziție (U3, U5, R1...), ident piesă, lot furnizor și operator.
+  - Operare rapidă din bară și modal de încărcare rolă pe alimentator.
+- [x] **Punct de verificare — AOI (`AoiPage.tsx`)**:
+  - Inspecție optică post-reflow cu calcul automat FPY (First Pass Yield %).
+  - Coduri industriale standard de defect (`BRIDGE_U3`, `MISSING_R1`, `TOMBSTONE_C2`, `OFFSET_U2`, `POLARITY_D1` etc.).
+  - Filtru rapid doar defecte (FAIL) și export CSV.
+- [x] **Zona de amplasare — THT (`ThtPage.tsx`)**:
+  - Inserție componente Through-Hole (U1 microcontroler DIP-28, conectori J1/J2, mufă jack).
+  - Monitorizare parametri proces lipire selectivă: temperatură cuvă cositor (260°C), aliaj ecologic SAC305, fluxant no-clean.
+- [x] **Punct de verificare — ICT (`IctPage.tsx`)**:
+  - Testare electrică pe pat de ace (Bed of Nails Fixture).
+  - Verificare tensiuni LDO 5V și 3.3V, frecvență oscilator 16 MHz și izolație VCC-GND.
+  - Izolare noduri / trasee eșuate (`NET_3V3_SHORT`).
+- [x] **Punct de verificare — EOL (`EolPage.tsx`)**:
+  - Testare funcțională finală la capăt de linie cu măsurare consum curent (47.85 mA).
+  - Checklist funcțional automatizat (enumerare USB, verificare bootloader CRC, buclă UART Loopback 115200 baud, comutare pini GPIO).
+  - Certificare finală de conformitate produs.
+- [x] **Postul de Export (`ExportPage.tsx`)**:
+  - Păstrat neschimbat (placeholder), conform instrucțiunilor utilizatorului pentru definire ulterioară.
+- [x] **Validare Totală Teste**:
+  - 36 teste backend trecute cu succes (250 aserțiuni).
+  - 34 teste frontend trecute cu succes.
+  - Respectare strictă a regulilor de capitalizare în limba română (doar prima literă majusculă).

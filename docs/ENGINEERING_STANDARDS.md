@@ -99,6 +99,26 @@ Testarea End-to-End asigură că stiva completă (Frontend React + Backend Larav
 - Structură bazată pe Page Object Model (POM) pentru mentenanță facilă.
 - Testarea rutelor principale, răspunsurilor HTTP și a stărilor de interfață.
 
+---
+
+## 5. 🏷️ Standardul Obligatoriu de Serializare Industrială PCB (`YYMMDDNNNNNN`)
+
+Toate numerele de serie ale plăcilor electronice (PCB), etichetate și scanate în sistemul SmartQMA la orice stație (QR Laser, SMD, AOI, THT, ICT, EOL, Export) sau în testele unitare/de integrare/seederi, **TREBUIE** să respecte strict și fără excepție formatul de **12 cifre numerice**:
+
+$$\text{Serie PCB} = \underbrace{\text{YYMMDD}}_{\text{6 cifre: data producției}} + \underbrace{\text{NNNNNN}}_{\text{6 cifre: secvență zilnică}}$$
+
+### 1. Specificația Formatului
+1. **`YYMMDD` (primele 6 cifre)**: Reprezintă data fabricației (ex: `260902` pentru 2 septembrie 2026, `261029` pentru 29 octombrie 2026).
+2. **`NNNNNN` (următoarele 6 cifre)**: Număr secvențial incremental alocat în ziua respectivă, completat cu zerouri la stânga (`000001`, `000002`, `000003`, ..., `999999`).
+3. **Lungime fixă**: Exact **12 caractere numerice**. Orice serie mai scurtă (ex: 11 cifre) sau mai lungă (ex: 13 cifre) sau care conține litere este respinsă de validatoarele API și din interfață.
+
+### 2. Reguli Absolute de Proiectare
+- ❌ **Interzis cu desăvârșire**: Utilizarea prefixelor textuale sau a formatelor de test de tip `ARD-UNO-...`, `TEST-001`, `PCB-2026-...`.
+- ✅ **Obligatoriu**: Toate exemplele, placeholder-ele, datele din seeders și testele automate folosesc exclusiv formatul `YYMMDDNNNNNN` (ex: `261029000001`, `261029000002`, `260902000001`).
+- ✅ **Validare în Backend**: Regula Laravel `'qr_serial_number' => ['required', 'string', 'regex:/^\d{12}$/']`.
+- ✅ **Validare în Frontend**: Expresia regulată `/^\d{12}$/.test(serial.trim())`.
+
+
 ### Comenzi Playwright:
 ```bash
 # Rulare teste E2E în consolă (headless)
