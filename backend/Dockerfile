@@ -19,6 +19,9 @@ COPY --from=composer:2 /usr/bin/composer /usr/bin/composer
 
 WORKDIR /var/www/html
 
+# Numarul de procese worker paralele pentru serverul HTTP (permite cereri concurente paralele)
+ENV PHP_CLI_SERVER_WORKERS=8
+
 EXPOSE 8000
 
-CMD ["sh", "-c", "php artisan serve --host=0.0.0.0 --port=8000"]
+CMD ["sh", "-c", "php artisan serve --host=0.0.0.0 --port=8000 --no-reload"]
