@@ -39,6 +39,7 @@ services:
       DB_DATABASE: ${DB_DATABASE:-smartqma_db}
       DB_USERNAME: ${DB_USERNAME:-smartqma_user}
       DB_PASSWORD: ${DB_PASSWORD:-secret}
+      PHP_CLI_SERVER_WORKERS: 8
     depends_on:
       db:
         condition: service_healthy
