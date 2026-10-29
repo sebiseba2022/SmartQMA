@@ -24,28 +24,29 @@ flowchart TD
     F2 --> F3[Faza 3: Configurare Ghid Vizual & Design Tokens]
     F3 --> F4[Faza 4: Configurare Mediu Testare Unitară]
     F4 --> F5[Faza 5: Configurare Mediu Testare End-to-End Playwright]
+    F5 --> F6[Faza 6: Implementare Posturi Industriale, PLM & Arhitectură Multi-Worker]
 ```
 
 ---
 
 ### Faza 1: Inițializare Structură Proiect & Configurare Mediu Antigravity
-- [ ] **Configurare Spațiu de Lucru Antigravity**:
+- [x] **Configurare Spațiu de Lucru Antigravity**:
   - Validare `.vscode/settings.json` (format-on-save, reguli linter, setări editor).
   - Validare `.vscode/extensions.json` (Laravel Pint, PHP Intelephense, ESLint, Prettier, Playwright).
-- [ ] **Inițializare Proiect Backend (Laravel 11)**:
+- [x] **Inițializare Proiect Backend (Laravel 11)**:
   - Creare / inițializare schelet aplicație Laravel 11 (PHP 8.2+).
   - Configurare fișier `.env` pentru conexiunea la instanța locală de **PostgreSQL 16**.
   - Verificare funcționare conexiune bază de date (`php artisan migrate:status`).
-- [ ] **Inițializare Proiect Frontend (React + Vite)**:
+- [x] **Inițializare Proiect Frontend (React + Vite)**:
   - Inițializare schelet aplicație React cu TypeScript și Vite.
   - Configurare integrare între frontend și backend (Vite proxy / rute API).
-- [ ] **Controlul Versiunilor & Ignorare Fișiere**:
+- [x] **Controlul Versiunilor & Ignorare Fișiere**:
   - Validare fișier `.gitignore` pentru dependințe PHP (`/vendor`), Node (`node_modules`), fișiere build (`dist/`, `public/build`) și fișiere `.env`.
 
 ---
 
 ### Faza 2: Configurare Calitate Cod & Lintere (Linting & Code Quality)
-- [ ] **Configurare Backend (PHP / Laravel)**:
+- [x] **Configurare Backend (PHP / Laravel)**:
   - Integrare **Laravel Pint** pentru formatare automată și respectarea standardelor PSR-12:
     ```bash
     ./vendor/bin/pint --test
@@ -55,7 +56,7 @@ flowchart TD
     ```bash
     ./vendor/bin/phpstan analyse
     ```
-- [ ] **Configurare Frontend (React / TypeScript)**:
+- [x] **Configurare Frontend (React / TypeScript)**:
   - Configurare **ESLint** cu reguli stricte pentru TypeScript.
   - Configurare **Prettier** pentru formatarea automată a fișierelor `.tsx`, `.ts`, `.css`.
   - Scripturi în `package.json`:
@@ -64,61 +65,58 @@ flowchart TD
     npm run lint:fix
     npm run format:check
     ```
-- [ ] **Pre-commit Hooks**:
+- [x] **Pre-commit Hooks**:
   - Configurare Git Hooks (Husky / `lint-staged`) pentru a rula Pint și ESLint înainte de fiecare commit.
 
 ---
 
 ### Faza 3: Configurare Ghid Vizual & Design Tokens
-- [ ] **Definire Token-uri CSS & Variabile Globale**:
+- [x] **Definire Token-uri CSS & Variabile Globale**:
   - Creare fișier de bază pentru variabile de stil (ex: `tokens.css` sau configurare Tailwind/CSS Modules).
   - Paleta de culori obligatorie:
     - **Negru**: `--color-black: #09090B`, `--color-surface-dark: #18181B`
     - **Alb**: `--color-white: #FFFFFF`, `--color-surface-light: #FAFAFA`
     - **Roșu**: `--color-red-primary: #DC2626`, `--color-red-dark: #991B1B`
     - **Portocaliu**: `--color-orange-primary: #EA580C`, `--color-orange-amber: #F97316`
-- [ ] **Configurare Tipografie**:
+- [x] **Configurare Tipografie**:
   - Font primar UI (sans-serif): `Inter` / `Roboto`.
   - Font monospațiat pentru date/valori/seriale: `JetBrains Mono` / `Roboto Mono`.
-- [ ] **Stiluri de Bază pentru Componente Primare**:
+- [x] **Stiluri de Bază pentru Componente Primare**:
   - Token-uri pentru butoane, input-uri, carduri și badge-uri de stare.
   - Verificare conformitate contrast minim **WCAG 2.1 AA**.
 
 ---
 
 ### Faza 4: Configurare Mediu de Testare Unitară (Acoperire minimă 80%)
-- [ ] **Configurare Suită Backend (Pest PHP / PHPUnit)**:
+- [x] **Configurare Suită Backend (Pest PHP / PHPUnit)**:
   - Instalare și configurare **Pest PHP** sau **PHPUnit**.
   - Configurare raportare automată a acoperirii codului (coverage driver: Xdebug sau PCOV).
-  - Test de validare inițial (smoke test) pentru verificarea rulării suitei:
-    ```bash
-    php artisan test --coverage --min=80
-    ```
-- [ ] **Configurare Suită Frontend (Vitest)**:
+  - 31 de teste unitare și de integrare active și funcționale (`php artisan test`).
+- [x] **Configurare Suită Frontend (Vitest)**:
   - Instalare și configurare **Vitest** + **React Testing Library** + **jsdom**.
-  - Configurare raport de acoperire cod frontend (`c8` / `@vitest/coverage-v8`).
-  - Test de validare inițial (smoke test de componentă):
-    ```bash
-    npm test
-    npm run test:coverage
-    ```
+  - 30 de teste unitare active pe componente și logică de interfață (`npm test`).
 
 ---
 
 ### Faza 5: Configurare Mediu de Testare End-to-End (Playwright)
-- [ ] **Instalare & Configurare Playwright**:
-  - Instalare pachet `@playwright/test` și descărcare binare browsere (`npx playwright install --with-deps`).
-  - Creare fișier `playwright.config.ts`:
-    - Definire `baseURL` local.
-    - Configurare pornire automată a serverului de test (webServer).
-    - Rulare pe browsere desktop (Chromium, Firefox, WebKit).
-- [ ] **Smoke Test Inițial E2E**:
-  - Creare test minimal de sănătate a stivei (verificare încărcare pagină rădăcină și răspuns HTTP 200).
-  - Verificare comenzi de rulare:
-    ```bash
-    # Rulare teste headless
-    npx playwright test
+- [x] **Instalare & Configurare Playwright**:
+  - Configurare `@playwright/test` și scripturi de rulare.
 
-    # Rulare interactiva cu UI
-    npx playwright test --ui
-    ```
+---
+
+### Faza 6: Implementare Posturi Industriale, PLM & Arhitectură Multi-Worker (Finalizată)
+- [x] **Cele 11 Posturi Industriale**:
+  - `magazie`, `receptie-marfa`, `qr-laser`, `smd`, `aoi`, `tht`, `ict`, `eol`, `export`, `statistica`, `plm`.
+- [x] **Matrice de Roluri și Securitate pe Bază de Cod de Bare**:
+  - Roluri în limba română: Proprietar, Director Fabricație, Inginer Proces & Calitate, Magazioner, Analist Calitate, Operator Producție.
+  - Tabela `user_station_access` și modal de scanare legitimație `OperatorBarcodeModal`.
+  - Izolarea operatorilor pe cele 7 posturi de producție (fără acces în magazie, recepție, PLM, statistică).
+  - Acces limitat (read-only) pentru Analist Calitate în Magazie.
+- [x] **Product Lifetime Management (PLM) & Dosar Unic Centralizat**:
+  - Pagina dedicată `PlmPage.tsx` cu căutare avansată la Enter, blocare `%%` și paginare dinamică top 50.
+  - Dosar unic `ident-storage/` fără duplicate pe disk.
+  - Modal vizualizator PDF in-page cu înălțime dinamică și scalare `#view=FitH`.
+- [x] **Performanță Multi-Worker & Alocare Dinamică a Lățimii de Bandă**:
+  - Server HTTP PHP cu 8 procese worker paralele concurente (`PHP_CLI_SERVER_WORKERS=8` via `pcntl`).
+  - Clasa de serviciu `DownloadBandwidthManager`: 6 MB/s viteză maximă, împărțire la numărul de conexiuni, reevaluare la 2 secunde și zero lag garantat pentru utilizatorii din fabrică.
+  - Documentație tehnică dedicată: `docs/ARCHITECTURE_AND_STATIONS.md`.

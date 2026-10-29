@@ -69,13 +69,14 @@ Sistemul de design este definit prin token-uri de stil, respectând standardul *
 
 ---
 
-## 🗺️ Plan de Configurare a Stack-ului
+## 🗺️ Plan de Configurare & Documentație Tehnică
 
-Documentația extinsă a infrastructurii este disponibilă în `docs/`:
-1. 🗺️ **[Plan de Acțiune Stack](docs/ACTION_PLAN.md)**: Fazele de configurare ale mediului, tooling-ului, testelor și ghidului vizual.
-2. 🎨 **[Ghid Vizual](docs/DESIGN_SYSTEM.md)**: Token-uri de culoare, tipografie și accesibilitate.
-3. 📐 **[Standarde Tehnice](docs/ENGINEERING_STANDARDS.md)**: Convenții de cod, comenzi de testare și reguli locale.
-4. 🤖 **[Instrucțiuni Antigravity](.github/copilot-instructions.md)**: Context specific pentru asistentul AI.
+Documentația extinsă a infrastructurii și producției este disponibilă în `docs/`:
+1. 🏭 **[Arhitectură Industrială & Posturi de Lucru](docs/ARCHITECTURE_AND_STATIONS.md)**: Ghid detaliat pentru cele 11 stații, securitate cod de bare, PLM, Magazie, multi-worker și streaming adaptiv.
+2. 🗺️ **[Plan de Acțiune Stack](docs/ACTION_PLAN.md)**: Fazele de configurare ale mediului, tooling-ului, testelor și ghidului vizual.
+3. 🎨 **[Ghid Vizual](docs/DESIGN_SYSTEM.md)**: Token-uri de culoare, tipografie și accesibilitate.
+4. 📐 **[Standarde Tehnice](docs/ENGINEERING_STANDARDS.md)**: Convenții de cod, comenzi de testare și reguli locale.
+5. 🤖 **[Instrucțiuni Antigravity](.github/copilot-instructions.md)**: Context specific pentru asistentul AI.
 
 ---
 
