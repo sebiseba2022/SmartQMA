@@ -372,6 +372,28 @@
   gap: 16px;
 }
 
+.navbar-user-chip {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  background-color: rgba(255, 255, 255, 0.08);
+  border: 1px solid rgba(255, 255, 255, 0.15);
+  padding: 4px 11px;
+  border-radius: 999px;
+  font-size: 12px;
+}
+
+.navbar-user-name {
+  color: #f5f5f4;
+  font-weight: 600;
+}
+
+.navbar-user-role {
+  color: #fb923c;
+  font-size: 11px;
+  text-transform: capitalize;
+}
+
 .btn-logout-x {
   background: transparent;
   border: 1.5px solid rgba(220, 38, 38, 0.5);
@@ -398,7 +420,83 @@
   box-shadow: 0 0 10px rgba(220, 38, 38, 0.5);
 }
 
-/* Pe pagină: COMPLET ALB, NIMIC AFIȘAT */
+/* Structură & Stilizare Generală Posturi de Lucru */
+.station-content-wrapper {
+  display: flex;
+  flex-direction: column;
+  flex: 1;
+  min-height: calc(100vh - 60px);
+  background-color: #fafaf9;
+}
+
+.station-banner-card {
+  padding: 22px 32px 18px 32px;
+  background: linear-gradient(180deg, #ffffff 0%, #fcfbf9 100%);
+  border-bottom: 1.5px solid #e7e5e4;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.03);
+}
+
+.station-code-pill {
+  display: inline-block;
+  background-color: #181512;
+  color: #ea580c;
+  font-size: 11px;
+  font-weight: 800;
+  letter-spacing: 0.05em;
+  padding: 3px 8px;
+  border-radius: 4px;
+  margin-bottom: 8px;
+}
+
+.station-headline {
+  font-size: 20px;
+  font-weight: 700;
+  color: #1c1917;
+  margin: 0 0 6px 0;
+}
+
+.station-description {
+  font-size: 13.5px;
+  color: #78716c;
+  margin: 0;
+  max-width: 800px;
+  line-height: 1.5;
+}
+
+.station-workspace-area {
+  flex: 1;
+  background-color: #ffffff;
+  padding: 24px 32px;
+}
+
+/* Modul Statistică */
+.stats-main-content {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  background-color: #ffffff;
+  overflow-y: auto;
+}
+
+.stats-content-header {
+  padding: 20px 28px;
+  background: #fafaf9;
+  border-bottom: 1px solid #e7e5e4;
+}
+
+.stats-content-title {
+  font-size: 19px;
+  font-weight: 700;
+  color: #1c1917;
+  margin: 0 0 4px 0;
+}
+
+.stats-content-subtitle {
+  font-size: 12.5px;
+  color: #78716c;
+}
+
+/* Pe pagină: COMPLET ALB */
 .blank-page-white {
   flex: 1;
   background-color: #ffffff;
@@ -407,62 +505,502 @@
 }
 
 /* ==============================================================================
-   3. ZONA DE STOCARE - MAGAZIE (STILIZARE STANDARD, FĂRĂ ELEMENTE FUTURISTICE)
+   3. ZONA DE STOCARE - MAGAZIE (COLOANA BUTOANE ROTUNDE + TABEL GOL PÂNĂ JOS)
    ============================================================================== */
-.magazie-standard-container {
+.magazie-workspace-split {
+  display: flex;
   flex: 1;
-  background-color: #f8f9fa;
-  padding: 24px 32px;
-  color: #1f2937;
-  font-family: Arial, Helvetica, sans-serif;
+  height: calc(100vh - 60px);
+  min-height: calc(100vh - 60px);
+  width: 100%;
+  background-color: #ffffff;
+  overflow: hidden;
+  font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Arial, sans-serif;
 }
 
-.magazie-standard-wrapper {
-  max-width: 1320px;
-  margin: 0 auto;
+/* Coloana din stânga: Butoane rotunde în coloană */
+.magazie-left-rail {
+  width: 112px;
+  flex-shrink: 0;
+  background-color: #181512;
+  border-right: 2px solid #2e2924;
+  padding: 24px 10px;
   display: flex;
   flex-direction: column;
-  gap: 20px;
+  align-items: center;
+  justify-content: flex-start;
+  overflow-y: auto;
+  z-index: 10;
 }
 
-.magazie-page-title {
-  font-size: 20px;
+.magazie-rail-group {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 22px;
+  width: 100%;
+}
+
+.magazie-round-btn-item {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 7px;
+  width: 100%;
+}
+
+.magazie-round-btn {
+  width: 52px;
+  height: 52px;
+  border-radius: 50%;
+  border: 1.5px solid #3f3831;
+  background-color: #24201c;
+  color: #f3efe9;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  transition: all 0.2s cubic-bezier(0.16, 1, 0.3, 1);
+  box-shadow: 0 3px 10px rgba(0, 0, 0, 0.35);
+  padding: 0;
+}
+
+.magazie-round-btn svg {
+  width: 22px;
+  height: 22px;
+}
+
+.magazie-round-btn:hover:not(:disabled) {
+  border-color: #ea580c;
+  background-color: #2e2721;
+  color: #ffffff;
+  transform: translateY(-2px);
+  box-shadow: 0 5px 14px rgba(234, 88, 12, 0.35);
+}
+
+.magazie-round-btn:active:not(:disabled) {
+  transform: translateY(0);
+}
+
+.magazie-round-btn.primary {
+  background: linear-gradient(135deg, #ea580c 0%, #dc2626 100%);
+  border-color: #f97316;
+  color: #ffffff;
+  box-shadow: 0 4px 14px rgba(234, 88, 12, 0.45);
+}
+
+.magazie-round-btn.primary:hover:not(:disabled) {
+  background: linear-gradient(135deg, #f97316 0%, #ef4444 100%);
+  box-shadow: 0 6px 18px rgba(234, 88, 12, 0.65);
+}
+
+.magazie-round-btn.active {
+  border-color: #ea580c;
+  background: rgba(234, 88, 12, 0.22);
+  color: #fb923c;
+  box-shadow: 0 0 12px rgba(234, 88, 12, 0.4);
+}
+
+.magazie-round-btn:disabled {
+  opacity: 0.38;
+  cursor: not-allowed;
+}
+
+.magazie-round-btn-label {
+  font-size: 11px;
+  font-weight: 600;
+  color: #cbbba8;
+  text-align: center;
+  line-height: 1.25;
+  max-width: 92px;
+  user-select: none;
+}
+
+/* Zona principală: Tabel până în josul paginii */
+.magazie-table-fullpage {
+  flex: 1;
+  height: 100%;
+  display: flex;
+  flex-direction: column;
+  background-color: #ffffff;
+  overflow: hidden;
+  position: relative;
+}
+
+.magazie-table-notice {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  background: linear-gradient(90deg, #fef2f2 0%, #fff1f2 100%);
+  border-bottom: 1.5px solid #fecaca;
+  color: #991b1b;
+  padding: 9px 18px;
+  font-size: 13px;
+  font-weight: 600;
+  box-shadow: 0 2px 6px rgba(220, 38, 38, 0.08);
+  z-index: 15;
+}
+
+.magazie-table-notice svg {
+  width: 18px;
+  height: 18px;
+  flex-shrink: 0;
+  stroke: #dc2626;
+}
+
+.magazie-table-notice span {
+  flex: 1;
+  letter-spacing: 0.01em;
+}
+
+.magazie-notice-close {
+  background: transparent;
+  border: 1px solid #fca5a5;
+  color: #991b1b;
+  cursor: pointer;
+  padding: 2px 7px;
+  font-size: 12px;
+  line-height: 1;
+  border-radius: 4px;
+  font-weight: 700;
+  transition: all 0.15s ease;
+}
+
+.magazie-notice-close:hover {
+  background-color: #fee2e2;
+  color: #7f1d1d;
+}
+
+.magazie-table-toolbar-info {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 6px 14px;
+  background-color: #faf8f5;
+  border-bottom: 1px solid #e7e5e4;
+  font-size: 11.5px;
+  color: #78716c;
+  font-weight: 500;
+}
+
+.magazie-count-badge {
+  color: #c2410c;
+  font-weight: 600;
+}
+
+.magazie-loading-row td {
+  background-color: #fff7ed !important;
+  border-bottom: 1px dashed #fdba74 !important;
+  text-align: center !important;
+  padding: 8px 12px !important;
+}
+
+.magazie-scroll-loader {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  color: #ea580c;
+  font-size: 12.5px;
+  font-weight: 600;
+}
+
+.magazie-mini-spinner {
+  width: 14px;
+  height: 14px;
+  border: 2px solid rgba(234, 88, 12, 0.25);
+  border-top-color: #ea580c;
+  border-radius: 50%;
+  animation: spin 0.7s linear infinite;
+}
+
+@keyframes spin {
+  to {
+    transform: rotate(360deg);
+  }
+}
+
+.magazie-fulltable-container {
+  flex: 1;
+  height: 100%;
+  overflow-y: auto;
+  overflow-x: auto;
+  background-color: #ffffff;
+}
+
+.magazie-pro-table {
+  width: 100%;
+  min-height: 100%;
+  border-collapse: collapse;
+  table-layout: fixed;
+  font-size: 13px;
+  color: #111827;
+}
+
+/* Antetul tabelului stilizat profesional */
+.magazie-pro-table thead th {
+  position: sticky;
+  top: 0;
+  z-index: 5;
+  background: linear-gradient(180deg, #1f1b18 0%, #141210 100%);
+  color: #f8fafc;
+  font-weight: 700;
+  font-size: 13px;
+  letter-spacing: 0.01em;
+  padding: 13px 12px;
+  text-align: left;
+  border-right: 1px solid #2e2924;
+  border-bottom: 2px solid #ea580c;
+  white-space: nowrap;
+  user-select: none;
+  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.12);
+}
+
+.magazie-pro-table thead th:last-child {
+  border-right: none;
+}
+
+.magazie-pro-table th.col-idx {
+  width: 48px;
+  text-align: center;
+}
+.magazie-pro-table th.col-ident {
+  width: 130px;
+}
+.magazie-pro-table th.col-name {
+  width: 24%;
+}
+.magazie-pro-table th.col-date {
+  width: 145px;
+}
+.magazie-pro-table th.col-qty {
+  width: 105px;
+}
+.magazie-pro-table th.col-provider {
+  width: 16%;
+}
+.magazie-pro-table th.col-tracking {
+  width: 150px;
+}
+.magazie-pro-table th.col-arrived {
+  width: 130px;
+}
+.magazie-pro-table th.col-arrival-time {
+  width: 125px;
+}
+
+/* Celule de tabel & Rânduri goale până în josul paginii */
+.magazie-pro-table tbody td {
+  height: 36px;
+  padding: 0 12px;
+  border-bottom: 1px solid #e2e8f0;
+  border-right: 1px solid #e2e8f0;
+  vertical-align: middle;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.magazie-pro-table tbody td:last-child {
+  border-right: none;
+}
+
+/* Primul rând de sub antet: Rândul de interogare pe coloane */
+.magazie-query-row td {
+  padding: 0;
+  height: 36px;
+  background-color: #ffffff;
+  border-bottom: 1px solid #cbd5e1;
+  transition: background-color 0.15s ease;
+}
+
+.magazie-query-row.has-query td {
+  background-color: #fffaf5;
+  border-bottom: 1.5px solid #fdba74;
+}
+
+.magazie-query-idx-cell {
+  text-align: center;
+  font-size: 12px;
+  color: #ea580c;
+  user-select: none;
+}
+
+.magazie-query-cell {
+  cursor: text;
+  position: relative;
+}
+
+.magazie-query-cell:focus-within {
+  background-color: #fff7ed !important;
+  box-shadow: inset 0 0 0 2px #ea580c;
+}
+
+.magazie-cell-input {
+  width: 100%;
+  height: 35px;
+  border: none;
+  outline: none;
+  background: transparent;
+  padding: 0 12px;
+  font-size: 13px;
+  font-family: inherit;
+  color: #111827;
+}
+
+.magazie-cell-input.ident-input {
+  font-weight: 700;
+  font-family: 'JetBrains Mono', Consolas, monospace;
+  color: #c2410c;
+}
+
+/* Rânduri cu date returnate la interogare */
+.magazie-data-row {
+  background-color: #ffffff;
+  cursor: context-menu;
+  transition: background-color 0.12s ease;
+}
+
+.magazie-data-row:nth-child(even) {
+  background-color: #f8fafc;
+}
+
+.magazie-data-row:hover {
+  background-color: #fff7ed;
+}
+
+.col-idx-cell {
+  text-align: center;
+  color: #64748b;
+  font-weight: 600;
+  font-size: 12px;
+}
+
+/* Rânduri goale până în josul paginii */
+.magazie-blank-row {
+  background-color: #ffffff;
+}
+
+.magazie-blank-row:nth-child(even) {
+  background-color: #fcfcfd;
+}
+
+.magazie-blank-row td {
+  cursor: text;
+}
+
+.magazie-ident-cell {
+  font-weight: 700;
+  font-family: 'JetBrains Mono', Consolas, monospace;
+  color: #111827;
+}
+
+.magazie-mono-cell {
+  font-family: 'JetBrains Mono', Consolas, monospace;
+}
+
+.magazie-name-cell {
+  font-weight: 600;
+  color: #111827;
+}
+
+.magazie-status-label {
+  display: inline-block;
+  padding: 2px 8px;
+  font-size: 12px;
+  font-weight: 600;
+  border-radius: 4px;
+}
+
+.magazie-status-label.arrived-yes {
+  background-color: #dcfce7;
+  color: #166534;
+  border: 1px solid #86efac;
+}
+
+.magazie-status-label.arrived-no {
+  background-color: #fef3c7;
+  color: #92400e;
+  border: 1px solid #fcd34d;
+}
+
+/* Modal Adaugă Comandă Nouă */
+.magazie-modal-backdrop {
+  position: fixed;
+  inset: 0;
+  background-color: rgba(15, 13, 11, 0.6);
+  backdrop-filter: blur(2px);
+  z-index: 2000;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 20px;
+}
+
+.magazie-modal-card {
+  width: 100%;
+  max-width: 560px;
+  background-color: #ffffff;
+  border-radius: 12px;
+  border: 1px solid #e2e8f0;
+  box-shadow: 0 20px 45px rgba(0, 0, 0, 0.28);
+  padding: 24px 26px;
+}
+
+.magazie-modal-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding-bottom: 14px;
+  margin-bottom: 18px;
+  border-bottom: 1px solid #e5e7eb;
+}
+
+.magazie-modal-title {
+  font-size: 18px;
   font-weight: 700;
   color: #111827;
   margin: 0;
-  padding-bottom: 10px;
-  border-bottom: 1px solid #d1d5db;
 }
 
-.magazie-section-box {
-  background-color: #ffffff;
+.magazie-modal-close {
+  width: 30px;
+  height: 30px;
+  border-radius: 50%;
   border: 1px solid #d1d5db;
-  border-radius: 4px;
-  padding: 18px 20px;
-}
-
-.magazie-section-heading {
-  font-size: 16px;
-  font-weight: 700;
-  color: #1f2937;
-  margin: 0 0 14px 0;
-}
-
-.magazie-standard-error {
-  background-color: #fef2f2;
-  border: 1px solid #f87171;
-  color: #991b1b;
-  padding: 8px 12px;
-  border-radius: 4px;
+  background: #f9fafb;
+  color: #4b5563;
   font-size: 13px;
-  margin-bottom: 14px;
+  font-weight: 700;
+  cursor: pointer;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
 }
 
-.magazie-order-form {
+.magazie-modal-close:hover {
+  background-color: #fee2e2;
+  border-color: #fca5a5;
+  color: #dc2626;
+}
+
+.magazie-modal-form {
   display: grid;
-  grid-template-columns: repeat(auto-fill, minmax(220px, 1fr));
+  grid-template-columns: 1fr 1fr;
   gap: 14px;
-  align-items: end;
+}
+
+.magazie-ident-preview {
+  background-color: #f8fafc;
+  border: 1px solid #e2e8f0;
+  border-left: 3px solid #ea580c;
+  border-radius: 6px;
+  padding: 10px 14px;
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px 20px;
+  font-size: 12.5px;
+  color: #334155;
 }
 
 .magazie-form-field {
@@ -479,44 +1017,60 @@
 
 .magazie-form-field input,
 .magazie-form-field select {
-  padding: 7px 10px;
+  padding: 8px 11px;
   font-size: 13px;
   color: #111827;
   background-color: #ffffff;
   border: 1px solid #cbd5e1;
-  border-radius: 4px;
-}
-
-.magazie-form-field input:disabled,
-.magazie-form-field select:disabled {
-  background-color: #f3f4f6;
-  color: #6b7280;
+  border-radius: 6px;
 }
 
 .magazie-form-field input:focus,
 .magazie-form-field select:focus {
   outline: none;
-  border-color: #2563eb;
+  border-color: #ea580c;
+  box-shadow: 0 0 0 3px rgba(234, 88, 12, 0.15);
 }
 
-.magazie-form-actions {
+.magazie-modal-actions {
+  grid-column: span 2;
   display: flex;
-  align-items: flex-end;
+  justify-content: flex-end;
+  gap: 10px;
+  margin-top: 8px;
+  padding-top: 14px;
+  border-top: 1px solid #f1f5f9;
 }
 
-.magazie-btn-submit {
+.magazie-btn-cancel {
   padding: 8px 16px;
   font-size: 13px;
   font-weight: 600;
-  color: #ffffff;
-  background-color: #2563eb;
-  border: 1px solid #1d4ed8;
-  border-radius: 4px;
+  color: #374151;
+  background-color: #f3f4f6;
+  border: 1px solid #d1d5db;
+  border-radius: 6px;
   cursor: pointer;
 }
 
+.magazie-btn-cancel:hover {
+  background-color: #e5e7eb;
+}
+
+.magazie-btn-submit {
+  padding: 8px 18px;
+  font-size: 13px;
+  font-weight: 600;
+  color: #ffffff;
+  background: linear-gradient(135deg, #ea580c 0%, #dc2626 100%);
+  border: none;
+  border-radius: 6px;
+  cursor: pointer;
+  box-shadow: 0 2px 8px rgba(234, 88, 12, 0.35);
+}
+
 .magazie-btn-submit:hover:not(:disabled) {
-  background-color: #1d4ed8;
+  background: linear-gradient(135deg, #f97316 0%, #ef4444 100%);
 }
 
 .magazie-btn-submit:disabled {
@@ -524,119 +1078,14 @@
   cursor: not-allowed;
 }
 
-.magazie-table-header-row {
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  margin-bottom: 12px;
-}
-
-.magazie-table-header-row .magazie-section-heading {
-  margin-bottom: 0;
-}
-
-.magazie-count-label {
+.magazie-standard-error {
+  background-color: #fef2f2;
+  border: 1px solid #f87171;
+  color: #991b1b;
+  padding: 8px 12px;
+  border-radius: 6px;
   font-size: 13px;
-  color: #4b5563;
-}
-
-.magazie-loading-text {
-  font-size: 14px;
-  color: #4b5563;
-  margin: 12px 0;
-}
-
-.magazie-table-scroll {
-  overflow-x: auto;
-}
-
-.magazie-standard-table {
-  width: 100%;
-  border-collapse: collapse;
-  font-size: 13px;
-  color: #1f2937;
-}
-
-.magazie-standard-table th,
-.magazie-standard-table td {
-  border: 1px solid #d1d5db;
-  padding: 8px 10px;
-  text-align: left;
-  vertical-align: middle;
-}
-
-.magazie-standard-table thead th {
-  background-color: #f3f4f6;
-  font-weight: 700;
-  color: #111827;
-  white-space: nowrap;
-}
-
-.magazie-standard-table tbody tr:nth-child(even) {
-  background-color: #f9fafb;
-}
-
-.magazie-standard-table tbody tr:hover {
-  background-color: #f3f4f6;
-}
-
-.magazie-ident-cell {
-  font-weight: 700;
-  color: #111827;
-}
-
-.magazie-mono-cell {
-  font-family: Consolas, monospace;
-}
-
-.magazie-empty-cell {
-  text-align: center;
-  padding: 20px;
-  color: #6b7280;
-}
-
-.magazie-status-label {
-  display: inline-block;
-  padding: 2px 8px;
-  font-size: 12px;
-  font-weight: 600;
-  border-radius: 3px;
-}
-
-.magazie-status-label.arrived-yes {
-  background-color: #dcfce7;
-  color: #166534;
-  border: 1px solid #86efac;
-}
-
-.magazie-status-label.arrived-no {
-  background-color: #fef3c7;
-  color: #92400e;
-  border: 1px solid #fcd34d;
-}
-
-.magazie-btn-secondary {
-  padding: 4px 10px;
-  font-size: 12px;
-  color: #1f2937;
-  background-color: #f3f4f6;
-  border: 1px solid #cbd5e1;
-  border-radius: 3px;
-  cursor: pointer;
-  white-space: nowrap;
-}
-
-.magazie-btn-secondary:hover {
-  background-color: #e5e7eb;
-}
-
-.magazie-context-row {
-  cursor: context-menu;
-}
-
-.magazie-name-cell {
-  font-weight: 600;
-  color: #111827;
+  margin-bottom: 14px;
 }
 
 /* Meniu contextual standard (Click Dreapta) */

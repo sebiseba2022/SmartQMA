@@ -4,6 +4,7 @@ namespace Database\Seeders;
 
 use App\Models\AoiResult;
 use App\Models\BestuckPosition;
+use App\Models\ComponentIdent;
 use App\Models\EolResult;
 use App\Models\IctResult;
 use App\Models\InventoryComponent;
@@ -168,12 +169,12 @@ class ProductionFlowSeeder extends Seeder
                 'ordered_at' => Carbon::now()->subDays(3)->setTime(15, 10, 0),
                 'quantity' => 2000,
                 'arrived' => false,
-                'arrival_time' => Carbon::now()->addDays(2)->startOfDay(),
-                'tracking_number' => 'TNT-440291830',
+                'arrival_time' => null,
+                'tracking_number' => null,
                 'provider' => 'TME Electronic Components',
                 'supplier_lot' => 'LOT-BRN-10008',
                 'production_date' => '2026-02-08',
-                'entry_date' => Carbon::now()->addDays(2)->startOfDay(),
+                'entry_date' => null,
                 'reception_status' => 'in_asteptare',
                 'reception_notes' => 'In tranzit de la furnizor',
                 'received_by' => 'operator',
@@ -185,12 +186,12 @@ class ProductionFlowSeeder extends Seeder
                 'ordered_at' => Carbon::now()->subDays(2)->setTime(10, 5, 0),
                 'quantity' => 1200,
                 'arrived' => false,
-                'arrival_time' => Carbon::now()->addDays(3)->startOfDay(),
-                'tracking_number' => 'DHL-991044321',
+                'arrival_time' => null,
+                'tracking_number' => null,
                 'provider' => 'TME Electronic Components',
                 'supplier_lot' => 'LOT-MUR-10009',
                 'production_date' => '2026-02-10',
-                'entry_date' => Carbon::now()->addDays(3)->startOfDay(),
+                'entry_date' => null,
                 'reception_status' => 'in_asteptare',
                 'reception_notes' => 'In tranzit de la furnizor',
                 'received_by' => 'operator',

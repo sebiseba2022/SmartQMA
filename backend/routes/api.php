@@ -171,7 +171,9 @@ Route::prefix('v1')->group(function () {
     // GET /api/v1/traceability/scan/{qr} -> Rezultate teste AOI, ICT, EOL (pass/fail) + Amplasare Bestück SMD/THT
     Route::get('/traceability/scan/{qr}', [TraceabilityController::class, 'scanQr']);
 
-    // Magazie & Comenzi componente
+    // Magazie & Comenzi componente + Nomenclator Identuri
+    Route::get('/idents', [TraceabilityController::class, 'getComponentIdents']);
+    Route::post('/idents', [TraceabilityController::class, 'storeComponentIdent']);
     Route::get('/inventory', [TraceabilityController::class, 'getInventory']);
     Route::post('/inventory', [TraceabilityController::class, 'storeInventory']);
     Route::patch('/inventory/{id}/arrival', [TraceabilityController::class, 'updateInventoryArrival']);

@@ -53,26 +53,60 @@ class TraceabilityTest extends TestCase
     }
 
     /**
-     * Testeaza popularea si comandarea componentelor in Magazie (ident 10002 - 10009)
+     * Testeaza nomenclatorul de identuri (component_idents, ident > 10000) si comenzile in Magazie
      */
     public function test_inventory_contains_arduino_uno_orders_and_creates_new_order(): void
     {
+        $identsResponse = $this->getJson('/api/v1/idents');
+        $identsResponse->assertStatus(200)
+            ->assertJsonPath('status', 'success')
+            ->assertJsonCount(8, 'data')
+            ->assertJsonPath('data.0.ident', 10002)
+            ->assertJsonPath('data.0.package_type', 'THT')
+            ->assertJsonPath('data.1.ident', 10003)
+            ->assertJsonPath('data.1.package_type', 'SMD');
+
+        $newIdentRes = $this->postJson('/api/v1/idents', [
+            'part_name' => 'Conector Mamă 12 Pini',
+            'manufacturer_part_number' => 'STE-12P-01',
+            'provider' => 'Farnell Element14',
+            'package_type' => 'Stecker',
+            'manufacturer' => 'TE Connectivity',
+        ]);
+        $newIdentRes->assertStatus(201)
+            ->assertJsonPath('status', 'success')
+            ->assertJsonPath('data.ident', 10010)
+            ->assertJsonPath('data.package_type', 'Stecker');
+
         $listResponse = $this->getJson('/api/v1/inventory');
         $listResponse->assertStatus(200)
             ->assertJsonPath('status', 'success')
             ->assertJsonCount(8, 'data')
             ->assertJsonPath('data.0.ident', '10002')
-            ->assertJsonPath('data.7.ident', '10009');
+            ->assertJsonPath('data.7.ident', '10009')
+            ->assertJsonPath('data.7.arrived', false)
+            ->assertJsonPath('data.7.arrival_time', null)
+            ->assertJsonPath('data.7.tracking_number', null);
+
+        // Testeaza paginarea progresiva (top 50 / scroll)
+        $paginatedResponse = $this->getJson('/api/v1/inventory?limit=5&offset=0');
+        $paginatedResponse->assertStatus(200)
+            ->assertJsonPath('status', 'success')
+            ->assertJsonCount(5, 'data')
+            ->assertJsonPath('limit', 5)
+            ->assertJsonPath('offset', 0)
+            ->assertJsonPath('has_more', true);
+
+        $nextPageResponse = $this->getJson('/api/v1/inventory?limit=5&offset=5');
+        $nextPageResponse->assertStatus(200)
+            ->assertJsonPath('status', 'success')
+            ->assertJsonCount(3, 'data')
+            ->assertJsonPath('has_more', false);
 
         $payload = [
             'ident' => '10002',
-            'part_name' => 'ATmega328P (Microcontroler 8-bit AVR)',
             'ordered_at' => '2026-02-20 10:30:00',
             'quantity' => 600,
-            'arrived' => false,
-            'arrival_time' => null,
-            'tracking_number' => 'DHL-775544332',
-            'provider' => 'Mouser Electronics',
         ];
 
         $response = $this->postJson('/api/v1/inventory', $payload);
@@ -82,7 +116,8 @@ class TraceabilityTest extends TestCase
             ->assertJsonPath('data.ident', '10002')
             ->assertJsonPath('data.quantity', 600)
             ->assertJsonPath('data.arrived', false)
-            ->assertJsonPath('data.tracking_number', 'DHL-775544332')
+            ->assertJsonPath('data.arrival_time', null)
+            ->assertJsonPath('data.tracking_number', null)
             ->assertJsonPath('data.provider', 'Mouser Electronics');
 
         $id = $response->json('data.id');
@@ -90,11 +125,13 @@ class TraceabilityTest extends TestCase
         $patchResponse = $this->patchJson("/api/v1/inventory/{$id}/arrival", [
             'arrived' => true,
             'arrival_time' => '2026-02-22 14:00:00',
+            'tracking_number' => 'DHL-775544332',
         ]);
 
         $patchResponse->assertStatus(200)
             ->assertJsonPath('status', 'success')
-            ->assertJsonPath('data.arrived', true);
+            ->assertJsonPath('data.arrived', true)
+            ->assertJsonPath('data.tracking_number', 'DHL-775544332');
 
         $deleteResponse = $this->deleteJson("/api/v1/inventory/{$id}");
         $deleteResponse->assertStatus(200)

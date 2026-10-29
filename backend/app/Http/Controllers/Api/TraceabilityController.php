@@ -5,6 +5,7 @@ namespace App\Http\Controllers\Api;
 use App\Http\Controllers\Controller;
 use App\Models\AoiResult;
 use App\Models\BestuckPosition;
+use App\Models\ComponentIdent;
 use App\Models\EolResult;
 use App\Models\IctResult;
 use App\Models\InventoryComponent;
@@ -15,20 +16,10 @@ use App\Models\ThtPlacement;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Carbon;
+use Illuminate\Support\Facades\DB;
 
 class TraceabilityController extends Controller
 {
-    private const IDENT_NAMES = [
-        '10002' => 'ATmega328P (Microcontroler 8-bit AVR)',
-        '10003' => 'ATmega16U2 (Controller USB-la-Serial)',
-        '10004' => 'NCP1117ST50T3G (Regulator LDO 5.0V)',
-        '10005' => 'LP2985-33DBVR (Regulator LDO 3.3V)',
-        '10006' => 'LMV358IDGKR (Amplificator Operațional Dual)',
-        '10007' => 'FDN340P (Tranzistor MOSFET Canal-P)',
-        '10008' => 'MF-MSMF050-2 (Siguranță Resetabilă PTC 500mA)',
-        '10009' => 'CSTCE16M0V53-R0 (Rezonator Ceramic 16 MHz)',
-    ];
-
     /**
      * Scanare QR serial number PCB
      */
@@ -166,15 +157,143 @@ class TraceabilityController extends Controller
     }
 
     /**
-     * Lista comenzi componente din magazie
+     * Nomenclator identuri componente (component_idents)
      */
-    public function getInventory(): JsonResponse
+    public function getComponentIdents(): JsonResponse
     {
-        $items = InventoryComponent::orderBy('id', 'asc')->get();
+        $idents = ComponentIdent::orderBy('ident', 'asc')->get();
+
+        return response()->json([
+            'status' => 'success',
+            'data' => $idents,
+        ]);
+    }
+
+    /**
+     * Adaugare ident nou in nomenclator (component_idents, ident > 10000)
+     */
+    public function storeComponentIdent(Request $request): JsonResponse
+    {
+        $validated = $request->validate([
+            'ident' => 'nullable|integer|min:10001|unique:component_idents,ident',
+            'part_name' => 'required|string|max:255',
+            'manufacturer_part_number' => 'required|string|max:255',
+            'provider' => 'required|string|max:255',
+            'package_type' => 'required|string|max:100',
+            'manufacturer' => 'nullable|string|max:255',
+            'unit' => 'nullable|string|max:50',
+        ]);
+
+        $identItem = ComponentIdent::create([
+            'ident' => $validated['ident'] ?? null,
+            'part_name' => trim($validated['part_name']),
+            'manufacturer_part_number' => trim($validated['manufacturer_part_number']),
+            'provider' => trim($validated['provider']),
+            'package_type' => trim($validated['package_type']),
+            'manufacturer' => !empty($validated['manufacturer']) ? trim($validated['manufacturer']) : null,
+            'unit' => !empty($validated['unit']) ? trim($validated['unit']) : 'buc.',
+        ]);
+
+        return response()->json([
+            'status' => 'success',
+            'message' => 'Identul a fost înregistrat în nomenclator.',
+            'data' => $identItem,
+        ], 201);
+    }
+
+    /**
+     * Lista comenzi componente din magazie cu suport de paginare (top 50, scroll) si filtrare wildcard.
+     */
+    public function getInventory(Request $request): JsonResponse
+    {
+        $query = InventoryComponent::orderBy('id', 'asc');
+
+        if ($request->filled('ident')) {
+            $this->applyWildcardFilter($query, 'ident', $request->query('ident'));
+        }
+        if ($request->filled('part_name')) {
+            $this->applyWildcardFilter($query, 'part_name', $request->query('part_name'));
+        }
+        if ($request->filled('provider')) {
+            $this->applyWildcardFilter($query, 'provider', $request->query('provider'));
+        }
+        if ($request->filled('tracking_number')) {
+            $this->applyWildcardFilter($query, 'tracking_number', $request->query('tracking_number'));
+        }
+        if ($request->filled('quantity')) {
+            $query->where('quantity', (int) $request->query('quantity'));
+        }
+        if ($request->filled('arrived')) {
+            $arrivedVal = strtolower(trim($request->query('arrived')));
+            if (in_array($arrivedVal, ['da', 'yes', 'true', '1'], true)) {
+                $query->where('arrived', true);
+            } elseif (in_array($arrivedVal, ['nu', 'no', 'false', '0'], true)) {
+                $query->where('arrived', false);
+            }
+        }
+
+        $total = (clone $query)->count();
+
+        // Daca este specificat limit (ex: limit=50), aplicam paginare progresiva (top 50, scroll)
+        if ($request->has('limit')) {
+            $limit = max(1, (int) $request->query('limit', 50));
+            $offset = max(0, (int) $request->query('offset', 0));
+            $items = $query->skip($offset)->take($limit)->get();
+
+            return response()->json([
+                'status' => 'success',
+                'data' => $items,
+                'total' => $total,
+                'limit' => $limit,
+                'offset' => $offset,
+                'has_more' => ($offset + $items->count()) < $total,
+            ]);
+        }
+
+        $items = $query->get();
         return response()->json([
             'status' => 'success',
             'data' => $items,
+            'total' => $total,
         ]);
+    }
+
+    /**
+     * Aplica filtru cu suport pentru wildcard %% (inceput, sfarsit, continut) sau potrivire exacta
+     */
+    private function applyWildcardFilter($query, string $field, string $rawVal): void
+    {
+        $val = trim($rawVal);
+        if ($val === '' || $val === '%%' || $val === '%') {
+            return;
+        }
+
+        $operator = DB::getDriverName() === 'pgsql' ? 'ILIKE' : 'LIKE';
+
+        if ($field === 'ident') {
+            if (str_contains($val, '%')) {
+                $pattern = str_replace('%%', '%', $val);
+                $query->where(function ($q) use ($operator, $pattern) {
+                    $q->where('ident', $operator, $pattern)
+                      ->orWhereRaw("CAST(internal_id AS TEXT) {$operator} ?", [$pattern]);
+                });
+            } else {
+                $query->where(function ($q) use ($val) {
+                    $q->where('ident', '=', $val);
+                    if (is_numeric($val)) {
+                        $q->orWhere('internal_id', '=', (int) $val);
+                    }
+                });
+            }
+            return;
+        }
+
+        if (str_contains($val, '%')) {
+            $pattern = str_replace('%%', '%', $val);
+            $query->where($field, $operator, $pattern);
+        } else {
+            $query->where($field, '=', $val);
+        }
     }
 
     /**
@@ -199,22 +318,34 @@ class TraceabilityController extends Controller
         ]);
 
         $ident = $validated['ident'] ?? '10002';
-        $partName = $validated['part_name'] ?? (self::IDENT_NAMES[$ident] ?? ('Componentă #' . $ident));
+        $catalogEntry = is_numeric($ident) ? ComponentIdent::find((int) $ident) : null;
+
+        $partName = $validated['part_name']
+            ?? $catalogEntry?->part_name
+            ?? ('Componentă #' . $ident);
+
+        $provider = $validated['provider']
+            ?? $catalogEntry?->provider
+            ?? 'Mouser Electronics';
+
         $arrived = (bool) ($validated['arrived'] ?? false);
         $orderedAt = !empty($validated['ordered_at']) ? Carbon::parse($validated['ordered_at']) : Carbon::now();
         $arrivalTime = !empty($validated['arrival_time'])
             ? Carbon::parse($validated['arrival_time'])->startOfDay()
-            : Carbon::now()->startOfDay();
+            : null;
+        $trackingNumber = !empty($validated['tracking_number'])
+            ? trim($validated['tracking_number'])
+            : null;
 
         $item = InventoryComponent::create([
-            'ident' => $ident,
+            'ident' => (string) $ident,
             'part_name' => $partName,
             'ordered_at' => $orderedAt,
             'quantity' => $validated['quantity'],
             'arrived' => $arrived,
             'arrival_time' => $arrivalTime,
-            'tracking_number' => $validated['tracking_number'] ?? ('AWB-' . $ident),
-            'provider' => $validated['provider'] ?? 'Mouser Electronics',
+            'tracking_number' => $trackingNumber,
+            'provider' => $provider,
             'supplier_lot' => $validated['supplier_lot'] ?? ('LOT-' . $ident),
             'production_date' => $validated['production_date'] ?? null,
             'entry_date' => $arrivalTime,
@@ -231,25 +362,38 @@ class TraceabilityController extends Controller
     }
 
     /**
-     * Actualizare status sosire in depozit (arrived & arrival_time) pentru o comanda
+     * Actualizare status sosire in depozit (arrived, arrival_time, tracking_number) pentru o comanda
      */
     public function updateInventoryArrival(Request $request, int $id): JsonResponse
     {
         $item = InventoryComponent::findOrFail($id);
 
         $validated = $request->validate([
-            'arrived' => 'required|boolean',
+            'arrived' => 'nullable|boolean',
             'arrival_time' => 'nullable|date',
+            'tracking_number' => 'nullable|string',
         ]);
 
-        $arrived = (bool) $validated['arrived'];
-        $arrivalTime = !empty($validated['arrival_time'])
-            ? Carbon::parse($validated['arrival_time'])->startOfDay()
-            : ($item->arrival_time ?? Carbon::now()->startOfDay());
+        $arrived = array_key_exists('arrived', $validated)
+            ? (bool) $validated['arrived']
+            : (bool) $item->arrived;
+
+        if (array_key_exists('arrival_time', $validated)) {
+            $arrivalTime = !empty($validated['arrival_time'])
+                ? Carbon::parse($validated['arrival_time'])->startOfDay()
+                : null;
+        } else {
+            $arrivalTime = $arrived ? ($item->arrival_time ?? Carbon::now()->startOfDay()) : null;
+        }
+
+        $trackingNumber = array_key_exists('tracking_number', $validated)
+            ? (!empty($validated['tracking_number']) ? trim($validated['tracking_number']) : null)
+            : $item->tracking_number;
 
         $item->update([
             'arrived' => $arrived,
             'arrival_time' => $arrivalTime,
+            'tracking_number' => $trackingNumber,
             'entry_date' => $arrivalTime,
             'reception_status' => $arrived ? 'conform' : 'in_asteptare',
         ]);
