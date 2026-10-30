@@ -24,4 +24,4 @@ ENV PHP_CLI_SERVER_WORKERS=8
 
 EXPOSE 8000
 
-CMD ["sh", "-c", "php artisan serve --host=0.0.0.0 --port=8000 --no-reload"]
+CMD ["sh", "-c", "if [ ! -f vendor/autoload.php ]; then composer install --no-interaction; fi && if [ ! -f .env ]; then cp .env.example .env; fi && if ! grep -q '^APP_KEY=base64:' .env; then php artisan key:generate --ansi; fi && php artisan migrate --force && php artisan serve --host=0.0.0.0 --port=8000 --no-reload"]
