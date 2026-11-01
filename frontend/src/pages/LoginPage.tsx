@@ -2,7 +2,6 @@ import { useState, type FormEvent } from 'react';
 import type { Language, User } from '../types';
 import { WORKSTATIONS, translations } from '../i18n';
 import { EyeIcon, EyeOffIcon } from '../components/icons/IndustrialIcons';
-import TraceabilityGraphic from '../components/TraceabilityGraphic';
 
 interface LoginPageProps {
   lang: Language;
@@ -84,19 +83,16 @@ export function LoginPage({
 
   return (
     <div className="login-split-layout">
-      {/* Coloana Stânga: Design elegant, aerisit, abundență de alb, grafic de trasabilitate */}
+      {/* Coloana Stânga: Imagine fabrică industrială cu fadeout, siglă transparentă decupată cu umbră, fără scroll */}
       <div className="login-left-banner">
         <div className="banner-top-brand">
           <div className="logo-wrapper-hero">
-            <img src="/logo-transparent.png" alt="SmartQMA Logo" className="hero-logo-img" />
+            <img src="/logo-white.png" alt="SmartQMA Logo" className="hero-logo-img" />
           </div>
         </div>
 
         <div className="banner-center-content">
-          <div className="banner-bordeaux-accent">
-            <span className="accent-cobalt-dot" />
-            <span className="accent-line-bordeaux" />
-          </div>
+          <div className="red-accent-line" />
 
           <h1 className="banner-headline">
             {lang === 'ro'
@@ -110,11 +106,6 @@ export function LoginPage({
               : 'SmartQMA unifies every manufacturing station: from raw components intake and QR laser marking, through SMD/THT assembly, AOI/ICT/EOL quality inspection, to final shipping.'}
           </p>
 
-          <div className="banner-graphic-container">
-            <TraceabilityGraphic size={310} />
-          </div>
-
-          {/* Repere de valoare discrete cu accente cobalt și bordeaux */}
           <div className="banner-features-row">
             <div className="banner-feature-item">
               <span className="feature-node-dot cobalt" />
@@ -145,7 +136,7 @@ export function LoginPage({
         </div>
       </div>
 
-      {/* Coloana Dreapta: Formular Autentificare curat, luminos, cu butoane stilizate bordeaux */}
+      {/* Coloana Dreapta: Formular Autentificare aerisit, compact, fără scroll pe pagină */}
       <div className="login-right-panel">
         <div className="top-lang-bar">
           <div className="lang-switcher-discreet" title="Select language">
@@ -220,7 +211,7 @@ export function LoginPage({
               </div>
             </div>
 
-            {/* Dropdown-ul cu cele 11 posturi de lucru */}
+            {/* Dropdown-ul cu cele 11 posturi de lucru — FĂRĂ TAG-URI ÎN PARANTEZĂ */}
             <div className="auth-form-group">
               <label htmlFor="auth-station">{t.stationLabel}</label>
               <select
@@ -231,13 +222,13 @@ export function LoginPage({
               >
                 {WORKSTATIONS.map((w) => (
                   <option key={w.id} value={w.id}>
-                    {w.name[lang]} ({w.code})
+                    {w.name[lang]}
                   </option>
                 ))}
               </select>
             </div>
 
-            {/* Autofill rapid pentru conturile de test - Stil Butoane Pill Elegante */}
+            {/* Autofill rapid pentru conturile de test */}
             <div className="test-autofill-box">
               <span className="autofill-label">
                 <span className="autofill-cobalt-dot" />
@@ -316,6 +307,8 @@ export function LoginPage({
             </button>
           </form>
         </div>
+
+        <div className="login-right-footer" />
       </div>
     </div>
   );

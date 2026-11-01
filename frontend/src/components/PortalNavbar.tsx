@@ -25,14 +25,13 @@ export function PortalNavbar({
     <header className="portal-navbar">
       {/* Stânga: Logo oficial SmartQMA + Separator subtil + Numele postului curent */}
       <div className="navbar-brand">
-        <a href="/" className="logo-wrapper-small" title="SmartQMA — Trasability at it's finest">
+        <a href="/" className="logo-wrapper-small" title="SmartQMA — Traceability at its finest">
           <img src="/logo-tight.png" alt="SmartQMA Logo" className="navbar-logo-img" />
         </a>
 
         <div className="navbar-divider-accent" />
 
         <div className="navbar-station-info">
-          <span className="navbar-station-badge">{currentWs.code}</span>
           <span className="navbar-station-name">{currentWs.name[lang]}</span>
         </div>
       </div>

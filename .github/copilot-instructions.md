@@ -12,9 +12,14 @@ Aceste instrucțiuni oferă context critic asistentului AI integrat în **Antigr
 
 ---
 
-## 🧭 Convenții de Arhitectură & Calitate Cod
+## 🧭 Reguli Stricte & Convenții
 
-### 1. Backend (Laravel & PHP)
+### 1. Regula de Aur pentru UI / Interfață
+- ❌ **STRICT:** Nu adăugați NICIODATĂ coduri de stații (ex: `WS-STA-10`, `WS-MAG-01`), tag-uri, badge-uri sau identificatori noi în UI fără permisiunea explicită a utilizatorului.
+- Se afișează strict denumirile specificate, fără adaosuri, fără paranteze sau elemente suplimentare.
+- Executați strict ce cere utilizatorul, fără suplimentări din proprie inițiativă.
+
+### 2. Backend (Laravel & PHP)
 - Respectați standardele PSR-12 și stilul Laravel, formatat cu **Laravel Pint** (`./vendor/bin/pint`).
 - Folosiți **PHPStan** pentru verificare strictă a tipurilor (`./vendor/bin/phpstan analyse`).
 - Structură modulară curată:
@@ -23,26 +28,11 @@ Aceste instrucțiuni oferă context critic asistentului AI integrat în **Antigr
   - API Resources pentru serializarea răspunsurilor JSON.
   - Politici de autorizare (Laravel Policies / Gates).
 
-### 2. Frontend (React & TypeScript)
+### 3. Frontend (React & TypeScript)
 - Folosiți **TypeScript în mod strict** (`strict: true`, fără utilizarea tipului `any`).
-- Formatare automată cu **Prettier** și verificare cu **ESLint** (`npm run lint`).
 - Componente modulare și reutilizabile, stilizate folosind token-urile de design SmartQMA.
 
-### 3. Autentificare & Securitate
-- ❌ **Nu creați tabele sau câmpuri de parole locale.**
-- Autentificarea utilizatorilor se bazează exclusiv pe **Google OAuth2 / OIDC** prin **Laravel Socialite**.
-
-### 4. Sistem Vizual (Design Tokens)
-- Respectați paleta oficială:
-  - **Negru** (`#09090B`, `#18181B`) pentru fundaluri și structuri dark.
-  - **Alb** (`#FFFFFF`, `#FAFAFA`) pentru text și suprafețe luminoase.
-  - **Roșu** (`#DC2626`, `#991B1B`) pentru erori și stări eșuate (`FAILED`).
-  - **Portocaliu** (`#EA580C`, `#F97316`) pentru stări în derulare (`IN_PROGRESS`) și avertizări.
-- Folosiți fonturi monospațiale (`JetBrains Mono` / `Roboto Mono`) pentru date brute, coduri și valori numerice.
-
----
-
-## 🧪 Reguli de Testare
+### 4. Reguli de Testare
 - **Backend (Laravel)**: Teste unitare și feature scrise cu **Pest PHP** sau **PHPUnit**, acoperire minimă impusă de **80%** (`php artisan test --coverage --min=80`).
 - **Frontend (React)**: Teste de componente cu **Vitest** + React Testing Library (`npm test`, `npm run test:coverage`).
 - **E2E Testing**: Suită **Playwright** pentru validarea fluxurilor complete în browser (`npx playwright test`).

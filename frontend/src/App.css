@@ -12,46 +12,29 @@
    ============================================================================== */
 .login-split-layout {
   display: flex;
-  min-height: 100vh;
+  height: 100vh;
+  max-height: 100vh;
   width: 100%;
+  overflow: hidden;
   background-color: var(--qma-bg-white, #ffffff);
 }
 
-/* Coloana Stânga: Banner Aerisit, Abundență de Alb & Gri Deschis, Grafic Trasabilitate */
+/* Coloana Stânga: Imagine fabrică industrială cu fadeout & siglă transparentă decupată cu umbră */
 .login-left-banner {
   flex: 1.15;
-  background-color: #fafbfc;
-  border-right: 1px solid var(--qma-border-light, #eaecf0);
-  color: var(--qma-text-main, #1e293b);
-  padding: 48px 56px;
+  height: 100vh;
+  max-height: 100vh;
+  background: 
+    linear-gradient(180deg, rgba(16, 7, 12, 0.78) 0%, rgba(75, 10, 24, 0.6) 42%, rgba(12, 4, 8, 0.9) 100%),
+    linear-gradient(90deg, rgba(16, 7, 12, 0.35) 0%, rgba(16, 7, 12, 0.88) 100%),
+    url('/factory-bg.jpg') center center / cover no-repeat;
+  color: #ffffff;
+  padding: 40px 48px;
   display: flex;
   flex-direction: column;
   justify-content: space-between;
   position: relative;
   overflow: hidden;
-}
-
-/* Fading decorativ subtil de fundal în nuanțe foarte pale de vișiniu */
-.login-left-banner::before {
-  content: '';
-  position: absolute;
-  top: -120px;
-  left: -80px;
-  width: 480px;
-  height: 480px;
-  background: radial-gradient(circle, rgba(122, 12, 34, 0.04) 0%, transparent 70%);
-  pointer-events: none;
-}
-
-.login-left-banner::after {
-  content: '';
-  position: absolute;
-  bottom: -100px;
-  right: -60px;
-  width: 420px;
-  height: 420px;
-  background: radial-gradient(circle, rgba(30, 58, 138, 0.035) 0%, transparent 70%);
-  pointer-events: none;
 }
 
 .banner-top-brand {
@@ -61,116 +44,88 @@
   z-index: 2;
 }
 
-/* Logo Hero pe fundal alb curat, fără neon */
+/* Logo Hero transparent, fără chenar alb, cu drop-shadow puternic pentru vizibilitate */
 .logo-wrapper-hero {
   position: relative;
   display: inline-flex;
   align-items: center;
-  justify-content: center;
-  padding: 12px 18px;
-  background: #ffffff;
-  border-radius: 16px;
-  border: 1px solid #eaecf0;
-  box-shadow: 0 4px 16px rgba(107, 15, 36, 0.04);
-  transition: transform 0.25s ease, box-shadow 0.25s ease;
-}
-
-.logo-wrapper-hero:hover {
-  transform: translateY(-2px);
-  box-shadow: 0 8px 22px rgba(107, 15, 36, 0.08);
+  justify-content: flex-start;
+  padding: 0;
+  background: transparent;
+  border: none;
+  box-shadow: none;
 }
 
 .hero-logo-img {
-  max-width: 290px;
+  max-width: 250px;
   width: 100%;
   height: auto;
   display: block;
+  filter: drop-shadow(0 6px 18px rgba(0, 0, 0, 0.85)) drop-shadow(0 2px 6px rgba(0, 0, 0, 0.95));
+  transition: transform 0.25s ease, filter 0.25s ease;
+}
+
+.hero-logo-img:hover {
+  transform: translateY(-2px);
+  filter: drop-shadow(0 8px 24px rgba(0, 0, 0, 0.95)) drop-shadow(0 3px 8px rgba(0, 0, 0, 1));
 }
 
 .banner-center-content {
   max-width: 520px;
-  margin: 32px 0;
+  margin: 16px 0;
   position: relative;
   z-index: 2;
-}
-
-/* Linii de accent vișiniu și puncte cobalt */
-.banner-bordeaux-accent {
-  display: inline-flex;
-  align-items: center;
-  gap: 8px;
-  margin-bottom: 20px;
-}
-
-.accent-cobalt-dot {
-  width: 8px;
-  height: 8px;
-  border-radius: 50%;
-  background-color: var(--qma-cobalt, #1e3a8a);
-  display: inline-block;
-}
-
-.accent-line-bordeaux {
-  width: 48px;
-  height: 3px;
-  background: #7a0c22;
-  border-radius: 3px;
-  display: inline-block;
 }
 
 .red-accent-line {
   width: 44px;
   height: 3.5px;
-  background: #7a0c22;
+  background: linear-gradient(90deg, #dc2626, #ea580c);
   border-radius: 3px;
-  margin-bottom: 20px;
+  margin-bottom: 16px;
 }
 
-/* Titlu în font serif elegant, nuanță bordeaux profund */
+/* Titlu în font serif elegant, alb pe fundalul de fabrică cu fadeout */
 .banner-headline {
   font-family: var(--font-serif, 'Playfair Display', Georgia, serif);
-  font-size: 38px;
+  font-size: 30px;
   font-weight: 700;
   line-height: 1.25;
-  color: #54091a;
-  margin-bottom: 16px;
-  letter-spacing: -0.5px;
+  color: #ffffff;
+  margin-bottom: 14px;
+  letter-spacing: -0.4px;
+  text-shadow: 0 2px 10px rgba(0, 0, 0, 0.65);
 }
 
 .banner-description {
-  font-size: 15px;
-  color: #475569;
-  line-height: 1.65;
-  margin-bottom: 24px;
-}
-
-.banner-graphic-container {
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  margin: 20px 0 24px 0;
+  font-size: 14px;
+  color: #e2e8f0;
+  line-height: 1.6;
+  margin-bottom: 18px;
+  max-width: 480px;
+  text-shadow: 0 1px 4px rgba(0, 0, 0, 0.5);
 }
 
 /* Rând de repere de trasabilitate */
 .banner-features-row {
   display: flex;
   flex-wrap: wrap;
-  gap: 16px;
-  margin-top: 14px;
+  gap: 10px;
+  margin-top: 8px;
 }
 
 .banner-feature-item {
   display: inline-flex;
   align-items: center;
-  gap: 8px;
-  background: #ffffff;
-  border: 1px solid #eaecf0;
+  gap: 7px;
+  background: rgba(255, 255, 255, 0.1);
+  border: 1px solid rgba(255, 255, 255, 0.18);
+  backdrop-filter: blur(4px);
   border-radius: 9999px;
-  padding: 6px 14px;
-  font-size: 12.5px;
+  padding: 5px 12px;
+  font-size: 12px;
   font-weight: 600;
-  color: #334155;
-  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.02);
+  color: #ffffff;
 }
 
 .feature-node-dot {
@@ -178,35 +133,38 @@
   height: 7px;
   border-radius: 50%;
 }
-.feature-node-dot.cobalt { background-color: #1e3a8a; }
-.feature-node-dot.bordeaux { background-color: #7a0c22; }
+.feature-node-dot.cobalt { background-color: #38bdf8; }
+.feature-node-dot.bordeaux { background-color: #ef4444; }
 
 .banner-footer {
   display: flex;
   justify-content: space-between;
   align-items: center;
-  font-size: 12px;
-  color: #94a3b8;
-  border-top: 1px solid #eaecf0;
-  padding-top: 20px;
+  font-size: 11.5px;
+  color: rgba(255, 255, 255, 0.65);
+  border-top: 1px solid rgba(255, 255, 255, 0.12);
+  padding-top: 14px;
   position: relative;
   z-index: 2;
 }
 
 .banner-footer-tagline {
-  color: #7a0c22;
+  color: #fca5a5;
   font-weight: 600;
   font-family: var(--font-serif, serif);
   font-style: italic;
 }
 
-/* Coloana Dreapta: Panou Curat, Alb, Formular Autentificare */
+/* Coloana Dreapta: Panou Curat, Alb, Fără scroll pe pagină */
 .login-right-panel {
   flex: 1;
+  height: 100vh;
+  max-height: 100vh;
+  overflow-y: auto;
   background-color: #ffffff;
   display: flex;
   flex-direction: column;
-  padding: 36px 54px;
+  padding: 24px 44px;
   position: relative;
   justify-content: space-between;
 }
@@ -224,15 +182,15 @@
   background: #f8fafc;
   border: 1px solid #e2e8f0;
   border-radius: 9999px;
-  padding: 4px 10px;
-  font-size: 12px;
+  padding: 3px 8px;
+  font-size: 11.5px;
 }
 
 .lang-btn-discreet {
   background: none;
   border: none;
   color: #64748b;
-  font-size: 12px;
+  font-size: 11.5px;
   font-weight: 600;
   cursor: pointer;
   padding: 2px 6px;
@@ -256,14 +214,14 @@
 }
 
 .login-card-container {
-  max-width: 440px;
+  max-width: 420px;
   width: 100%;
   margin: auto;
-  padding: 30px 0;
+  padding: 0;
 }
 
 .login-card-header {
-  margin-bottom: 24px;
+  margin-bottom: 14px;
 }
 
 .login-portal-badge {
@@ -273,13 +231,13 @@
   background-color: #eff6ff;
   border: 1px solid #bfdbfe;
   color: #1e3a8a;
-  font-size: 11px;
+  font-size: 10.5px;
   font-weight: 700;
   text-transform: uppercase;
   letter-spacing: 0.05em;
-  padding: 3px 10px;
+  padding: 2px 9px;
   border-radius: 9999px;
-  margin-bottom: 12px;
+  margin-bottom: 8px;
 }
 
 .badge-pulse-dot {
@@ -291,45 +249,45 @@
 
 .login-card-title {
   font-family: var(--font-serif, 'Playfair Display', Georgia, serif);
-  font-size: 28px;
+  font-size: 24px;
   font-weight: 700;
   color: #54091a;
-  margin-bottom: 6px;
+  margin-bottom: 4px;
   letter-spacing: -0.3px;
 }
 
 .login-card-subtitle {
-  font-size: 14.5px;
+  font-size: 13.5px;
   color: #64748b;
-  margin-bottom: 24px;
-  line-height: 1.5;
+  margin-bottom: 16px;
+  line-height: 1.4;
 }
 
 .login-error-alert {
   background-color: #fef2f2;
   border: 1.5px solid #fecaca;
   color: #991b1b;
-  padding: 11px 16px;
-  border-radius: 10px;
-  font-size: 13.5px;
-  margin-bottom: 20px;
+  padding: 9px 14px;
+  border-radius: 8px;
+  font-size: 13px;
+  margin-bottom: 14px;
   font-weight: 500;
 }
 
 .auth-form {
   display: flex;
   flex-direction: column;
-  gap: 18px;
+  gap: 12px;
 }
 
 .auth-form-group {
   display: flex;
   flex-direction: column;
-  gap: 7px;
+  gap: 5px;
 }
 
 .auth-form-group label {
-  font-size: 13px;
+  font-size: 12.5px;
   font-weight: 600;
   color: #334155;
 }
@@ -337,10 +295,10 @@
 .auth-form-group input,
 .auth-form-group select {
   width: 100%;
-  padding: 11px 15px;
-  font-size: 14px;
+  padding: 9px 13px;
+  font-size: 13.5px;
   border: 1.5px solid #d0d5dd;
-  border-radius: 10px;
+  border-radius: 8px;
   background-color: #ffffff;
   color: #1e293b;
   transition: all 0.18s ease;
@@ -360,17 +318,17 @@
 }
 
 .password-input-wrapper input {
-  padding-right: 44px;
+  padding-right: 40px;
 }
 
 .btn-toggle-eye {
   position: absolute;
-  right: 14px;
+  right: 12px;
   background: none;
   border: none;
   cursor: pointer;
   color: #64748b;
-  font-size: 16px;
+  font-size: 15px;
   padding: 0;
   line-height: 1;
   transition: color 0.15s ease;
@@ -380,38 +338,38 @@
   color: #7a0c22;
 }
 
-/* Caseta Conturi Test — Butoane Conturate Bordeaux Pill */
+/* Caseta Conturi Test — Butoane Conturate Bordeaux Pill Compacte */
 .test-autofill-box {
   background-color: #fafbfc;
   border: 1px solid #eaecf0;
-  border-radius: 12px;
-  padding: 14px 16px;
-  margin-top: 4px;
+  border-radius: 10px;
+  padding: 10px 12px;
+  margin-top: 2px;
 }
 
 .autofill-label {
-  font-size: 11px;
+  font-size: 10.5px;
   font-weight: 700;
   color: #54091a;
   display: inline-flex;
   align-items: center;
-  gap: 6px;
-  margin-bottom: 10px;
+  gap: 5px;
+  margin-bottom: 8px;
   letter-spacing: 0.05em;
   text-transform: uppercase;
 }
 
 .autofill-cobalt-dot {
-  width: 6px;
-  height: 6px;
+  width: 5px;
+  height: 5px;
   border-radius: 50%;
   background-color: #1e3a8a;
 }
 
 .autofill-buttons-row {
-  display: flex;
-  flex-wrap: wrap;
-  gap: 8px;
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 6px;
 }
 
 /* Butoane de test: rotunjite pill, contur bordeaux elegant */
@@ -419,9 +377,9 @@
   background-color: #ffffff;
   border: 1.5px solid #7a0c22;
   border-radius: 9999px;
-  padding: 6px 12px;
-  font-size: 12px;
-  font-weight: 600;
+  padding: 5px 4px;
+  font-size: 11px;
+  font-weight: 700;
   color: #7a0c22;
   cursor: pointer;
   text-align: center;
@@ -433,18 +391,18 @@
   background-color: #7a0c22;
   color: #ffffff;
   transform: translateY(-1px);
-  box-shadow: 0 3px 8px rgba(122, 12, 34, 0.22);
+  box-shadow: 0 2px 6px rgba(122, 12, 34, 0.22);
 }
 
 /* Buton Principal Autentificare: Pill Bordeaux Bogat */
 .btn-signin {
-  margin-top: 10px;
+  margin-top: 4px;
   background: #7a0c22;
   color: #ffffff;
   border: none;
   border-radius: 9999px;
-  padding: 14px 24px;
-  font-size: 15px;
+  padding: 11px 20px;
+  font-size: 14.5px;
   font-weight: 700;
   letter-spacing: 0.01em;
   cursor: pointer;

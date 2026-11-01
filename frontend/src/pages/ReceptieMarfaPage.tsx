@@ -8,7 +8,6 @@ export function ReceptieMarfaPage({ lang }: StationPageProps) {
   return (
     <div className="station-content-wrapper">
       <div className="station-banner-card">
-        <div className="station-code-pill">WS-REC-02</div>
         <h2 className="station-headline">
           {lang === 'ro' ? 'Punct de verificare — Recepție marfă' : 'Inspection point — Goods receipt'}
         </h2>
@@ -18,8 +17,9 @@ export function ReceptieMarfaPage({ lang }: StationPageProps) {
             : 'Incoming quality control, component batch reception, and supplier conformity verification.'}
         </p>
       </div>
-      <div className="station-workspace-area blank-page-white">
-        {/* Spațiu pregătit pentru fluxul de recepție marfă */}
+
+      <div className="station-workspace-area">
+        <div className="blank-page-white" />
       </div>
     </div>
   );

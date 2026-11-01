@@ -92,9 +92,6 @@ export function OperatorBarcodeModal({
       >
         <div className="magazie-modal-header">
           <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
-            <span className="station-code-pill" style={{ margin: 0 }}>
-              {currentWs.code}
-            </span>
             <h2 className="magazie-modal-title" style={{ margin: 0, fontSize: '17px' }}>
               {lang === 'ro' ? 'Verificare acces operator' : 'Operator access verification'}
             </h2>
@@ -202,7 +199,7 @@ export function OperatorBarcodeModal({
               </div>
             </div>
 
-            <div className="magazie-modal-actions" style={{ marginTop: '16px' }}>
+            <div className="magazie-modal-actions">
               <button
                 type="button"
                 className="magazie-btn-cancel"
@@ -221,8 +218,8 @@ export function OperatorBarcodeModal({
                     ? 'Se verifică...'
                     : 'Verifying...'
                   : lang === 'ro'
-                    ? 'Verifică accesul'
-                    : 'Verify access'}
+                  ? 'Autorizează acces'
+                  : 'Authorize access'}
               </button>
             </div>
           </form>
@@ -233,4 +230,3 @@ export function OperatorBarcodeModal({
 }
 
 export default OperatorBarcodeModal;
-
