@@ -1,83 +1,96 @@
+import { useState } from 'react';
 import type { Language, User } from '../types';
 import type { WorkstationDef } from '../i18n';
-import { ROLE_NAMES } from '../i18n';
 
 interface PortalNavbarProps {
-  lang: Language;
-  onLangChange: (newLang: Language) => void;
+  lang?: Language;
+  onLangChange?: (newLang: Language) => void;
   currentWs: WorkstationDef;
-  currentUser: User | null;
+  currentUser?: User | null;
   onLogout: () => void;
 }
 
 export function PortalNavbar({
-  lang,
-  onLangChange,
   currentWs,
-  currentUser,
   onLogout,
 }: PortalNavbarProps) {
-  const roleDisplay = currentUser
-    ? ROLE_NAMES[currentUser.role]?.[lang] || currentUser.role
-    : '';
+  const [showLogoutModal, setShowLogoutModal] = useState(false);
 
   return (
-    <header className="portal-navbar">
-      {/* Stânga: Logo oficial SmartQMA + Separator subtil + Numele postului curent */}
-      <div className="navbar-brand">
-        <a href="/" className="logo-wrapper-small" title="SmartQMA — Traceability at its finest">
-          <img src="/logo-tight.png" alt="SmartQMA Logo" className="navbar-logo-img" />
-        </a>
-
-        <div className="navbar-divider-accent" />
-
-        <div className="navbar-station-info">
-          <span className="navbar-station-name">{currentWs.name[lang]}</span>
-        </div>
-      </div>
-
-      {/* Dreapta: Informații utilizator activ, comutator limbă RO/EN și buton deconectare */}
-      <div className="navbar-right-actions">
-        {currentUser && (
-          <div className="navbar-user-chip" title={`Rol: ${roleDisplay}`}>
-            <span className="user-status-dot cobalt" />
-            <span className="navbar-user-name">{currentUser.name}</span>
-            <span className="navbar-user-role">({roleDisplay})</span>
+    <>
+      <header className="portal-navbar">
+        {/* Stânga: Logo oficial SmartQMA + Separator subtil + Numele postului curent */}
+        <div className="navbar-brand">
+          <div
+            className="logo-wrapper-small logo-static"
+            title="SmartQMA — Traceability at its finest"
+          >
+            <img src="/logo-tight.png" alt="SmartQMA Logo" className="navbar-logo-img" />
           </div>
-        )}
 
-        {/* Comutator discret RO / EN */}
-        <div className="lang-switcher-discreet" title="Language selection">
-          <button
-            type="button"
-            className={`lang-btn-discreet ${lang === 'ro' ? 'active' : ''}`}
-            onClick={() => onLangChange('ro')}
-          >
-            RO
-          </button>
-          <span className="lang-sep-discreet">/</span>
-          <button
-            type="button"
-            className={`lang-btn-discreet ${lang === 'en' ? 'active' : ''}`}
-            onClick={() => onLangChange('en')}
-          >
-            EN
-          </button>
+          <div className="navbar-divider-accent" />
+
+          <div className="navbar-station-info">
+            <span className="navbar-station-name">{currentWs.name.ro}</span>
+          </div>
         </div>
 
-        {/* Buton Deconectare elegant, rotund cu contur bordeaux */}
-        <button
-          type="button"
-          className="btn-logout-pill"
-          onClick={onLogout}
-          title={lang === 'ro' ? 'Deconectare din sesiune' : 'Log out from session'}
-          aria-label="Logout"
+        {/* Dreapta: Doar butonul ✕ de deconectare, fără text și fără badge de funcție */}
+        <div className="navbar-right-actions">
+          <button
+            type="button"
+            className="btn-logout-x"
+            onClick={() => setShowLogoutModal(true)}
+            title="Deconectare"
+            aria-label="Deconectare"
+          >
+            ✕
+          </button>
+        </div>
+      </header>
+
+      {/* Dialog de confirmare deconectare centrat pe ecran */}
+      {showLogoutModal && (
+        <div
+          className="logout-modal-backdrop"
+          onClick={() => setShowLogoutModal(false)}
+          role="dialog"
+          aria-modal="true"
         >
-          <span className="logout-icon">✕</span>
-          <span className="logout-text">{lang === 'ro' ? 'Ieșire' : 'Sign out'}</span>
-        </button>
-      </div>
-    </header>
+          <div
+            className="logout-modal-card"
+            onClick={(e) => e.stopPropagation()}
+          >
+            <div className="logout-modal-icon-wrap">
+              <span className="logout-modal-warn-icon">!</span>
+            </div>
+            <h3 className="logout-modal-title">Deconectare</h3>
+            <p className="logout-modal-message">
+              Sunteți sigur că doriți să vă deconectați?
+            </p>
+            <div className="logout-modal-actions">
+              <button
+                type="button"
+                className="btn-logout-cancel"
+                onClick={() => setShowLogoutModal(false)}
+              >
+                Anulează
+              </button>
+              <button
+                type="button"
+                className="btn-logout-confirm"
+                onClick={() => {
+                  setShowLogoutModal(false);
+                  onLogout();
+                }}
+              >
+                Confirmă
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
+    </>
   );
 }
 

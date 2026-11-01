@@ -4,14 +4,12 @@ import { WORKSTATIONS, translations } from '../i18n';
 import { EyeIcon, EyeOffIcon } from '../components/icons/IndustrialIcons';
 
 interface LoginPageProps {
-  lang: Language;
-  onLangChange: (newLang: Language) => void;
+  lang?: Language;
+  onLangChange?: (newLang: Language) => void;
   onLoginSuccess: (user: User, stationId: string) => void;
 }
 
 export function LoginPage({
-  lang,
-  onLangChange,
   onLoginSuccess,
 }: LoginPageProps) {
   const [username, setUsername] = useState('');
@@ -21,7 +19,7 @@ export function LoginPage({
   const [error, setError] = useState<string | null>(null);
   const [loading, setLoading] = useState(false);
 
-  const t = translations[lang];
+  const t = translations.ro;
 
   const handleLogin = async (e: FormEvent) => {
     e.preventDefault();
@@ -54,9 +52,7 @@ export function LoginPage({
       const targetStation = WORKSTATIONS.find((w) => w.id === selectedStation);
       if (targetStation && !targetStation.allowedRoles.includes(data.user.role)) {
         throw new Error(
-          lang === 'ro'
-            ? `Acces refuzat: Rolul «${data.user.role}» nu are permisiunea de a accesa postul «${targetStation.name.ro}».`
-            : `Access denied: Role "${data.user.role}" is not authorized for workstation "${targetStation.name.en}".`
+          `Acces refuzat: Rolul «${data.user.role}» nu are permisiunea de a accesa postul «${targetStation.name.ro}».`
         );
       }
 
@@ -95,75 +91,23 @@ export function LoginPage({
           <div className="red-accent-line" />
 
           <h1 className="banner-headline">
-            {lang === 'ro'
-              ? 'Soluții inteligente pentru trasabilitate completă'
-              : 'Intelligent solutions for complete traceability'}
+            Soluții inteligente pentru trasabilitate completă
           </h1>
 
           <p className="banner-description">
-            {lang === 'ro'
-              ? 'SmartQMA integrează fiecare post de fabricație: de la primirea componentelor și marcarea QR laser, până la asamblarea SMD/THT, inspecția calității AOI/ICT/EOL și expediție.'
-              : 'SmartQMA unifies every manufacturing station: from raw components intake and QR laser marking, through SMD/THT assembly, AOI/ICT/EOL quality inspection, to final shipping.'}
+            SmartQMA integrează fiecare post de fabricație: de la primirea componentelor și marcarea QR laser, până la asamblarea SMD/THT, inspecția calității AOI/ICT/EOL și expediție.
           </p>
-
-          <div className="banner-features-row">
-            <div className="banner-feature-item">
-              <span className="feature-node-dot cobalt" />
-              <span className="feature-text">
-                {lang === 'ro' ? 'Trasabilitate per PCB' : 'Per-PCB Traceability'}
-              </span>
-            </div>
-            <div className="banner-feature-item">
-              <span className="feature-node-dot bordeaux" />
-              <span className="feature-text">
-                {lang === 'ro' ? 'Control Calitate 100%' : '100% Quality Control'}
-              </span>
-            </div>
-            <div className="banner-feature-item">
-              <span className="feature-node-dot cobalt" />
-              <span className="feature-text">
-                {lang === 'ro' ? 'Securitate Coduri de Bare' : 'Barcode Badge Security'}
-              </span>
-            </div>
-          </div>
         </div>
 
         <div className="banner-footer">
           <span>{t.bannerFooter}</span>
-          <span className="banner-footer-tagline">
-            {lang === 'ro' ? 'Eleganță & Precizie Industrială' : 'Elegance & Industrial Precision'}
-          </span>
         </div>
       </div>
 
       {/* Coloana Dreapta: Formular Autentificare aerisit, compact, fără scroll pe pagină */}
       <div className="login-right-panel">
-        <div className="top-lang-bar">
-          <div className="lang-switcher-discreet" title="Select language">
-            <button
-              type="button"
-              className={`lang-btn-discreet ${lang === 'ro' ? 'active' : ''}`}
-              onClick={() => onLangChange('ro')}
-            >
-              RO
-            </button>
-            <span className="lang-sep-discreet">/</span>
-            <button
-              type="button"
-              className={`lang-btn-discreet ${lang === 'en' ? 'active' : ''}`}
-              onClick={() => onLangChange('en')}
-            >
-              EN
-            </button>
-          </div>
-        </div>
-
         <div className="login-card-container">
           <div className="login-card-header">
-            <span className="login-portal-badge">
-              <span className="badge-pulse-dot" />
-              {lang === 'ro' ? 'Acces Securizat Producție' : 'Secure Production Access'}
-            </span>
             <h2 className="login-card-title">{t.authPortalTitle}</h2>
             <p className="login-card-subtitle">{t.authPortalSubtitle}</p>
           </div>
@@ -203,8 +147,8 @@ export function LoginPage({
                   className="btn-toggle-eye"
                   onClick={() => setShowPassword(!showPassword)}
                   tabIndex={-1}
-                  title={showPassword ? 'Hide password' : 'Show password'}
-                  aria-label={showPassword ? 'Hide password' : 'Show password'}
+                  title={showPassword ? 'Ascunde parola' : 'Afișează parola'}
+                  aria-label={showPassword ? 'Ascunde parola' : 'Afișează parola'}
                 >
                   {showPassword ? <EyeOffIcon size={16} /> : <EyeIcon size={16} />}
                 </button>
@@ -222,7 +166,7 @@ export function LoginPage({
               >
                 {WORKSTATIONS.map((w) => (
                   <option key={w.id} value={w.id}>
-                    {w.name[lang]}
+                    {w.name.ro}
                   </option>
                 ))}
               </select>

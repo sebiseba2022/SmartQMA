@@ -1,20 +1,18 @@
 import type { Language } from '../types';
 
 interface StationPageProps {
-  lang: Language;
+  lang?: Language;
 }
 
-export function ExportPage({ lang }: StationPageProps) {
+export function ExportPage(_props: StationPageProps) {
   return (
     <div className="station-content-wrapper">
       <div className="station-banner-card">
         <h2 className="station-headline">
-          {lang === 'ro' ? 'Zona de scanare — Export' : 'Scanning area — Export'}
+          Zona de scanare — Export
         </h2>
         <p className="station-description">
-          {lang === 'ro'
-            ? 'Scanare finală pentru trasabilitate completă, generare rapoarte de lot, ambalare antistatică și pregătire expediere.'
-            : 'Final QR serial scanning for full traceability, batch report generation, ESD packaging, and shipping preparation.'}
+          Scanare finală pentru trasabilitate completă, generare rapoarte de lot, ambalare antistatică și pregătire expediere.
         </p>
       </div>
 

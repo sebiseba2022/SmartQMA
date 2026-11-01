@@ -30,11 +30,11 @@ import {
 const MIN_EMPTY_TABLE_ROWS = 24;
 
 interface MagaziePageProps {
-  lang: Language;
+  lang?: Language;
   currentUser?: User | null;
 }
 
-export function MagaziePage({ lang, currentUser }: MagaziePageProps) {
+export function MagaziePage({ currentUser }: MagaziePageProps) {
   const isLimitedAnalyst = currentUser?.role === 'analist_calitate';
   const [orders, setOrders] = useState<WarehouseOrder[]>([]);
   const [totalCount, setTotalCount] = useState<number>(0);
@@ -224,10 +224,7 @@ export function MagaziePage({ lang, currentUser }: MagaziePageProps) {
   const handleDraftFilterChange = (field: keyof ColumnFilters, value: string) => {
     if (isStandAloneWildcard(value)) {
       setTableNotice(
-        lang === 'ro'
-          ? 'Nu puteți selecta toate elementele deoarece îngreunează baza de date.'
-          : 'You cannot select all elements as it slows down the database.'
-      );
+        'Nu puteți selecta toate elementele deoarece îngreunează baza de date.');
     } else if (tableNotice) {
       setTableNotice(null);
     }
@@ -245,10 +242,7 @@ export function MagaziePage({ lang, currentUser }: MagaziePageProps) {
       const hasStandalone = Object.values(draftFilters).some(isStandAloneWildcard);
       if (hasStandalone) {
         setTableNotice(
-          lang === 'ro'
-            ? 'Nu puteți selecta toate elementele deoarece îngreunează baza de date.'
-            : 'You cannot select all elements as it slows down the database.'
-        );
+          'Nu puteți selecta toate elementele deoarece îngreunează baza de date.');
         return;
       }
 
@@ -348,10 +342,7 @@ export function MagaziePage({ lang, currentUser }: MagaziePageProps) {
     const qtyNum = parseInt(quantity, 10);
     if (!ident.trim() || Number.isNaN(qtyNum) || qtyNum < 1) {
       setError(
-        lang === 'ro'
-          ? 'Selectați identul și introduceți o cantitate validă.'
-          : 'Select an ident and enter a valid quantity.'
-      );
+        'Selectați identul și introduceți o cantitate validă.');
       return;
     }
 
@@ -417,10 +408,7 @@ export function MagaziePage({ lang, currentUser }: MagaziePageProps) {
       !resolvedPackageType
     ) {
       setError(
-        lang === 'ro'
-          ? 'Completați toate câmpurile obligatorii pentru ident.'
-          : 'Please fill in all required ident fields.'
-      );
+        'Completați toate câmpurile obligatorii pentru ident.');
       return;
     }
 
@@ -598,7 +586,7 @@ export function MagaziePage({ lang, currentUser }: MagaziePageProps) {
                     setError(null);
                     setIsAddModalOpen(true);
                   }}
-                  title={lang === 'ro' ? 'Adaugă comandă nouă' : 'Add new order'}
+                  title={'Adaugă comandă nouă'}
                 >
                   <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.4" strokeLinecap="round" strokeLinejoin="round">
                     <line x1="12" y1="5" x2="12" y2="19" />
@@ -606,7 +594,7 @@ export function MagaziePage({ lang, currentUser }: MagaziePageProps) {
                   </svg>
                 </button>
                 <span className="magazie-round-btn-label">
-                  {lang === 'ro' ? 'Adaugă comandă' : 'Add order'}
+                  {'Adaugă comandă'}
                 </span>
               </div>
 
@@ -618,7 +606,7 @@ export function MagaziePage({ lang, currentUser }: MagaziePageProps) {
                     setError(null);
                     setIsAddIdentModalOpen(true);
                   }}
-                  title={lang === 'ro' ? 'Adaugă ident nou în nomenclator' : 'Add new ident to catalog'}
+                  title={'Adaugă ident nou în nomenclator'}
                 >
                   <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.1" strokeLinecap="round" strokeLinejoin="round">
                     <ellipse cx="12" cy="5" rx="9" ry="3" />
@@ -627,7 +615,7 @@ export function MagaziePage({ lang, currentUser }: MagaziePageProps) {
                   </svg>
                 </button>
                 <span className="magazie-round-btn-label">
-                  {lang === 'ro' ? 'Adaugă ident' : 'Add ident'}
+                  {'Adaugă ident'}
                 </span>
               </div>
             </>
@@ -639,10 +627,7 @@ export function MagaziePage({ lang, currentUser }: MagaziePageProps) {
               className={`magazie-round-btn ${isAllActive ? 'active' : ''}`}
               onClick={handleShowAllBtn}
               title={
-                lang === 'ro'
-                  ? 'Afișează comenzi (top 50, derulare pentru încărcare)'
-                  : 'Show orders (top 50, scroll to load)'
-              }
+                'Afișează comenzi (top 50, derulare pentru încărcare)'}
             >
               <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.1" strokeLinecap="round" strokeLinejoin="round">
                 <polygon points="12 2 2 7 12 12 22 7 12 2" />
@@ -651,7 +636,7 @@ export function MagaziePage({ lang, currentUser }: MagaziePageProps) {
               </svg>
             </button>
             <span className="magazie-round-btn-label">
-              {lang === 'ro' ? 'Toate (%%)' : 'All (%%)'}
+              {'Toate (%%)'}
             </span>
           </div>
 
@@ -660,7 +645,7 @@ export function MagaziePage({ lang, currentUser }: MagaziePageProps) {
               type="button"
               className="magazie-round-btn"
               onClick={handleResetBtn}
-              title={lang === 'ro' ? 'Golește interogarea / Resetează tabelul' : 'Clear query / Reset table'}
+              title={'Golește interogarea / Resetează tabelul'}
             >
               <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.1" strokeLinecap="round" strokeLinejoin="round">
                 <polyline points="23 4 23 10 17 10" />
@@ -669,7 +654,7 @@ export function MagaziePage({ lang, currentUser }: MagaziePageProps) {
               </svg>
             </button>
             <span className="magazie-round-btn-label">
-              {lang === 'ro' ? 'Resetează' : 'Reset'}
+              {'Resetează'}
             </span>
           </div>
 
@@ -679,7 +664,7 @@ export function MagaziePage({ lang, currentUser }: MagaziePageProps) {
               className="magazie-round-btn"
               onClick={handleExportCsv}
               disabled={queriedOrders.length === 0}
-              title={lang === 'ro' ? 'Exportă rezultatele în CSV' : 'Export results to CSV'}
+              title={'Exportă rezultatele în CSV'}
             >
               <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.1" strokeLinecap="round" strokeLinejoin="round">
                 <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4" />
@@ -688,7 +673,7 @@ export function MagaziePage({ lang, currentUser }: MagaziePageProps) {
               </svg>
             </button>
             <span className="magazie-round-btn-label">
-              {lang === 'ro' ? 'Exportă CSV' : 'Export CSV'}
+              {'Exportă CSV'}
             </span>
           </div>
         </div>
@@ -717,20 +702,13 @@ export function MagaziePage({ lang, currentUser }: MagaziePageProps) {
 
         <div className="magazie-table-toolbar-info">
           <span>
-            {lang === 'ro'
-              ? 'Click dreapta pe rând pentru acțiuni'
-              : 'Right-click row for actions'}
+            {'Click dreapta pe rând pentru acțiuni'}
           </span>
           {hasActiveQuery && (
             <span className="magazie-count-badge">
-              {lang === 'ro'
-                ? `Afișate ${orders.length} din ${totalCount} comenzi`
-                : `Showing ${orders.length} of ${totalCount} orders`}
+              {`Afișate ${orders.length} din ${totalCount} comenzi`}
               {hasMore
-                ? lang === 'ro'
-                  ? ' • Derulați în jos pentru a încărca mai multe'
-                  : ' • Scroll down to load more'
-                : ''}
+                ? ' • Derulați în jos pentru a încărca mai multe': ''}
             </span>
           )}
         </div>
@@ -741,13 +719,13 @@ export function MagaziePage({ lang, currentUser }: MagaziePageProps) {
               <tr>
                 <th className="col-idx">#</th>
                 <th className="col-ident">Ident</th>
-                <th className="col-name">{lang === 'ro' ? 'Componentă' : 'Component'}</th>
-                <th className="col-date">{lang === 'ro' ? 'Data comenzii' : 'Order date'}</th>
-                <th className="col-qty">{lang === 'ro' ? 'Cantitate' : 'Quantity'}</th>
-                <th className="col-provider">{lang === 'ro' ? 'Furnizor' : 'Provider'}</th>
-                <th className="col-tracking">{lang === 'ro' ? 'Număr urmărire' : 'Tracking number'}</th>
-                <th className="col-arrived">{lang === 'ro' ? 'Ajuns în depozit' : 'Arrived in warehouse'}</th>
-                <th className="col-arrival-time">{lang === 'ro' ? 'Data sosirii' : 'Arrival time'}</th>
+                <th className="col-name">{'Componentă'}</th>
+                <th className="col-date">{'Data comenzii'}</th>
+                <th className="col-qty">{'Cantitate'}</th>
+                <th className="col-provider">{'Furnizor'}</th>
+                <th className="col-tracking">{'Număr urmărire'}</th>
+                <th className="col-arrived">{'Ajuns în depozit'}</th>
+                <th className="col-arrival-time">{'Data sosirii'}</th>
               </tr>
             </thead>
             <tbody>
@@ -870,10 +848,7 @@ export function MagaziePage({ lang, currentUser }: MagaziePageProps) {
                   className="magazie-data-row"
                   onContextMenu={(e) => handleRowContextMenu(e, order)}
                   title={
-                    lang === 'ro'
-                      ? 'Click dreapta pentru acțiuni (Editează recepția / Confirmă sosirea / Anulează comanda)'
-                      : 'Right-click for actions'
-                  }
+                    'Click dreapta pentru acțiuni (Editează recepția / Confirmă sosirea / Anulează comanda)'}
                 >
                   <td className="col-idx-cell">{idx + 1}</td>
                   <td className="magazie-ident-cell">{order.ident || order.internal_id}</td>
@@ -889,12 +864,7 @@ export function MagaziePage({ lang, currentUser }: MagaziePageProps) {
                       }`}
                     >
                       {order.arrived
-                        ? lang === 'ro'
-                          ? 'Da'
-                          : 'Yes'
-                        : lang === 'ro'
-                          ? 'Nu'
-                          : 'No'}
+                        ? 'Da': 'Nu'}
                     </span>
                   </td>
                   <td>{formatDateOnly(order.arrival_time)}</td>
@@ -906,9 +876,7 @@ export function MagaziePage({ lang, currentUser }: MagaziePageProps) {
                   <td colSpan={9}>
                     <div className="magazie-scroll-loader">
                       <span className="magazie-mini-spinner" />
-                      {lang === 'ro'
-                        ? 'Se încarcă încă 50 de comenzi...'
-                        : 'Loading 50 more orders...'}
+                      {'Se încarcă încă 50 de comenzi...'}
                     </div>
                   </td>
                 </tr>
@@ -945,7 +913,7 @@ export function MagaziePage({ lang, currentUser }: MagaziePageProps) {
           >
             <div className="magazie-modal-header">
               <h2 className="magazie-modal-title">
-                {lang === 'ro' ? 'Înregistrare comandă nouă' : 'Register new component order'}
+                {'Înregistrare comandă nouă'}
               </h2>
               <button
                 type="button"
@@ -961,7 +929,7 @@ export function MagaziePage({ lang, currentUser }: MagaziePageProps) {
 
             <form onSubmit={handleCreateOrder} className="magazie-modal-form">
               <div className="magazie-form-field" style={{ gridColumn: 'span 2' }}>
-                <label htmlFor="mag-ident">{lang === 'ro' ? 'Ident componentă' : 'Component ident'}</label>
+                <label htmlFor="mag-ident">{'Ident componentă'}</label>
                 <select
                   id="mag-ident"
                   value={ident}
@@ -979,22 +947,22 @@ export function MagaziePage({ lang, currentUser }: MagaziePageProps) {
               {selectedCatalogIdent && (
                 <div className="magazie-ident-preview" style={{ gridColumn: 'span 2' }}>
                   <div>
-                    <strong>{lang === 'ro' ? 'Furnizor:' : 'Provider:'}</strong>{' '}
+                    <strong>{'Furnizor:'}</strong>{' '}
                     {selectedCatalogIdent.provider}
                   </div>
                   <div>
-                    <strong>{lang === 'ro' ? 'Cod producător:' : 'MPN:'}</strong>{' '}
+                    <strong>{'Cod producător:'}</strong>{' '}
                     {selectedCatalogIdent.manufacturer_part_number}
                   </div>
                   <div>
-                    <strong>{lang === 'ro' ? 'Tip capsulă:' : 'Package type:'}</strong>{' '}
+                    <strong>{'Tip capsulă:'}</strong>{' '}
                     {selectedCatalogIdent.package_type}
                   </div>
                 </div>
               )}
 
               <div className="magazie-form-field" style={{ gridColumn: 'span 2' }}>
-                <label htmlFor="mag-qty">{lang === 'ro' ? 'Cantitate' : 'Quantity'}</label>
+                <label htmlFor="mag-qty">{'Cantitate'}</label>
                 <input
                   id="mag-qty"
                   type="number"
@@ -1013,16 +981,11 @@ export function MagaziePage({ lang, currentUser }: MagaziePageProps) {
                   onClick={() => setIsAddModalOpen(false)}
                   disabled={submitting}
                 >
-                  {lang === 'ro' ? 'Anulează' : 'Cancel'}
+                  {'Anulează'}
                 </button>
                 <button type="submit" className="magazie-btn-submit" disabled={submitting}>
                   {submitting
-                    ? lang === 'ro'
-                      ? 'Se salvează...'
-                      : 'Saving...'
-                    : lang === 'ro'
-                      ? 'Plasează comanda'
-                      : 'Place order'}
+                    ? 'Se salvează...': 'Plasează comanda'}
                 </button>
               </div>
             </form>
@@ -1042,7 +1005,7 @@ export function MagaziePage({ lang, currentUser }: MagaziePageProps) {
           >
             <div className="magazie-modal-header">
               <h2 className="magazie-modal-title">
-                {lang === 'ro' ? 'Adăugare ident nou în nomenclator' : 'Add new ident to catalog'}
+                {'Adăugare ident nou în nomenclator'}
               </h2>
               <button
                 type="button"
@@ -1059,7 +1022,7 @@ export function MagaziePage({ lang, currentUser }: MagaziePageProps) {
             <form onSubmit={handleCreateIdent} className="magazie-modal-form">
               <div className="magazie-form-field" style={{ gridColumn: 'span 2' }}>
                 <label htmlFor="ident-name">
-                  {lang === 'ro' ? 'Denumire componentă' : 'Component name'}
+                  {'Denumire componentă'}
                 </label>
                 <input
                   id="ident-name"
@@ -1074,7 +1037,7 @@ export function MagaziePage({ lang, currentUser }: MagaziePageProps) {
 
               <div className="magazie-form-field">
                 <label htmlFor="ident-mpn">
-                  {lang === 'ro' ? 'Codul piesei de la producător' : 'Manufacturer part number'}
+                  {'Codul piesei de la producător'}
                 </label>
                 <input
                   id="ident-mpn"
@@ -1089,7 +1052,7 @@ export function MagaziePage({ lang, currentUser }: MagaziePageProps) {
 
               <div className="magazie-form-field">
                 <label htmlFor="ident-provider">
-                  {lang === 'ro' ? 'Furnizor' : 'Provider'}
+                  {'Furnizor'}
                 </label>
                 <input
                   id="ident-provider"
@@ -1104,7 +1067,7 @@ export function MagaziePage({ lang, currentUser }: MagaziePageProps) {
 
               <div className="magazie-form-field">
                 <label htmlFor="ident-pkg">
-                  {lang === 'ro' ? 'Tipul de capsulă' : 'Package type'}
+                  {'Tipul de capsulă'}
                 </label>
                 <select
                   id="ident-pkg"
@@ -1122,7 +1085,7 @@ export function MagaziePage({ lang, currentUser }: MagaziePageProps) {
 
               <div className="magazie-form-field">
                 <label htmlFor="ident-unit">
-                  {lang === 'ro' ? 'Unitate de măsură' : 'Unit of measure'}
+                  {'Unitate de măsură'}
                 </label>
                 <input
                   id="ident-unit"
@@ -1137,16 +1100,13 @@ export function MagaziePage({ lang, currentUser }: MagaziePageProps) {
               {newIdentPackageOption === 'Altele' && (
                 <div className="magazie-form-field" style={{ gridColumn: 'span 2' }}>
                   <label htmlFor="ident-pkg-custom">
-                    {lang === 'ro' ? 'Specifică tipul de capsulă' : 'Specify package type'}
+                    {'Specifică tipul de capsulă'}
                   </label>
                   <input
                     id="ident-pkg-custom"
                     type="text"
                     placeholder={
-                      lang === 'ro'
-                        ? 'Introduceți tipul de capsulă...'
-                        : 'Enter custom package type...'
-                    }
+                      'Introduceți tipul de capsulă...'}
                     value={newIdentCustomPackage}
                     onChange={(e) => setNewIdentCustomPackage(e.target.value)}
                     disabled={submitting}
@@ -1157,7 +1117,7 @@ export function MagaziePage({ lang, currentUser }: MagaziePageProps) {
 
               <div className="magazie-form-field" style={{ gridColumn: 'span 2' }}>
                 <label htmlFor="ident-manufacturer">
-                  {lang === 'ro' ? 'Producător (opțional)' : 'Manufacturer (optional)'}
+                  {'Producător (opțional)'}
                 </label>
                 <input
                   id="ident-manufacturer"
@@ -1176,16 +1136,11 @@ export function MagaziePage({ lang, currentUser }: MagaziePageProps) {
                   onClick={() => setIsAddIdentModalOpen(false)}
                   disabled={submitting}
                 >
-                  {lang === 'ro' ? 'Anulează' : 'Cancel'}
+                  {'Anulează'}
                 </button>
                 <button type="submit" className="magazie-btn-submit" disabled={submitting}>
                   {submitting
-                    ? lang === 'ro'
-                      ? 'Se salvează...'
-                      : 'Saving...'
-                    : lang === 'ro'
-                      ? 'Salvează identul'
-                      : 'Save ident'}
+                    ? 'Se salvează...': 'Salvează identul'}
                 </button>
               </div>
             </form>
@@ -1205,7 +1160,7 @@ export function MagaziePage({ lang, currentUser }: MagaziePageProps) {
           >
             <div className="magazie-modal-header">
               <h2 className="magazie-modal-title">
-                {lang === 'ro' ? 'Editează livrarea / recepția' : 'Edit delivery / reception'}
+                {'Editează livrarea / recepția'}
               </h2>
               <button
                 type="button"
@@ -1222,7 +1177,7 @@ export function MagaziePage({ lang, currentUser }: MagaziePageProps) {
             <form onSubmit={handleSaveEditOrder} className="magazie-modal-form">
               <div className="magazie-form-field" style={{ gridColumn: 'span 2' }}>
                 <label>
-                  {lang === 'ro' ? 'Comandă selectată' : 'Selected order'}
+                  {'Comandă selectată'}
                 </label>
                 <div style={{ padding: '8px 12px', background: '#f8fafc', borderRadius: '6px', border: '1px solid #e2e8f0', fontSize: '13px' }}>
                   <strong>{editingOrder.ident || editingOrder.internal_id}</strong> — {editingOrder.part_name} ({editingOrder.quantity} buc. • {editingOrder.provider})
@@ -1231,7 +1186,7 @@ export function MagaziePage({ lang, currentUser }: MagaziePageProps) {
 
               <div className="magazie-form-field" style={{ gridColumn: 'span 2' }}>
                 <label htmlFor="edit-tracking">
-                  {lang === 'ro' ? 'Număr urmărire (Tracking number / AWB)' : 'Tracking number (AWB)'}
+                  {'Număr urmărire (Tracking number / AWB)'}
                 </label>
                 <input
                   id="edit-tracking"
@@ -1245,7 +1200,7 @@ export function MagaziePage({ lang, currentUser }: MagaziePageProps) {
 
               <div className="magazie-form-field">
                 <label htmlFor="edit-arrived">
-                  {lang === 'ro' ? 'Ajuns în depozit?' : 'Arrived in warehouse?'}
+                  {'Ajuns în depozit?'}
                 </label>
                 <select
                   id="edit-arrived"
@@ -1259,14 +1214,14 @@ export function MagaziePage({ lang, currentUser }: MagaziePageProps) {
                   }}
                   disabled={submitting}
                 >
-                  <option value="nu">{lang === 'ro' ? 'Nu (În tranzit)' : 'No (In transit)'}</option>
-                  <option value="da">{lang === 'ro' ? 'Da (Recepționat fizic)' : 'Yes (Received physically)'}</option>
+                  <option value="nu">{'Nu (În tranzit)'}</option>
+                  <option value="da">{'Da (Recepționat fizic)'}</option>
                 </select>
               </div>
 
               <div className="magazie-form-field">
                 <label htmlFor="edit-arrival-time">
-                  {lang === 'ro' ? 'Data sosirii' : 'Arrival date'}
+                  {'Data sosirii'}
                 </label>
                 <input
                   id="edit-arrival-time"
@@ -1284,16 +1239,11 @@ export function MagaziePage({ lang, currentUser }: MagaziePageProps) {
                   onClick={() => setEditingOrder(null)}
                   disabled={submitting}
                 >
-                  {lang === 'ro' ? 'Anulează' : 'Cancel'}
+                  {'Anulează'}
                 </button>
                 <button type="submit" className="magazie-btn-submit" disabled={submitting}>
                   {submitting
-                    ? lang === 'ro'
-                      ? 'Se actualizează...'
-                      : 'Updating...'
-                    : lang === 'ro'
-                      ? 'Salvează modificările'
-                      : 'Save changes'}
+                    ? 'Se actualizează...': 'Salvează modificările'}
                 </button>
               </div>
             </form>
@@ -1314,9 +1264,7 @@ export function MagaziePage({ lang, currentUser }: MagaziePageProps) {
           {isLimitedAnalyst ? (
             <>
               <div style={{ padding: '8px 12px', fontSize: '11.5px', color: '#64748b' }}>
-                {lang === 'ro'
-                  ? 'Acces limitat (analist calitate): doar consultare / interogare.'
-                  : 'Limited access (quality analyst): query only.'}
+                {'Acces limitat (analist calitate): doar consultare / interogare.'}
               </div>
               {contextMenu.order.tracking_number && (
                 <button
@@ -1325,7 +1273,7 @@ export function MagaziePage({ lang, currentUser }: MagaziePageProps) {
                   onClick={() => handleCopyTrackingNumber(contextMenu.order)}
                 >
                   <CopyIcon size={14} style={{ verticalAlign: 'middle', marginRight: 6 }} />
-                  {lang === 'ro' ? 'Copiază numărul de urmărire' : 'Copy tracking number'}
+                  {'Copiază numărul de urmărire'}
                 </button>
               )}
             </>
@@ -1337,7 +1285,7 @@ export function MagaziePage({ lang, currentUser }: MagaziePageProps) {
                 onClick={() => handleOpenEditOrder(contextMenu.order)}
               >
                 <EditIcon size={14} style={{ verticalAlign: 'middle', marginRight: 6 }} />
-                {lang === 'ro' ? 'Editează livrarea / recepția' : 'Edit delivery / reception'}
+                {'Editează livrarea / recepția'}
               </button>
               {!contextMenu.order.arrived ? (
                 <button
@@ -1346,7 +1294,7 @@ export function MagaziePage({ lang, currentUser }: MagaziePageProps) {
                   onClick={() => handleSetArrival(contextMenu.order, true)}
                 >
                   <CheckCircleIcon size={14} style={{ verticalAlign: 'middle', marginRight: 6 }} />
-                  {lang === 'ro' ? 'Marchează ca ajuns în depozit' : 'Mark as arrived'}
+                  {'Marchează ca ajuns în depozit'}
                 </button>
               ) : (
                 <button
@@ -1355,7 +1303,7 @@ export function MagaziePage({ lang, currentUser }: MagaziePageProps) {
                   onClick={() => handleSetArrival(contextMenu.order, false)}
                 >
                   <UndoIcon size={14} style={{ verticalAlign: 'middle', marginRight: 6 }} />
-                  {lang === 'ro' ? 'Revenire la starea «În tranzit»' : 'Revert to in transit'}
+                  {'Revenire la starea «În tranzit»'}
                 </button>
               )}
               {contextMenu.order.tracking_number && (
@@ -1365,7 +1313,7 @@ export function MagaziePage({ lang, currentUser }: MagaziePageProps) {
                   onClick={() => handleCopyTrackingNumber(contextMenu.order)}
                 >
                   <CopyIcon size={14} style={{ verticalAlign: 'middle', marginRight: 6 }} />
-                  {lang === 'ro' ? 'Copiază numărul de urmărire' : 'Copy tracking number'}
+                  {'Copiază numărul de urmărire'}
                 </button>
               )}
               <div className="magazie-ctx-divider" />
@@ -1375,7 +1323,7 @@ export function MagaziePage({ lang, currentUser }: MagaziePageProps) {
                 onClick={() => handleCancelOrder(contextMenu.order)}
               >
                 <TrashIcon size={14} style={{ verticalAlign: 'middle', marginRight: 6 }} />
-                {lang === 'ro' ? 'Șterge comanda' : 'Delete order'}
+                {'Șterge comanda'}
               </button>
             </>
           )}

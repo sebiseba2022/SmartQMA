@@ -1,6 +1,6 @@
 import { useState } from 'react';
 import { useParams, Navigate } from 'react-router-dom';
-import type { Language, User } from '../types';
+import type { User } from '../types';
 import { WORKSTATIONS } from '../i18n';
 import PortalNavbar from '../components/PortalNavbar';
 import RestrictedAccess from '../components/RestrictedAccess';
@@ -20,15 +20,11 @@ import PlmPage from './PlmPage';
 const OPERATOR_GATED_STATIONS = ['qr-laser', 'smd', 'aoi', 'tht', 'ict', 'eol', 'export'];
 
 interface WorkstationPageProps {
-  lang: Language;
-  onLangChange: (newLang: Language) => void;
   currentUser: User | null;
   onLogout: () => void;
 }
 
 export function WorkstationPage({
-  lang,
-  onLangChange,
   currentUser,
   onLogout,
 }: WorkstationPageProps) {
@@ -72,8 +68,6 @@ export function WorkstationPage({
     <div className="station-page-layout">
       {/* Top Navbar comun pentru toate posturile */}
       <PortalNavbar
-        lang={lang}
-        onLangChange={onLangChange}
         currentWs={currentWs}
         currentUser={currentUser}
         onLogout={onLogout}
@@ -81,10 +75,9 @@ export function WorkstationPage({
 
       {/* Verificare acces pe bază de rol */}
       {!hasAccess ? (
-        <RestrictedAccess lang={lang} onLogout={onLogout} />
+        <RestrictedAccess onLogout={onLogout} />
       ) : requiresBarcodeGate ? (
         <OperatorBarcodeModal
-          lang={lang}
           currentUser={currentUser}
           currentWs={currentWs}
           onAuthorized={handleStationUnlocked}
@@ -95,27 +88,27 @@ export function WorkstationPage({
         (() => {
           switch (currentWs.id) {
             case 'magazie':
-              return <MagaziePage lang={lang} currentUser={currentUser} />;
+              return <MagaziePage currentUser={currentUser} />;
             case 'receptie-marfa':
-              return <ReceptieMarfaPage lang={lang} />;
+              return <ReceptieMarfaPage />;
             case 'qr-laser':
-              return <QrLaserPage lang={lang} currentUser={currentUser} />;
+              return <QrLaserPage currentUser={currentUser} />;
             case 'smd':
-              return <SmdPage lang={lang} currentUser={currentUser} />;
+              return <SmdPage currentUser={currentUser} />;
             case 'aoi':
-              return <AoiPage lang={lang} currentUser={currentUser} />;
+              return <AoiPage currentUser={currentUser} />;
             case 'tht':
-              return <ThtPage lang={lang} currentUser={currentUser} />;
+              return <ThtPage currentUser={currentUser} />;
             case 'ict':
-              return <IctPage lang={lang} currentUser={currentUser} />;
+              return <IctPage currentUser={currentUser} />;
             case 'eol':
-              return <EolPage lang={lang} currentUser={currentUser} />;
+              return <EolPage currentUser={currentUser} />;
             case 'export':
-              return <ExportPage lang={lang} />;
+              return <ExportPage />;
             case 'statistica':
-              return <StatisticaPage lang={lang} currentUser={currentUser} />;
+              return <StatisticaPage currentUser={currentUser} />;
             case 'plm':
-              return <PlmPage lang={lang} />;
+              return <PlmPage />;
             default:
               return <main className="blank-page-white"></main>;
           }

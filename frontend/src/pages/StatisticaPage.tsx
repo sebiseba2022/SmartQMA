@@ -4,18 +4,18 @@ import { STATS_MODEL_PAGES, translations } from '../i18n';
 import FlowGeneratorView from '../components/FlowGeneratorView';
 
 interface StatisticaPageProps {
-  lang: Language;
+  lang?: Language;
   currentUser?: User | null;
 }
 
-export function StatisticaPage({ lang, currentUser }: StatisticaPageProps) {
+export function StatisticaPage({ currentUser }: StatisticaPageProps) {
   const { subPageId } = useParams<{ subPageId?: string }>();
   const navigate = useNavigate();
-  const t = translations[lang];
+  const t = translations.ro;
 
   const validSubPage = STATS_MODEL_PAGES.find((p) => p.id === subPageId);
   const activeStatsPageId = validSubPage ? validSubPage.id : STATS_MODEL_PAGES[0].id;
-  const currentSubPageName = validSubPage ? validSubPage.name[lang] : STATS_MODEL_PAGES[0].name[lang];
+  const currentSubPageName = validSubPage ? validSubPage.name.ro : STATS_MODEL_PAGES[0].name.ro;
 
   return (
     <div className="stats-workspace-layout">
@@ -36,7 +36,7 @@ export function StatisticaPage({ lang, currentUser }: StatisticaPageProps) {
                 onClick={() => navigate(`/statistica/${page.id}`)}
               >
                 <span className="stats-nav-dot" />
-                <span className="stats-nav-text">{page.name[lang]}</span>
+                <span className="stats-nav-text">{page.name.ro}</span>
               </button>
             );
           })}
@@ -46,19 +46,22 @@ export function StatisticaPage({ lang, currentUser }: StatisticaPageProps) {
       {/* Spațiu de lucru pentru pagina selectată - Temă luminoasă, aerisită */}
       <main className="stats-main-content">
         {activeStatsPageId === 'pagina-6' ? (
-          <FlowGeneratorView lang={lang} currentUser={currentUser} />
+          <FlowGeneratorView currentUser={currentUser} />
         ) : (
           <>
             <div className="stats-content-header">
               <h2 className="stats-content-title">{currentSubPageName}</h2>
               <span className="stats-content-subtitle">
-                {lang === 'ro'
-                  ? 'Modul de analiză și rapoarte de producție'
-                  : 'Production analytics and yield reports module'}
+                Modul de analiză și rapoarte de producție
               </span>
             </div>
             <div className="stats-content-body blank-page-white">
-              {/* Zona curată pregătită pentru grafice și indicatori de performanță */}
+              <div className="stats-empty-state">
+                <div className="stats-empty-icon" />
+                <p className="stats-empty-text">
+                  {t.workspaceDescPrefix} «{currentSubPageName}». {t.workspaceDescSuffix}
+                </p>
+              </div>
             </div>
           </>
         )}

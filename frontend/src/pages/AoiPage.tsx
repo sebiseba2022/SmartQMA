@@ -9,7 +9,7 @@ import { useRealtimeLiveFeed } from '../utils/useRealtimeLiveFeed';
 import { LiveStreamFreezeBanner } from '../components/LiveStreamFreezeBanner';
 
 interface AoiPageProps {
-  lang: Language;
+  lang?: Language;
   currentUser?: User | null;
 }
 
@@ -41,7 +41,7 @@ const STANDARD_DEFECT_CODES = [
 
 const MIN_EMPTY_TABLE_ROWS = 22;
 
-export function AoiPage({ lang, currentUser }: AoiPageProps) {
+export function AoiPage({ currentUser }: AoiPageProps) {
   const [totalCount, setTotalCount] = useState<number>(0);
   const [, setLoading] = useState<boolean>(true);
   const [error, setError] = useState<string | null>(null);
@@ -122,10 +122,7 @@ export function AoiPage({ lang, currentUser }: AoiPageProps) {
       if (!res.ok) throw new Error(data.message || 'Eroare la salvare.');
 
       setNotice(
-        lang === 'ro'
-          ? `Inspecția optică pentru PCB ${cleanSerial} a fost înregistrată: ${formResult}.`
-          : `AOI inspection for PCB ${cleanSerial} recorded: ${formResult}.`
-      );
+        `Inspecția optică pentru PCB ${cleanSerial} a fost înregistrată: ${formResult}.`);
       setIsRecordModalOpen(false);
       setFormSerial('');
       setFormDetails('');
@@ -162,10 +159,7 @@ export function AoiPage({ lang, currentUser }: AoiPageProps) {
       if (!res.ok) throw new Error(data.message || 'Eroare.');
 
       setNotice(
-        lang === 'ro'
-          ? `PCB ${cleanSerial} marcat cu ${verdict} la AOI.`
-          : `PCB ${cleanSerial} marked as ${verdict} at AOI.`
-      );
+        `PCB ${cleanSerial} marcat cu ${verdict} la AOI.`);
       setQuickPcbSerial('');
       fetchResults();
     } catch (err: any) {
@@ -258,7 +252,7 @@ export function AoiPage({ lang, currentUser }: AoiPageProps) {
             <button
               type="button"
               className="magazie-round-btn primary"
-              title={lang === 'ro' ? 'Înregistrează inspecție AOI nouă' : 'Record new AOI test'}
+              title={'Înregistrează inspecție AOI nouă'}
               onClick={() => setIsRecordModalOpen(true)}
             >
               <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5">
@@ -266,7 +260,7 @@ export function AoiPage({ lang, currentUser }: AoiPageProps) {
               </svg>
             </button>
             <span className="magazie-round-btn-label">
-              {lang === 'ro' ? 'Inspecție nouă' : 'New test'}
+              {'Inspecție nouă'}
             </span>
           </div>
 
@@ -275,7 +269,7 @@ export function AoiPage({ lang, currentUser }: AoiPageProps) {
             <button
               type="button"
               className={`magazie-round-btn ${filters.test_result === 'FAIL' ? 'active' : ''}`}
-              title={lang === 'ro' ? 'Afișează doar defecte (FAIL)' : 'Show FAIL only'}
+              title={'Afișează doar defecte (FAIL)'}
               onClick={() =>
                 setFilters({
                   ...filters,
@@ -292,7 +286,7 @@ export function AoiPage({ lang, currentUser }: AoiPageProps) {
               </svg>
             </button>
             <span className="magazie-round-btn-label">
-              {lang === 'ro' ? 'Doar defecte' : 'Defects only'}
+              {'Doar defecte'}
             </span>
           </div>
 
@@ -301,7 +295,7 @@ export function AoiPage({ lang, currentUser }: AoiPageProps) {
             <button
               type="button"
               className="magazie-round-btn"
-              title={lang === 'ro' ? 'Reîmprospătează lista' : 'Refresh list'}
+              title={'Reîmprospătează lista'}
               onClick={fetchResults}
             >
               <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
@@ -313,7 +307,7 @@ export function AoiPage({ lang, currentUser }: AoiPageProps) {
               </svg>
             </button>
             <span className="magazie-round-btn-label">
-              {lang === 'ro' ? 'Reîmprospătare' : 'Refresh'}
+              {'Reîmprospătare'}
             </span>
           </div>
 
@@ -322,7 +316,7 @@ export function AoiPage({ lang, currentUser }: AoiPageProps) {
             <button
               type="button"
               className="magazie-round-btn"
-              title={lang === 'ro' ? 'Exportă CSV' : 'Export CSV'}
+              title={'Exportă CSV'}
               onClick={handleExportCsv}
             >
               <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
@@ -334,7 +328,7 @@ export function AoiPage({ lang, currentUser }: AoiPageProps) {
               </svg>
             </button>
             <span className="magazie-round-btn-label">
-              {lang === 'ro' ? 'Exportă CSV' : 'Export CSV'}
+              {'Exportă CSV'}
             </span>
           </div>
         </div>
@@ -363,7 +357,7 @@ export function AoiPage({ lang, currentUser }: AoiPageProps) {
         <section className="station-quick-bar" aria-label="Operare rapidă AOI">
           <div className="station-quick-group">
             <span className="station-quick-label">
-              {lang === 'ro' ? 'Verificare PCB:' : 'PCB check:'}
+              {'Verificare PCB:'}
             </span>
             <input
               type="text"
@@ -394,7 +388,7 @@ export function AoiPage({ lang, currentUser }: AoiPageProps) {
 
           <div className="station-kpi-group">
             <div className="station-kpi-chip success">
-              <span>{lang === 'ro' ? 'Rată FPY:' : 'FPY Yield:'}</span>
+              <span>{'Rată FPY:'}</span>
               <strong>{fpyRate}</strong>
             </div>
             <div className="station-kpi-chip">
@@ -406,7 +400,7 @@ export function AoiPage({ lang, currentUser }: AoiPageProps) {
               <strong>{failCount}</strong>
             </div>
             <div className="station-kpi-chip">
-              <span>{lang === 'ro' ? 'Total inspectate:' : 'Total inspected:'}</span>
+              <span>{'Total inspectate:'}</span>
               <strong>{totalCount}</strong>
             </div>
           </div>
@@ -415,14 +409,10 @@ export function AoiPage({ lang, currentUser }: AoiPageProps) {
         {/* Toolbar informativ */}
         <div className="magazie-table-toolbar-info">
           <span>
-            {lang === 'ro'
-              ? 'Punct de verificare AOI — Inspecție optică automată post-reflow & control joncțiuni'
-              : 'AOI Inspection Point — Post-Reflow Automated Optical Inspection & Joint Control'}
+            {'Punct de verificare AOI — Inspecție optică automată post-reflow & control joncțiuni'}
           </span>
           <span className="magazie-count-badge">
-            {lang === 'ro'
-              ? `${filteredResults.length} din ${totalCount} inspecții afișate`
-              : `${filteredResults.length} of ${totalCount} inspections displayed`}
+            {`${filteredResults.length} din ${totalCount} inspecții afișate`}
           </span>
         </div>
 
@@ -430,7 +420,7 @@ export function AoiPage({ lang, currentUser }: AoiPageProps) {
         <LiveStreamFreezeBanner
           pendingCount={pendingNewCount}
           onResume={resumeLiveStream}
-          lang={lang}
+
         />
 
         {/* Tabel */}
@@ -439,16 +429,16 @@ export function AoiPage({ lang, currentUser }: AoiPageProps) {
             <thead>
               <tr>
                 <th className="col-idx" style={{ width: '65px' }}>#</th>
-                <th style={{ width: '155px' }}>{lang === 'ro' ? 'Serie PCB' : 'PCB Serial'}</th>
-                <th style={{ width: '85px' }}>{lang === 'ro' ? 'Rezultat' : 'Verdict'}</th>
-                <th style={{ width: '135px' }}>{lang === 'ro' ? 'Cod defect' : 'Defect code'}</th>
+                <th style={{ width: '155px' }}>{'Serie PCB'}</th>
+                <th style={{ width: '85px' }}>{'Rezultat'}</th>
+                <th style={{ width: '135px' }}>{'Cod defect'}</th>
                 <th style={{ minWidth: '160px' }}>
-                  {lang === 'ro' ? 'Detalii optice / observații cameră' : 'Optical details / observations'}
+                  {'Detalii optice / observații cameră'}
                 </th>
-                <th style={{ width: '105px' }}>{lang === 'ro' ? 'Operator' : 'Operator'}</th>
-                <th style={{ width: '140px' }}>{lang === 'ro' ? 'Data inspecției' : 'Tested at'}</th>
+                <th style={{ width: '105px' }}>{'Operator'}</th>
+                <th style={{ width: '140px' }}>{'Data inspecției'}</th>
                 <th style={{ width: '85px', textAlign: 'center' }}>
-                  {lang === 'ro' ? 'Detalii' : 'Details'}
+                  {'Detalii'}
                 </th>
               </tr>
             </thead>
@@ -460,7 +450,7 @@ export function AoiPage({ lang, currentUser }: AoiPageProps) {
                   <input
                     type="text"
                     className="magazie-cell-input ident-input"
-                    placeholder={lang === 'ro' ? 'Filtrează serie...' : 'Filter serial...'}
+                    placeholder={'Filtrează serie...'}
                     value={filters.qr_serial_number}
                     onChange={(e) =>
                       setFilters({ ...filters, qr_serial_number: e.target.value })
@@ -473,7 +463,7 @@ export function AoiPage({ lang, currentUser }: AoiPageProps) {
                     value={filters.test_result}
                     onChange={(e) => setFilters({ ...filters, test_result: e.target.value })}
                   >
-                    <option value="">{lang === 'ro' ? 'Toate' : 'All'}</option>
+                    <option value="">{'Toate'}</option>
                     <option value="PASS">PASS</option>
                     <option value="FAIL">FAIL</option>
                   </select>
@@ -482,7 +472,7 @@ export function AoiPage({ lang, currentUser }: AoiPageProps) {
                   <input
                     type="text"
                     className="magazie-cell-input"
-                    placeholder={lang === 'ro' ? 'Cod defect...' : 'Defect code...'}
+                    placeholder={'Cod defect...'}
                     value={filters.defect_code}
                     onChange={(e) => setFilters({ ...filters, defect_code: e.target.value })}
                   />
@@ -539,7 +529,7 @@ export function AoiPage({ lang, currentUser }: AoiPageProps) {
                         setSelectedResult(r);
                       }}
                     >
-                      {lang === 'ro' ? 'Detalii' : 'Details'}
+                      {'Detalii'}
                     </button>
                   </td>
                 </tr>
@@ -568,7 +558,7 @@ export function AoiPage({ lang, currentUser }: AoiPageProps) {
           <div className="magazie-modal-card" onClick={(e) => e.stopPropagation()}>
             <div className="magazie-modal-header">
               <h3 className="magazie-modal-title">
-                {lang === 'ro' ? 'Înregistrare inspecție optică AOI' : 'Record AOI inspection'}
+                {'Înregistrare inspecție optică AOI'}
               </h3>
               <button
                 type="button"
@@ -582,7 +572,7 @@ export function AoiPage({ lang, currentUser }: AoiPageProps) {
             <form onSubmit={handleRecordSubmit}>
               <div className="magazie-modal-form">
                 <div className="magazie-form-field" style={{ gridColumn: 'span 2' }}>
-                  <label>{lang === 'ro' ? 'Serie placă PCB (12 cifre)*' : 'PCB serial (12 digits)*'}</label>
+                  <label>{'Serie placă PCB (12 cifre)*'}</label>
                   <input
                     type="text"
                     required
@@ -599,7 +589,7 @@ export function AoiPage({ lang, currentUser }: AoiPageProps) {
                 </div>
 
                 <div className="magazie-form-field">
-                  <label>{lang === 'ro' ? 'Rezultat test optice*' : 'Optical verdict*'}</label>
+                  <label>{'Rezultat test optice*'}</label>
                   <select
                     value={formResult}
                     onChange={(e) => setFormResult(e.target.value as any)}
@@ -611,7 +601,7 @@ export function AoiPage({ lang, currentUser }: AoiPageProps) {
 
                 {formResult === 'FAIL' ? (
                   <div className="magazie-form-field">
-                    <label>{lang === 'ro' ? 'Cod defect identificat*' : 'Defect code*'}</label>
+                    <label>{'Cod defect identificat*'}</label>
                     <select
                       value={formDefectCode}
                       onChange={(e) => setFormDefectCode(e.target.value)}
@@ -625,20 +615,17 @@ export function AoiPage({ lang, currentUser }: AoiPageProps) {
                   </div>
                 ) : (
                   <div className="magazie-form-field">
-                    <label>{lang === 'ro' ? 'Stare conformitate' : 'Status'}</label>
+                    <label>{'Stare conformitate'}</label>
                     <input type="text" disabled value="Lipituri & Aliniere 100% OK" />
                   </div>
                 )}
 
                 <div className="magazie-form-field" style={{ gridColumn: 'span 2' }}>
-                  <label>{lang === 'ro' ? 'Detalii observate la cameră' : 'Camera observations'}</label>
+                  <label>{'Detalii observate la cameră'}</label>
                   <input
                     type="text"
                     placeholder={
-                      lang === 'ro'
-                        ? 'Observații specifice / pini analizați...'
-                        : 'Specific observations...'
-                    }
+                      'Observații specifice / pini analizați...'}
                     value={formDetails}
                     onChange={(e) => setFormDetails(e.target.value)}
                   />
@@ -651,7 +638,7 @@ export function AoiPage({ lang, currentUser }: AoiPageProps) {
                   className="magazie-btn-cancel"
                   onClick={() => setIsRecordModalOpen(false)}
                 >
-                  {lang === 'ro' ? 'Anulează' : 'Cancel'}
+                  {'Anulează'}
                 </button>
                 <button
                   type="submit"
@@ -659,12 +646,7 @@ export function AoiPage({ lang, currentUser }: AoiPageProps) {
                   disabled={submitting || !formSerial.trim()}
                 >
                   {submitting
-                    ? lang === 'ro'
-                      ? 'Se salvează...'
-                      : 'Saving...'
-                    : lang === 'ro'
-                    ? 'Confirmă rezultat AOI'
-                    : 'Confirm AOI test'}
+                    ? 'Se salvează...': 'Confirmă rezultat AOI'}
                 </button>
               </div>
             </form>
@@ -678,7 +660,7 @@ export function AoiPage({ lang, currentUser }: AoiPageProps) {
           <div className="magazie-modal-card" onClick={(e) => e.stopPropagation()}>
             <div className="magazie-modal-header">
               <h3 className="magazie-modal-title">
-                {lang === 'ro' ? 'Fișă inspecție optică AOI' : 'AOI inspection card'}
+                {'Fișă inspecție optică AOI'}
               </h3>
               <button
                 type="button"
@@ -702,14 +684,14 @@ export function AoiPage({ lang, currentUser }: AoiPageProps) {
               }}
             >
               <div>
-                <span style={{ color: '#64748b' }}>{lang === 'ro' ? 'Serie PCB:' : 'PCB Serial:'}</span>
+                <span style={{ color: '#64748b' }}>{'Serie PCB:'}</span>
                 <div style={{ fontFamily: 'monospace', fontWeight: 700, color: '#7a0c22' }}>
                   {selectedResult.qr_serial_number}
                 </div>
               </div>
 
               <div>
-                <span style={{ color: '#64748b' }}>{lang === 'ro' ? 'Rezultat:' : 'Verdict:'}</span>
+                <span style={{ color: '#64748b' }}>{'Rezultat:'}</span>
                 <div>
                   <span
                     className={`status-badge ${
@@ -722,31 +704,31 @@ export function AoiPage({ lang, currentUser }: AoiPageProps) {
               </div>
 
               <div>
-                <span style={{ color: '#64748b' }}>{lang === 'ro' ? 'Cod defect:' : 'Defect code:'}</span>
+                <span style={{ color: '#64748b' }}>{'Cod defect:'}</span>
                 <div style={{ fontFamily: 'monospace', fontWeight: 700, color: selectedResult.defect_code ? '#b91c1c' : '#64748b' }}>
                   {selectedResult.defect_code || '— (Niciun defect)'}
                 </div>
               </div>
 
               <div>
-                <span style={{ color: '#64748b' }}>{lang === 'ro' ? 'Stație inspecție:' : 'Station ID:'}</span>
+                <span style={{ color: '#64748b' }}>{'Stație inspecție:'}</span>
                 <div style={{ fontWeight: 600 }}>{selectedResult.station_id}</div>
               </div>
 
               <div style={{ gridColumn: 'span 2' }}>
-                <span style={{ color: '#64748b' }}>{lang === 'ro' ? 'Observații optice:' : 'Observations:'}</span>
+                <span style={{ color: '#64748b' }}>{'Observații optice:'}</span>
                 <div style={{ color: '#0f172a', fontWeight: 500 }}>
                   {selectedResult.details || '—'}
                 </div>
               </div>
 
               <div>
-                <span style={{ color: '#64748b' }}>{lang === 'ro' ? 'Operator:' : 'Operator:'}</span>
+                <span style={{ color: '#64748b' }}>{'Operator:'}</span>
                 <div>{selectedResult.operator_username || '—'}</div>
               </div>
 
               <div>
-                <span style={{ color: '#64748b' }}>{lang === 'ro' ? 'Data testării:' : 'Tested at:'}</span>
+                <span style={{ color: '#64748b' }}>{'Data testării:'}</span>
                 <div>
                   {selectedResult.tested_at
                     ? new Date(selectedResult.tested_at).toLocaleString('ro-RO')
@@ -761,7 +743,7 @@ export function AoiPage({ lang, currentUser }: AoiPageProps) {
                 className="magazie-btn-cancel"
                 onClick={() => setSelectedResult(null)}
               >
-                {lang === 'ro' ? 'Închide' : 'Close'}
+                {'Închide'}
               </button>
             </div>
           </div>

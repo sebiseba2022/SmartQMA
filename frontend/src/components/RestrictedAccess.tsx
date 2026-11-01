@@ -2,12 +2,12 @@ import type { Language } from '../types';
 import { translations } from '../i18n';
 
 interface RestrictedAccessProps {
-  lang: Language;
+  lang?: Language;
   onLogout: () => void;
 }
 
-export function RestrictedAccess({ lang, onLogout }: RestrictedAccessProps) {
-  const t = translations[lang];
+export function RestrictedAccess({ onLogout }: RestrictedAccessProps) {
+  const t = translations.ro;
 
   return (
     <main className="restricted-access-container">

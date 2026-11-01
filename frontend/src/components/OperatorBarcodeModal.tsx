@@ -3,7 +3,7 @@ import type { Language, User } from '../types';
 import type { WorkstationDef } from '../i18n';
 
 interface OperatorBarcodeModalProps {
-  lang: Language;
+  lang?: Language;
   currentUser: User;
   currentWs: WorkstationDef;
   onAuthorized: () => void;
@@ -11,7 +11,6 @@ interface OperatorBarcodeModalProps {
 }
 
 export function OperatorBarcodeModal({
-  lang,
   currentUser,
   currentWs,
   onAuthorized,
@@ -29,11 +28,7 @@ export function OperatorBarcodeModal({
   const handleVerify = async (barcodeToVerify: string) => {
     const code = barcodeToVerify.trim();
     if (!code) {
-      setError(
-        lang === 'ro'
-          ? 'Vă rugăm să scanați sau introduceți codul de bare.'
-          : 'Please scan or enter your barcode.'
-      );
+      setError('Vă rugăm să scanați sau introduceți codul de bare.');
       return;
     }
 
@@ -56,10 +51,7 @@ export function OperatorBarcodeModal({
       const json = await res.json();
       if (!res.ok || !json.authorized) {
         throw new Error(
-          json.message ||
-            (lang === 'ro'
-              ? 'Acces neautorizat pentru acest post.'
-              : 'Unauthorized access for this workstation.')
+          json.message || 'Acces neautorizat pentru acest post.'
         );
       }
 
@@ -93,7 +85,7 @@ export function OperatorBarcodeModal({
         <div className="magazie-modal-header">
           <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
             <h2 className="magazie-modal-title" style={{ margin: 0, fontSize: '17px' }}>
-              {lang === 'ro' ? 'Verificare acces operator' : 'Operator access verification'}
+              Verificare acces operator
             </h2>
           </div>
           <button
@@ -108,9 +100,7 @@ export function OperatorBarcodeModal({
 
         <div style={{ padding: '16px 20px 8px' }}>
           <p style={{ margin: '0 0 16px', color: '#64748b', fontSize: '13.5px', lineHeight: '1.5' }}>
-            {lang === 'ro'
-              ? `Postul de lucru «${currentWs.name.ro}» necesită validarea legitimației de operator.`
-              : `Workstation "${currentWs.name.en}" requires operator badge validation.`}
+            {`Postul de lucru «${currentWs.name.ro}» necesită validarea legitimației de operator.`}
           </p>
 
           {error && <div className="magazie-standard-error">{error}</div>}
@@ -118,7 +108,7 @@ export function OperatorBarcodeModal({
           <form onSubmit={handleSubmit} className="magazie-modal-form" style={{ marginTop: '8px' }}>
             <div className="magazie-form-field" style={{ gridColumn: 'span 2' }}>
               <label htmlFor="operator-barcode-input">
-                {lang === 'ro' ? 'Cod de bare operator (scanat / introdus)' : 'Operator barcode'}
+                Cod de bare operator (scanat / introdus)
               </label>
               <div style={{ position: 'relative' }}>
                 <input
@@ -169,7 +159,7 @@ export function OperatorBarcodeModal({
                   textTransform: 'uppercase',
                 }}
               >
-                {lang === 'ro' ? 'Legitimații de test:' : 'Test operator badges:'}
+                Legitimații de test:
               </div>
               <div style={{ display: 'flex', flexWrap: 'wrap', gap: '6px' }}>
                 <button
@@ -206,20 +196,14 @@ export function OperatorBarcodeModal({
                 onClick={onCancel}
                 disabled={loading}
               >
-                {lang === 'ro' ? 'Anulează' : 'Cancel'}
+                Anulează
               </button>
               <button
                 type="submit"
                 className="magazie-btn-submit"
                 disabled={loading || !barcode.trim()}
               >
-                {loading
-                  ? lang === 'ro'
-                    ? 'Se verifică...'
-                    : 'Verifying...'
-                  : lang === 'ro'
-                  ? 'Autorizează acces'
-                  : 'Authorize access'}
+                {loading ? 'Se verifică...' : 'Autorizează acces'}
               </button>
             </div>
           </form>

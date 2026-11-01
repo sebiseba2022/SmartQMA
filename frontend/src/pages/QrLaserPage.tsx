@@ -10,7 +10,7 @@ import { useRealtimeLiveFeed } from '../utils/useRealtimeLiveFeed';
 import { LiveStreamFreezeBanner } from '../components/LiveStreamFreezeBanner';
 
 interface QrLaserPageProps {
-  lang: Language;
+  lang?: Language;
   currentUser?: User | null;
 }
 
@@ -32,7 +32,7 @@ const EMPTY_FILTERS: QrLaserFilters = {
 
 const MIN_EMPTY_TABLE_ROWS = 22;
 
-export function QrLaserPage({ lang, currentUser }: QrLaserPageProps) {
+export function QrLaserPage({ currentUser }: QrLaserPageProps) {
   const [totalCount, setTotalCount] = useState<number>(0);
   const [, setLoading] = useState<boolean>(true);
   const [error, setError] = useState<string | null>(null);
@@ -148,10 +148,7 @@ export function QrLaserPage({ lang, currentUser }: QrLaserPageProps) {
       }
 
       setNotice(
-        lang === 'ro'
-          ? `Placa PCB a fost marcată cu succes cu seria ${data.data?.qr_serial_number}.`
-          : `PCB marked successfully with serial ${data.data?.qr_serial_number}.`
-      );
+        `Placa PCB a fost marcată cu succes cu seria ${data.data?.qr_serial_number}.`);
       setIsAutoModalOpen(false);
       fetchMarkings();
       fetchNextSerial();
@@ -169,10 +166,7 @@ export function QrLaserPage({ lang, currentUser }: QrLaserPageProps) {
 
     if (!/^\d{12}$/.test(cleanSerial)) {
       setError(
-        lang === 'ro'
-          ? 'Seria trebuie să conțină exact 12 cifre (format: YYMMDD + 6 cifre secvență).'
-          : 'Serial number must contain exactly 12 numeric digits (YYMMDD + 6 sequence digits).'
-      );
+        'Seria trebuie să conțină exact 12 cifre (format: YYMMDD + 6 cifre secvență).');
       return;
     }
 
@@ -199,10 +193,7 @@ export function QrLaserPage({ lang, currentUser }: QrLaserPageProps) {
       }
 
       setNotice(
-        lang === 'ro'
-          ? `Seria manuală ${cleanSerial} a fost înregistrată cu succes.`
-          : `Manual serial ${cleanSerial} recorded successfully.`
-      );
+        `Seria manuală ${cleanSerial} a fost înregistrată cu succes.`);
       setIsManualModalOpen(false);
       setManualSerialForm('');
       setManualNotes('');
@@ -220,10 +211,7 @@ export function QrLaserPage({ lang, currentUser }: QrLaserPageProps) {
     const cleanSerial = quickManualSerial.trim();
     if (!/^\d{12}$/.test(cleanSerial)) {
       setError(
-        lang === 'ro'
-          ? 'Seria manuală rapidă trebuie să conțină exact 12 cifre numerice.'
-          : 'Quick manual serial must contain exactly 12 digits.'
-      );
+        'Seria manuală rapidă trebuie să conțină exact 12 cifre numerice.');
       return;
     }
 
@@ -248,10 +236,7 @@ export function QrLaserPage({ lang, currentUser }: QrLaserPageProps) {
       if (!res.ok) throw new Error(data.message || 'Eroare la salvare.');
 
       setNotice(
-        lang === 'ro'
-          ? `Seria ${cleanSerial} a fost gravată și adăugată în tabel.`
-          : `Serial ${cleanSerial} engraved and listed.`
-      );
+        `Seria ${cleanSerial} a fost gravată și adăugată în tabel.`);
       setQuickManualSerial('');
       fetchMarkings();
       fetchNextSerial();
@@ -392,10 +377,7 @@ export function QrLaserPage({ lang, currentUser }: QrLaserPageProps) {
               type="button"
               className="magazie-round-btn primary"
               title={
-                lang === 'ro'
-                  ? `Gravare automată (+1): ${nextSerialInfo?.next_serial || 'Generare serie'}`
-                  : `Auto mark (+1): ${nextSerialInfo?.next_serial || 'Generate serial'}`
-              }
+                `Gravare automată (+1): ${nextSerialInfo?.next_serial || 'Generare serie'}`}
               onClick={() => setIsAutoModalOpen(true)}
             >
               <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5">
@@ -403,7 +385,7 @@ export function QrLaserPage({ lang, currentUser }: QrLaserPageProps) {
               </svg>
             </button>
             <span className="magazie-round-btn-label">
-              {lang === 'ro' ? 'Gravare (+1)' : 'Auto mark (+1)'}
+              {'Gravare (+1)'}
             </span>
           </div>
 
@@ -412,7 +394,7 @@ export function QrLaserPage({ lang, currentUser }: QrLaserPageProps) {
             <button
               type="button"
               className="magazie-round-btn"
-              title={lang === 'ro' ? 'Introducere serie manuală' : 'Manual serial input'}
+              title={'Introducere serie manuală'}
               onClick={() => setIsManualModalOpen(true)}
             >
               <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
@@ -424,7 +406,7 @@ export function QrLaserPage({ lang, currentUser }: QrLaserPageProps) {
               </svg>
             </button>
             <span className="magazie-round-btn-label">
-              {lang === 'ro' ? 'Serie manuală' : 'Manual serial'}
+              {'Serie manuală'}
             </span>
           </div>
 
@@ -433,7 +415,7 @@ export function QrLaserPage({ lang, currentUser }: QrLaserPageProps) {
             <button
               type="button"
               className="magazie-round-btn"
-              title={lang === 'ro' ? 'Rescanează / verifică PCB' : 'Rescan / inspect PCB'}
+              title={'Rescanează / verifică PCB'}
               onClick={() => setIsRescanModalOpen(true)}
             >
               <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
@@ -445,7 +427,7 @@ export function QrLaserPage({ lang, currentUser }: QrLaserPageProps) {
               </svg>
             </button>
             <span className="magazie-round-btn-label">
-              {lang === 'ro' ? 'Rescanare QR' : 'Rescan QR'}
+              {'Rescanare QR'}
             </span>
           </div>
 
@@ -454,7 +436,7 @@ export function QrLaserPage({ lang, currentUser }: QrLaserPageProps) {
             <button
               type="button"
               className="magazie-round-btn"
-              title={lang === 'ro' ? 'Reîmprospătează datele' : 'Refresh markings'}
+              title={'Reîmprospătează datele'}
               onClick={() => {
                 fetchMarkings();
                 fetchNextSerial();
@@ -469,7 +451,7 @@ export function QrLaserPage({ lang, currentUser }: QrLaserPageProps) {
               </svg>
             </button>
             <span className="magazie-round-btn-label">
-              {lang === 'ro' ? 'Reîmprospătare' : 'Refresh'}
+              {'Reîmprospătare'}
             </span>
           </div>
 
@@ -478,7 +460,7 @@ export function QrLaserPage({ lang, currentUser }: QrLaserPageProps) {
             <button
               type="button"
               className="magazie-round-btn"
-              title={lang === 'ro' ? 'Exportă tabelul în CSV' : 'Export CSV'}
+              title={'Exportă tabelul în CSV'}
               onClick={handleExportCsv}
             >
               <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
@@ -490,7 +472,7 @@ export function QrLaserPage({ lang, currentUser }: QrLaserPageProps) {
               </svg>
             </button>
             <span className="magazie-round-btn-label">
-              {lang === 'ro' ? 'Exportă CSV' : 'Export CSV'}
+              {'Exportă CSV'}
             </span>
           </div>
         </div>
@@ -520,7 +502,7 @@ export function QrLaserPage({ lang, currentUser }: QrLaserPageProps) {
         <section className="station-quick-bar" aria-label="Introducere rapidă și scanare">
           <div className="station-quick-group">
             <span className="station-quick-label">
-              {lang === 'ro' ? 'Introducere manuală (12 cifre):' : 'Manual entry (12 digits):'}
+              {'Introducere manuală (12 cifre):'}
             </span>
             <input
               type="text"
@@ -539,18 +521,18 @@ export function QrLaserPage({ lang, currentUser }: QrLaserPageProps) {
               disabled={submitting || quickManualSerial.length !== 12}
               onClick={handleQuickManualSubmit}
             >
-              {lang === 'ro' ? 'Marchează serie' : 'Mark serial'}
+              {'Marchează serie'}
             </button>
           </div>
 
           <div className="station-quick-group">
             <span className="station-quick-label">
-              {lang === 'ro' ? 'Rescanează piesă QR:' : 'Rescan PCB QR:'}
+              {'Rescanează piesă QR:'}
             </span>
             <input
               type="text"
               className="station-quick-input"
-              placeholder={lang === 'ro' ? 'Scanează sau tastează cod...' : 'Scan barcode...'}
+              placeholder={'Scanează sau tastează cod...'}
               value={quickRescanInput}
               onChange={(e) => setQuickRescanInput(e.target.value)}
               onKeyDown={(e) => {
@@ -563,22 +545,22 @@ export function QrLaserPage({ lang, currentUser }: QrLaserPageProps) {
               disabled={submitting || !quickRescanInput.trim()}
               onClick={() => handleRescanSubmit()}
             >
-              {lang === 'ro' ? 'Rescanează' : 'Rescan'}
+              {'Rescanează'}
             </button>
           </div>
 
           {/* Indicatori de stare producție (KPI chips) */}
           <div className="station-kpi-group">
             <div className="station-kpi-chip">
-              <span>{lang === 'ro' ? 'Data producției:' : 'Production date:'}</span>
+              <span>{'Data producției:'}</span>
               <strong>{nextSerialInfo?.prefix || '261029'}</strong>
             </div>
             <div className="station-kpi-chip success">
-              <span>{lang === 'ro' ? 'Următoarea serie (+1):' : 'Next auto serial:'}</span>
+              <span>{'Următoarea serie (+1):'}</span>
               <strong>{nextSerialInfo?.next_serial || '261029000001'}</strong>
             </div>
             <div className="station-kpi-chip">
-              <span>{lang === 'ro' ? 'Total plăci gravate:' : 'Total marked:'}</span>
+              <span>{'Total plăci gravate:'}</span>
               <strong>{totalCount}</strong>
             </div>
           </div>
@@ -587,14 +569,10 @@ export function QrLaserPage({ lang, currentUser }: QrLaserPageProps) {
         {/* Toolbar informativ */}
         <div className="magazie-table-toolbar-info">
           <span>
-            {lang === 'ro'
-              ? 'Stația de gravare laser DataMatrix 2D — trasabilitate unică PCB'
-              : 'DataMatrix 2D laser marking station — unique PCB traceability'}
+            {'Stația de gravare laser DataMatrix 2D — trasabilitate unică PCB'}
           </span>
           <span className="magazie-count-badge">
-            {lang === 'ro'
-              ? `${filteredMarkings.length} din ${totalCount} plăci PCB afișate`
-              : `${filteredMarkings.length} of ${totalCount} PCBs displayed`}
+            {`${filteredMarkings.length} din ${totalCount} plăci PCB afișate`}
           </span>
         </div>
 
@@ -602,7 +580,7 @@ export function QrLaserPage({ lang, currentUser }: QrLaserPageProps) {
         <LiveStreamFreezeBanner
           pendingCount={pendingNewCount}
           onResume={resumeLiveStream}
-          lang={lang}
+
         />
 
         {/* Tabel profesional pe tot ecranul */}
@@ -612,26 +590,26 @@ export function QrLaserPage({ lang, currentUser }: QrLaserPageProps) {
               <tr>
                 <th className="col-idx" style={{ width: '65px' }}>#</th>
                 <th style={{ width: '145px' }}>
-                  {lang === 'ro' ? 'Număr serie (12 cifre)' : 'Serial number (12 digits)'}
+                  {'Număr serie (12 cifre)'}
                 </th>
                 <th style={{ width: '135px' }}>
-                  {lang === 'ro' ? 'Model produs' : 'Product model'}
+                  {'Model produs'}
                 </th>
-                <th style={{ width: '75px' }}>{lang === 'ro' ? 'Față' : 'Side'}</th>
+                <th style={{ width: '75px' }}>{'Față'}</th>
                 <th style={{ width: '140px' }}>
-                  {lang === 'ro' ? 'Data și ora marcării' : 'Marking timestamp'}
+                  {'Data și ora marcării'}
                 </th>
                 <th style={{ width: '90px' }}>
-                  {lang === 'ro' ? 'Putere laser (%)' : 'Laser power (%)'}
+                  {'Putere laser (%)'}
                 </th>
                 <th style={{ width: '85px' }}>
-                  {lang === 'ro' ? 'Durată (ms)' : 'Duration (ms)'}
+                  {'Durată (ms)'}
                 </th>
-                <th style={{ width: '100px' }}>{lang === 'ro' ? 'Operator' : 'Operator'}</th>
-                <th style={{ width: '85px' }}>{lang === 'ro' ? 'Status' : 'Status'}</th>
-                <th style={{ minWidth: '130px' }}>{lang === 'ro' ? 'Note / detalii' : 'Notes / details'}</th>
+                <th style={{ width: '100px' }}>{'Operator'}</th>
+                <th style={{ width: '85px' }}>{'Status'}</th>
+                <th style={{ minWidth: '130px' }}>{'Note / detalii'}</th>
                 <th style={{ width: '80px', textAlign: 'center' }}>
-                  {lang === 'ro' ? 'Detalii' : 'Details'}
+                  {'Detalii'}
                 </th>
               </tr>
             </thead>
@@ -643,7 +621,7 @@ export function QrLaserPage({ lang, currentUser }: QrLaserPageProps) {
                   <input
                     type="text"
                     className="magazie-cell-input ident-input"
-                    placeholder={lang === 'ro' ? 'Filtrează serie...' : 'Filter serial...'}
+                    placeholder={'Filtrează serie...'}
                     value={filters.qr_serial_number}
                     onChange={(e) =>
                       setFilters({ ...filters, qr_serial_number: e.target.value })
@@ -654,7 +632,7 @@ export function QrLaserPage({ lang, currentUser }: QrLaserPageProps) {
                   <input
                     type="text"
                     className="magazie-cell-input"
-                    placeholder={lang === 'ro' ? 'Model...' : 'Model...'}
+                    placeholder={'Model...'}
                     value={filters.product_model}
                     onChange={(e) => setFilters({ ...filters, product_model: e.target.value })}
                   />
@@ -688,7 +666,7 @@ export function QrLaserPage({ lang, currentUser }: QrLaserPageProps) {
                     value={filters.status}
                     onChange={(e) => setFilters({ ...filters, status: e.target.value })}
                   >
-                    <option value="">{lang === 'ro' ? 'Toate' : 'All'}</option>
+                    <option value="">{'Toate'}</option>
                     <option value="OK">OK</option>
                     <option value="RESCANAT">RESCANAT</option>
                   </select>
@@ -747,7 +725,7 @@ export function QrLaserPage({ lang, currentUser }: QrLaserPageProps) {
                         setSelectedMarking(m);
                       }}
                     >
-                      {lang === 'ro' ? 'Detalii' : 'Details'}
+                      {'Detalii'}
                     </button>
                   </td>
                 </tr>
@@ -780,7 +758,7 @@ export function QrLaserPage({ lang, currentUser }: QrLaserPageProps) {
           <div className="magazie-modal-card" onClick={(e) => e.stopPropagation()}>
             <div className="magazie-modal-header">
               <h3 className="magazie-modal-title">
-                {lang === 'ro' ? 'Gravare laser automată (+1)' : 'Auto laser marking (+1)'}
+                {'Gravare laser automată (+1)'}
               </h3>
               <button
                 type="button"
@@ -793,9 +771,7 @@ export function QrLaserPage({ lang, currentUser }: QrLaserPageProps) {
 
             <div style={{ padding: '12px 0 20px', lineHeight: 1.6 }}>
               <p style={{ color: '#334155', fontSize: '14px', marginBottom: '14px' }}>
-                {lang === 'ro'
-                  ? 'Sistemul calculează automat următorul număr secvențial din 12 cifre pentru ziua de azi:'
-                  : 'The system automatically increments the 12-digit serial for today:'}
+                {'Sistemul calculează automat următorul număr secvențial din 12 cifre pentru ziua de azi:'}
               </p>
 
               <div
@@ -809,7 +785,7 @@ export function QrLaserPage({ lang, currentUser }: QrLaserPageProps) {
                 }}
               >
                 <div style={{ color: '#94a3b8', fontSize: '12px', marginBottom: '4px' }}>
-                  {lang === 'ro' ? 'Următoarea serie alocată PCB' : 'Next allocated PCB serial'}
+                  {'Următoarea serie alocată PCB'}
                 </div>
                 <div
                   style={{
@@ -830,7 +806,7 @@ export function QrLaserPage({ lang, currentUser }: QrLaserPageProps) {
 
               <div className="magazie-modal-form" style={{ marginTop: '10px' }}>
                 <div className="magazie-form-field">
-                  <label>{lang === 'ro' ? 'Model PCB' : 'PCB Model'}</label>
+                  <label>{'Model PCB'}</label>
                   <input
                     type="text"
                     value={manualModelForm}
@@ -838,7 +814,7 @@ export function QrLaserPage({ lang, currentUser }: QrLaserPageProps) {
                   />
                 </div>
                 <div className="magazie-form-field">
-                  <label>{lang === 'ro' ? 'Față PCB' : 'PCB Side'}</label>
+                  <label>{'Față PCB'}</label>
                   <select
                     value={manualSideForm}
                     onChange={(e) => setManualSideForm(e.target.value as any)}
@@ -856,7 +832,7 @@ export function QrLaserPage({ lang, currentUser }: QrLaserPageProps) {
                 className="magazie-btn-cancel"
                 onClick={() => setIsAutoModalOpen(false)}
               >
-                {lang === 'ro' ? 'Anulează' : 'Cancel'}
+                {'Anulează'}
               </button>
               <button
                 type="button"
@@ -865,12 +841,7 @@ export function QrLaserPage({ lang, currentUser }: QrLaserPageProps) {
                 onClick={handleAutoMark}
               >
                 {submitting
-                  ? lang === 'ro'
-                    ? 'Se gravează...'
-                    : 'Marking...'
-                  : lang === 'ro'
-                  ? 'Confirmă și gravează (+1)'
-                  : 'Confirm and mark (+1)'}
+                  ? 'Se gravează...': 'Confirmă și gravează (+1)'}
               </button>
             </div>
           </div>
@@ -883,7 +854,7 @@ export function QrLaserPage({ lang, currentUser }: QrLaserPageProps) {
           <div className="magazie-modal-card" onClick={(e) => e.stopPropagation()}>
             <div className="magazie-modal-header">
               <h3 className="magazie-modal-title">
-                {lang === 'ro' ? 'Introducere serie manuală' : 'Manual serial entry'}
+                {'Introducere serie manuală'}
               </h3>
               <button
                 type="button"
@@ -898,9 +869,7 @@ export function QrLaserPage({ lang, currentUser }: QrLaserPageProps) {
               <div className="magazie-modal-form">
                 <div className="magazie-form-field" style={{ gridColumn: 'span 2' }}>
                   <label>
-                    {lang === 'ro'
-                      ? 'Număr serie exact (12 cifre: YYMMDDxxxxxx)*'
-                      : 'Exact serial number (12 digits: YYMMDDxxxxxx)*'}
+                    {'Număr serie exact (12 cifre: YYMMDDxxxxxx)*'}
                   </label>
                   <input
                     type="text"
@@ -920,14 +889,12 @@ export function QrLaserPage({ lang, currentUser }: QrLaserPageProps) {
                     }
                   />
                   <small style={{ color: '#64748b', fontSize: '11px' }}>
-                    {lang === 'ro'
-                      ? `Exemplu cerut: 260902 pentru 2 septembrie 2026 urmat de 6 cifre incrementabile (lungime: ${manualSerialForm.length}/12).`
-                      : `Strict 12 digits required (${manualSerialForm.length}/12).`}
+                    {`Exemplu cerut: 260902 pentru 2 septembrie 2026 urmat de 6 cifre incrementabile (lungime: ${manualSerialForm.length}/12).`}
                   </small>
                 </div>
 
                 <div className="magazie-form-field">
-                  <label>{lang === 'ro' ? 'Model PCB' : 'PCB Model'}</label>
+                  <label>{'Model PCB'}</label>
                   <input
                     type="text"
                     value={manualModelForm}
@@ -936,7 +903,7 @@ export function QrLaserPage({ lang, currentUser }: QrLaserPageProps) {
                 </div>
 
                 <div className="magazie-form-field">
-                  <label>{lang === 'ro' ? 'Față gravare' : 'Marking side'}</label>
+                  <label>{'Față gravare'}</label>
                   <select
                     value={manualSideForm}
                     onChange={(e) => setManualSideForm(e.target.value as any)}
@@ -947,7 +914,7 @@ export function QrLaserPage({ lang, currentUser }: QrLaserPageProps) {
                 </div>
 
                 <div className="magazie-form-field">
-                  <label>{lang === 'ro' ? 'Putere laser (%)' : 'Laser power (%)'}</label>
+                  <label>{'Putere laser (%)'}</label>
                   <input
                     type="number"
                     step="0.1"
@@ -959,7 +926,7 @@ export function QrLaserPage({ lang, currentUser }: QrLaserPageProps) {
                 </div>
 
                 <div className="magazie-form-field">
-                  <label>{lang === 'ro' ? 'Durată marcare (ms)' : 'Duration (ms)'}</label>
+                  <label>{'Durată marcare (ms)'}</label>
                   <input
                     type="number"
                     step="1"
@@ -970,14 +937,11 @@ export function QrLaserPage({ lang, currentUser }: QrLaserPageProps) {
                 </div>
 
                 <div className="magazie-form-field" style={{ gridColumn: 'span 2' }}>
-                  <label>{lang === 'ro' ? 'Note / observații' : 'Notes / comments'}</label>
+                  <label>{'Note / observații'}</label>
                   <input
                     type="text"
                     placeholder={
-                      lang === 'ro'
-                        ? 'Motiv introducere manuală / lot...'
-                        : 'Reason for manual entry...'
-                    }
+                      'Motiv introducere manuală / lot...'}
                     value={manualNotes}
                     onChange={(e) => setManualNotes(e.target.value)}
                   />
@@ -990,7 +954,7 @@ export function QrLaserPage({ lang, currentUser }: QrLaserPageProps) {
                   className="magazie-btn-cancel"
                   onClick={() => setIsManualModalOpen(false)}
                 >
-                  {lang === 'ro' ? 'Anulează' : 'Cancel'}
+                  {'Anulează'}
                 </button>
                 <button
                   type="submit"
@@ -998,12 +962,7 @@ export function QrLaserPage({ lang, currentUser }: QrLaserPageProps) {
                   disabled={submitting || manualSerialForm.length !== 12}
                 >
                   {submitting
-                    ? lang === 'ro'
-                      ? 'Se salvează...'
-                      : 'Saving...'
-                    : lang === 'ro'
-                    ? 'Înregistrează serie'
-                    : 'Save serial'}
+                    ? 'Se salvează...': 'Înregistrează serie'}
                 </button>
               </div>
             </form>
@@ -1017,7 +976,7 @@ export function QrLaserPage({ lang, currentUser }: QrLaserPageProps) {
           <div className="magazie-modal-card" onClick={(e) => e.stopPropagation()}>
             <div className="magazie-modal-header">
               <h3 className="magazie-modal-title">
-                {lang === 'ro' ? 'Rescanare și verificare cod QR' : 'Rescan and inspect QR code'}
+                {'Rescanare și verificare cod QR'}
               </h3>
               <button
                 type="button"
@@ -1034,12 +993,12 @@ export function QrLaserPage({ lang, currentUser }: QrLaserPageProps) {
             <form onSubmit={handleRescanSubmit}>
               <div className="magazie-modal-form">
                 <div className="magazie-form-field" style={{ gridColumn: 'span 2' }}>
-                  <label>{lang === 'ro' ? 'Cod QR / serie PCB scanată*' : 'Scanned QR / serial*'}</label>
+                  <label>{'Cod QR / serie PCB scanată*'}</label>
                   <input
                     type="text"
                     required
                     autoFocus
-                    placeholder={lang === 'ro' ? 'Scanați codul DataMatrix de pe placă...' : 'Scan code...'}
+                    placeholder={'Scanați codul DataMatrix de pe placă...'}
                     value={rescanSerialInput}
                     onChange={(e) => setRescanSerialInput(e.target.value)}
                     style={{
@@ -1051,10 +1010,10 @@ export function QrLaserPage({ lang, currentUser }: QrLaserPageProps) {
                 </div>
 
                 <div className="magazie-form-field" style={{ gridColumn: 'span 2' }}>
-                  <label>{lang === 'ro' ? 'Note rescanare' : 'Rescan notes'}</label>
+                  <label>{'Note rescanare'}</label>
                   <input
                     type="text"
-                    placeholder={lang === 'ro' ? 'Observații de verificare...' : 'Inspection notes...'}
+                    placeholder={'Observații de verificare...'}
                     value={rescanNotesInput}
                     onChange={(e) => setRescanNotesInput(e.target.value)}
                   />
@@ -1073,7 +1032,7 @@ export function QrLaserPage({ lang, currentUser }: QrLaserPageProps) {
                   }}
                 >
                   <strong style={{ color: '#0f172a' }}>
-                    {lang === 'ro' ? 'Status trasabilitate integrată:' : 'Traceability summary:'}
+                    {'Status trasabilitate integrată:'}
                   </strong>
                   <div style={{ marginTop: '6px', display: 'flex', gap: '12px', flexWrap: 'wrap' }}>
                     <span>
@@ -1101,7 +1060,7 @@ export function QrLaserPage({ lang, currentUser }: QrLaserPageProps) {
                     setRescanTraceabilityData(null);
                   }}
                 >
-                  {lang === 'ro' ? 'Închide' : 'Close'}
+                  {'Închide'}
                 </button>
                 <button
                   type="submit"
@@ -1109,12 +1068,7 @@ export function QrLaserPage({ lang, currentUser }: QrLaserPageProps) {
                   disabled={submitting || !rescanSerialInput.trim()}
                 >
                   {submitting
-                    ? lang === 'ro'
-                      ? 'Se verifică...'
-                      : 'Checking...'
-                    : lang === 'ro'
-                    ? 'Rescanează și confirmă'
-                    : 'Rescan and confirm'}
+                    ? 'Se verifică...': 'Rescanează și confirmă'}
                 </button>
               </div>
             </form>
@@ -1128,7 +1082,7 @@ export function QrLaserPage({ lang, currentUser }: QrLaserPageProps) {
           <div className="magazie-modal-card" onClick={(e) => e.stopPropagation()}>
             <div className="magazie-modal-header">
               <h3 className="magazie-modal-title">
-                {lang === 'ro' ? 'Detalii marcare laser' : 'Laser marking details'}
+                {'Detalii marcare laser'}
               </h3>
               <button
                 type="button"
@@ -1162,7 +1116,7 @@ export function QrLaserPage({ lang, currentUser }: QrLaserPageProps) {
 
               <div>
                 <div style={{ fontSize: '11.5px', color: '#64748b' }}>
-                  {lang === 'ro' ? 'Număr serie unică PCB' : 'Unique PCB serial'}
+                  {'Număr serie unică PCB'}
                 </div>
                 <div
                   style={{
@@ -1193,7 +1147,7 @@ export function QrLaserPage({ lang, currentUser }: QrLaserPageProps) {
               }}
             >
               <div>
-                <span style={{ color: '#64748b' }}>{lang === 'ro' ? 'Data marcării:' : 'Marked at:'}</span>
+                <span style={{ color: '#64748b' }}>{'Data marcării:'}</span>
                 <div style={{ fontWeight: 600, color: '#0f172a' }}>
                   {selectedMarking.marked_at
                     ? new Date(selectedMarking.marked_at).toLocaleString('ro-RO')
@@ -1202,24 +1156,24 @@ export function QrLaserPage({ lang, currentUser }: QrLaserPageProps) {
               </div>
 
               <div>
-                <span style={{ color: '#64748b' }}>{lang === 'ro' ? 'Operator:' : 'Operator:'}</span>
+                <span style={{ color: '#64748b' }}>{'Operator:'}</span>
                 <div style={{ fontWeight: 600, color: '#0f172a' }}>
                   {selectedMarking.operator_username || '—'}
                 </div>
               </div>
 
               <div>
-                <span style={{ color: '#64748b' }}>{lang === 'ro' ? 'Putere fascicul laser:' : 'Laser power:'}</span>
+                <span style={{ color: '#64748b' }}>{'Putere fascicul laser:'}</span>
                 <div style={{ fontWeight: 600, color: '#0f172a' }}>{selectedMarking.laser_power_pct}%</div>
               </div>
 
               <div>
-                <span style={{ color: '#64748b' }}>{lang === 'ro' ? 'Durată impuls:' : 'Pulse duration:'}</span>
+                <span style={{ color: '#64748b' }}>{'Durată impuls:'}</span>
                 <div style={{ fontWeight: 600, color: '#0f172a' }}>{selectedMarking.mark_duration_ms} ms</div>
               </div>
 
               <div>
-                <span style={{ color: '#64748b' }}>{lang === 'ro' ? 'Stare conformitate:' : 'Status:'}</span>
+                <span style={{ color: '#64748b' }}>{'Stare conformitate:'}</span>
                 <div>
                   <span
                     className={`status-badge ${
@@ -1232,7 +1186,7 @@ export function QrLaserPage({ lang, currentUser }: QrLaserPageProps) {
               </div>
 
               <div>
-                <span style={{ color: '#64748b' }}>{lang === 'ro' ? 'Note / observații:' : 'Notes:'}</span>
+                <span style={{ color: '#64748b' }}>{'Note / observații:'}</span>
                 <div style={{ fontWeight: 500, color: '#334155' }}>{selectedMarking.notes || '—'}</div>
               </div>
             </div>
@@ -1243,7 +1197,7 @@ export function QrLaserPage({ lang, currentUser }: QrLaserPageProps) {
                 className="magazie-btn-cancel"
                 onClick={() => setSelectedMarking(null)}
               >
-                {lang === 'ro' ? 'Închide' : 'Close'}
+                {'Închide'}
               </button>
             </div>
           </div>

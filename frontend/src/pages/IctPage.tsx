@@ -9,7 +9,7 @@ import { useRealtimeLiveFeed } from '../utils/useRealtimeLiveFeed';
 import { LiveStreamFreezeBanner } from '../components/LiveStreamFreezeBanner';
 
 interface IctPageProps {
-  lang: Language;
+  lang?: Language;
   currentUser?: User | null;
 }
 
@@ -29,7 +29,7 @@ const EMPTY_FILTERS: IctFilters = {
 
 const MIN_EMPTY_TABLE_ROWS = 22;
 
-export function IctPage({ lang, currentUser }: IctPageProps) {
+export function IctPage({ currentUser }: IctPageProps) {
   const [totalCount, setTotalCount] = useState<number>(0);
   const [, setLoading] = useState<boolean>(true);
   const [error, setError] = useState<string | null>(null);
@@ -120,10 +120,7 @@ export function IctPage({ lang, currentUser }: IctPageProps) {
       if (!res.ok) throw new Error(data.message || 'Eroare la salvare.');
 
       setNotice(
-        lang === 'ro'
-          ? `Testul electric ICT pentru PCB ${cleanSerial} a fost înregistrat: ${formResult}.`
-          : `ICT test for PCB ${cleanSerial} recorded: ${formResult}.`
-      );
+        `Testul electric ICT pentru PCB ${cleanSerial} a fost înregistrat: ${formResult}.`);
       setIsRecordModalOpen(false);
       setFormSerial('');
       setFormFailedNets('');
@@ -163,10 +160,7 @@ export function IctPage({ lang, currentUser }: IctPageProps) {
       if (!res.ok) throw new Error(data.message || 'Eroare.');
 
       setNotice(
-        lang === 'ro'
-          ? `PCB ${cleanSerial} marcat cu ${verdict} la patul de ace ICT.`
-          : `PCB ${cleanSerial} marked as ${verdict} at ICT bed of nails.`
-      );
+        `PCB ${cleanSerial} marcat cu ${verdict} la patul de ace ICT.`);
       setQuickPcbSerial('');
       fetchResults();
     } catch (err: any) {
@@ -267,7 +261,7 @@ export function IctPage({ lang, currentUser }: IctPageProps) {
             <button
               type="button"
               className="magazie-round-btn primary"
-              title={lang === 'ro' ? 'Înregistrează test electric ICT' : 'Record ICT electrical test'}
+              title={'Înregistrează test electric ICT'}
               onClick={() => setIsRecordModalOpen(true)}
             >
               <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5">
@@ -275,7 +269,7 @@ export function IctPage({ lang, currentUser }: IctPageProps) {
               </svg>
             </button>
             <span className="magazie-round-btn-label">
-              {lang === 'ro' ? 'Test nou' : 'New test'}
+              {'Test nou'}
             </span>
           </div>
 
@@ -284,7 +278,7 @@ export function IctPage({ lang, currentUser }: IctPageProps) {
             <button
               type="button"
               className={`magazie-round-btn ${filters.test_result === 'FAIL' ? 'active' : ''}`}
-              title={lang === 'ro' ? 'Afișează doar teste eșuate (FAIL)' : 'Show failed tests only'}
+              title={'Afișează doar teste eșuate (FAIL)'}
               onClick={() =>
                 setFilters({
                   ...filters,
@@ -301,7 +295,7 @@ export function IctPage({ lang, currentUser }: IctPageProps) {
               </svg>
             </button>
             <span className="magazie-round-btn-label">
-              {lang === 'ro' ? 'Doar FAIL' : 'FAIL only'}
+              {'Doar FAIL'}
             </span>
           </div>
 
@@ -310,7 +304,7 @@ export function IctPage({ lang, currentUser }: IctPageProps) {
             <button
               type="button"
               className="magazie-round-btn"
-              title={lang === 'ro' ? 'Reîmprospătează lista' : 'Refresh list'}
+              title={'Reîmprospătează lista'}
               onClick={fetchResults}
             >
               <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
@@ -322,7 +316,7 @@ export function IctPage({ lang, currentUser }: IctPageProps) {
               </svg>
             </button>
             <span className="magazie-round-btn-label">
-              {lang === 'ro' ? 'Reîmprospătare' : 'Refresh'}
+              {'Reîmprospătare'}
             </span>
           </div>
 
@@ -331,7 +325,7 @@ export function IctPage({ lang, currentUser }: IctPageProps) {
             <button
               type="button"
               className="magazie-round-btn"
-              title={lang === 'ro' ? 'Exportă CSV' : 'Export CSV'}
+              title={'Exportă CSV'}
               onClick={handleExportCsv}
             >
               <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
@@ -343,7 +337,7 @@ export function IctPage({ lang, currentUser }: IctPageProps) {
               </svg>
             </button>
             <span className="magazie-round-btn-label">
-              {lang === 'ro' ? 'Exportă CSV' : 'Export CSV'}
+              {'Exportă CSV'}
             </span>
           </div>
         </div>
@@ -372,7 +366,7 @@ export function IctPage({ lang, currentUser }: IctPageProps) {
         <section className="station-quick-bar" aria-label="Operare rapidă ICT">
           <div className="station-quick-group">
             <span className="station-quick-label">
-              {lang === 'ro' ? 'Verificare pat de ace PCB:' : 'Bed of nails PCB check:'}
+              {'Verificare pat de ace PCB:'}
             </span>
             <input
               type="text"
@@ -403,7 +397,7 @@ export function IctPage({ lang, currentUser }: IctPageProps) {
 
           <div className="station-kpi-group">
             <div className="station-kpi-chip success">
-              <span>{lang === 'ro' ? 'Rată trecere ICT:' : 'ICT Pass Rate:'}</span>
+              <span>{'Rată trecere ICT:'}</span>
               <strong>{fpyRate}</strong>
             </div>
             <div className="station-kpi-chip">
@@ -415,7 +409,7 @@ export function IctPage({ lang, currentUser }: IctPageProps) {
               <strong>{failCount}</strong>
             </div>
             <div className="station-kpi-chip">
-              <span>{lang === 'ro' ? 'Total testate:' : 'Total tested:'}</span>
+              <span>{'Total testate:'}</span>
               <strong>{totalCount}</strong>
             </div>
           </div>
@@ -424,14 +418,10 @@ export function IctPage({ lang, currentUser }: IctPageProps) {
         {/* Toolbar informativ */}
         <div className="magazie-table-toolbar-info">
           <span>
-            {lang === 'ro'
-              ? 'Punct de verificare ICT — Testare electrică în circuit pe pat de ace (Bed of Nails)'
-              : 'ICT Inspection Point — In-Circuit Electrical Testing (Bed of Nails Fixture)'}
+            {'Punct de verificare ICT — Testare electrică în circuit pe pat de ace (Bed of Nails)'}
           </span>
           <span className="magazie-count-badge">
-            {lang === 'ro'
-              ? `${filteredResults.length} din ${totalCount} teste electrice afișate`
-              : `${filteredResults.length} of ${totalCount} electrical tests displayed`}
+            {`${filteredResults.length} din ${totalCount} teste electrice afișate`}
           </span>
         </div>
 
@@ -439,7 +429,7 @@ export function IctPage({ lang, currentUser }: IctPageProps) {
         <LiveStreamFreezeBanner
           pendingCount={pendingNewCount}
           onResume={resumeLiveStream}
-          lang={lang}
+
         />
 
         {/* Tabel */}
@@ -448,16 +438,16 @@ export function IctPage({ lang, currentUser }: IctPageProps) {
             <thead>
               <tr>
                 <th className="col-idx" style={{ width: '65px' }}>#</th>
-                <th style={{ width: '155px' }}>{lang === 'ro' ? 'Serie PCB' : 'PCB Serial'}</th>
-                <th style={{ width: '85px' }}>{lang === 'ro' ? 'Rezultat' : 'Verdict'}</th>
-                <th style={{ width: '130px' }}>{lang === 'ro' ? 'Noduri eșuate' : 'Failed nets'}</th>
+                <th style={{ width: '155px' }}>{'Serie PCB'}</th>
+                <th style={{ width: '85px' }}>{'Rezultat'}</th>
+                <th style={{ width: '130px' }}>{'Noduri eșuate'}</th>
                 <th style={{ minWidth: '160px' }}>
-                  {lang === 'ro' ? 'Măsurători electrice (V / Freq / R)' : 'Electrical measurements'}
+                  {'Măsurători electrice (V / Freq / R)'}
                 </th>
-                <th style={{ width: '105px' }}>{lang === 'ro' ? 'Operator' : 'Operator'}</th>
-                <th style={{ width: '140px' }}>{lang === 'ro' ? 'Data testării' : 'Tested at'}</th>
+                <th style={{ width: '105px' }}>{'Operator'}</th>
+                <th style={{ width: '140px' }}>{'Data testării'}</th>
                 <th style={{ width: '85px', textAlign: 'center' }}>
-                  {lang === 'ro' ? 'Detalii' : 'Details'}
+                  {'Detalii'}
                 </th>
               </tr>
             </thead>
@@ -469,7 +459,7 @@ export function IctPage({ lang, currentUser }: IctPageProps) {
                   <input
                     type="text"
                     className="magazie-cell-input ident-input"
-                    placeholder={lang === 'ro' ? 'Filtrează serie...' : 'Filter serial...'}
+                    placeholder={'Filtrează serie...'}
                     value={filters.qr_serial_number}
                     onChange={(e) =>
                       setFilters({ ...filters, qr_serial_number: e.target.value })
@@ -482,7 +472,7 @@ export function IctPage({ lang, currentUser }: IctPageProps) {
                     value={filters.test_result}
                     onChange={(e) => setFilters({ ...filters, test_result: e.target.value })}
                   >
-                    <option value="">{lang === 'ro' ? 'Toate' : 'All'}</option>
+                    <option value="">{'Toate'}</option>
                     <option value="PASS">PASS</option>
                     <option value="FAIL">FAIL</option>
                   </select>
@@ -550,7 +540,7 @@ export function IctPage({ lang, currentUser }: IctPageProps) {
                         setSelectedResult(r);
                       }}
                     >
-                      {lang === 'ro' ? 'Detalii' : 'Details'}
+                      {'Detalii'}
                     </button>
                   </td>
                 </tr>
@@ -579,7 +569,7 @@ export function IctPage({ lang, currentUser }: IctPageProps) {
           <div className="magazie-modal-card" onClick={(e) => e.stopPropagation()}>
             <div className="magazie-modal-header">
               <h3 className="magazie-modal-title">
-                {lang === 'ro' ? 'Înregistrare test electric ICT' : 'Record ICT test'}
+                {'Înregistrare test electric ICT'}
               </h3>
               <button
                 type="button"
@@ -593,7 +583,7 @@ export function IctPage({ lang, currentUser }: IctPageProps) {
             <form onSubmit={handleRecordSubmit}>
               <div className="magazie-modal-form">
                 <div className="magazie-form-field" style={{ gridColumn: 'span 2' }}>
-                  <label>{lang === 'ro' ? 'Serie placă PCB (12 cifre)*' : 'PCB serial (12 digits)*'}</label>
+                  <label>{'Serie placă PCB (12 cifre)*'}</label>
                   <input
                     type="text"
                     required
@@ -610,7 +600,7 @@ export function IctPage({ lang, currentUser }: IctPageProps) {
                 </div>
 
                 <div className="magazie-form-field">
-                  <label>{lang === 'ro' ? 'Rezultat test electric*' : 'Test verdict*'}</label>
+                  <label>{'Rezultat test electric*'}</label>
                   <select
                     value={formResult}
                     onChange={(e) => setFormResult(e.target.value as any)}
@@ -621,7 +611,7 @@ export function IctPage({ lang, currentUser }: IctPageProps) {
                 </div>
 
                 <div className="magazie-form-field">
-                  <label>{lang === 'ro' ? 'Tensiune LDO 5V (U5)' : '5V Rail (U5)'}</label>
+                  <label>{'Tensiune LDO 5V (U5)'}</label>
                   <input
                     type="text"
                     value={form5v}
@@ -630,7 +620,7 @@ export function IctPage({ lang, currentUser }: IctPageProps) {
                 </div>
 
                 <div className="magazie-form-field">
-                  <label>{lang === 'ro' ? 'Tensiune LDO 3.3V (U2)' : '3.3V Rail (U2)'}</label>
+                  <label>{'Tensiune LDO 3.3V (U2)'}</label>
                   <input
                     type="text"
                     value={form3v3}
@@ -639,7 +629,7 @@ export function IctPage({ lang, currentUser }: IctPageProps) {
                 </div>
 
                 <div className="magazie-form-field">
-                  <label>{lang === 'ro' ? 'Frecvență rezonator (Y1)' : 'Oscillator freq (Y1)'}</label>
+                  <label>{'Frecvență rezonator (Y1)'}</label>
                   <input
                     type="text"
                     value={formFreq}
@@ -648,7 +638,7 @@ export function IctPage({ lang, currentUser }: IctPageProps) {
                 </div>
 
                 <div className="magazie-form-field">
-                  <label>{lang === 'ro' ? 'Izolație VCC-GND' : 'VCC-GND isolation'}</label>
+                  <label>{'Izolație VCC-GND'}</label>
                   <input
                     type="text"
                     value={formVccGnd}
@@ -658,7 +648,7 @@ export function IctPage({ lang, currentUser }: IctPageProps) {
 
                 {formResult === 'FAIL' && (
                   <div className="magazie-form-field" style={{ gridColumn: 'span 2' }}>
-                    <label>{lang === 'ro' ? 'Noduri / trasee eșuate*' : 'Failed nets*'}</label>
+                    <label>{'Noduri / trasee eșuate*'}</label>
                     <input
                       type="text"
                       required
@@ -676,7 +666,7 @@ export function IctPage({ lang, currentUser }: IctPageProps) {
                   className="magazie-btn-cancel"
                   onClick={() => setIsRecordModalOpen(false)}
                 >
-                  {lang === 'ro' ? 'Anulează' : 'Cancel'}
+                  {'Anulează'}
                 </button>
                 <button
                   type="submit"
@@ -684,12 +674,7 @@ export function IctPage({ lang, currentUser }: IctPageProps) {
                   disabled={submitting || !formSerial.trim()}
                 >
                   {submitting
-                    ? lang === 'ro'
-                      ? 'Se salvează...'
-                      : 'Saving...'
-                    : lang === 'ro'
-                    ? 'Confirmă rezultat ICT'
-                    : 'Confirm ICT test'}
+                    ? 'Se salvează...': 'Confirmă rezultat ICT'}
                 </button>
               </div>
             </form>
@@ -703,7 +688,7 @@ export function IctPage({ lang, currentUser }: IctPageProps) {
           <div className="magazie-modal-card" onClick={(e) => e.stopPropagation()}>
             <div className="magazie-modal-header">
               <h3 className="magazie-modal-title">
-                {lang === 'ro' ? 'Fișă testare electrică ICT' : 'ICT electrical test card'}
+                {'Fișă testare electrică ICT'}
               </h3>
               <button
                 type="button"
@@ -727,14 +712,14 @@ export function IctPage({ lang, currentUser }: IctPageProps) {
               }}
             >
               <div>
-                <span style={{ color: '#64748b' }}>{lang === 'ro' ? 'Serie PCB:' : 'PCB Serial:'}</span>
+                <span style={{ color: '#64748b' }}>{'Serie PCB:'}</span>
                 <div style={{ fontFamily: 'monospace', fontWeight: 700, color: '#7a0c22' }}>
                   {selectedResult.qr_serial_number}
                 </div>
               </div>
 
               <div>
-                <span style={{ color: '#64748b' }}>{lang === 'ro' ? 'Rezultat:' : 'Verdict:'}</span>
+                <span style={{ color: '#64748b' }}>{'Rezultat:'}</span>
                 <div>
                   <span
                     className={`status-badge ${
@@ -747,14 +732,14 @@ export function IctPage({ lang, currentUser }: IctPageProps) {
               </div>
 
               <div style={{ gridColumn: 'span 2' }}>
-                <span style={{ color: '#64748b' }}>{lang === 'ro' ? 'Noduri / trasee eșuate:' : 'Failed nets:'}</span>
+                <span style={{ color: '#64748b' }}>{'Noduri / trasee eșuate:'}</span>
                 <div style={{ fontFamily: 'monospace', fontWeight: 700, color: selectedResult.failed_nets ? '#b91c1c' : '#15803d' }}>
                   {selectedResult.failed_nets || '— (Fără trasee eșuate)'}
                 </div>
               </div>
 
               <div style={{ gridColumn: 'span 2' }}>
-                <span style={{ color: '#64748b' }}>{lang === 'ro' ? 'Valori electrice măsurate la patul de ace:' : 'Measured values:'}</span>
+                <span style={{ color: '#64748b' }}>{'Valori electrice măsurate la patul de ace:'}</span>
                 <div
                   style={{
                     background: '#ffffff',
@@ -771,12 +756,12 @@ export function IctPage({ lang, currentUser }: IctPageProps) {
               </div>
 
               <div>
-                <span style={{ color: '#64748b' }}>{lang === 'ro' ? 'Operator:' : 'Operator:'}</span>
+                <span style={{ color: '#64748b' }}>{'Operator:'}</span>
                 <div>{selectedResult.operator_username || '—'}</div>
               </div>
 
               <div>
-                <span style={{ color: '#64748b' }}>{lang === 'ro' ? 'Data testării:' : 'Tested at:'}</span>
+                <span style={{ color: '#64748b' }}>{'Data testării:'}</span>
                 <div>
                   {selectedResult.tested_at
                     ? new Date(selectedResult.tested_at).toLocaleString('ro-RO')
@@ -791,7 +776,7 @@ export function IctPage({ lang, currentUser }: IctPageProps) {
                 className="magazie-btn-cancel"
                 onClick={() => setSelectedResult(null)}
               >
-                {lang === 'ro' ? 'Închide' : 'Close'}
+                {'Închide'}
               </button>
             </div>
           </div>

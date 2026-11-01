@@ -1,17 +1,15 @@
 import { describe, it, expect } from 'vitest';
 import { WORKSTATIONS, STATS_MODEL_PAGES, ROLE_NAMES, translations } from './i18n';
 
-describe('SmartQMA i18n & Workstations Standard', () => {
+describe('SmartQMA i18n & Workstations Standard (Limba Română)', () => {
   it('should define exactly 11 production and management workstations (including PLM)', () => {
     expect(WORKSTATIONS).toHaveLength(11);
   });
 
-  it('should have complete RO and EN translations for all 11 workstations', () => {
+  it('should have complete Romanian definitions for all 11 workstations', () => {
     WORKSTATIONS.forEach((ws) => {
       expect(ws.name.ro).toBeTruthy();
-      expect(ws.name.en).toBeTruthy();
       expect(ws.category.ro).toBeTruthy();
-      expect(ws.category.en).toBeTruthy();
       expect(ws.code).toMatch(/^WS-[A-Z]+-\d{2}$/);
     });
   });
@@ -78,16 +76,10 @@ describe('SmartQMA i18n & Workstations Standard', () => {
     ]);
   });
 
-  it('should provide symmetric translations for all UI keys', () => {
-    const roKeys = Object.keys(translations.ro).sort();
-    const enKeys = Object.keys(translations.en).sort();
-    expect(roKeys).toEqual(enKeys);
-  });
-
-  it('should render correct brand and headline translations', () => {
+  it('should provide complete Romanian UI translations', () => {
     expect(translations.ro.bannerHeadline).toBe('Trasabilitate, simplificată.');
-    expect(translations.en.bannerHeadline).toBe('Traceability, simplified.');
     expect(translations.ro.authPortalTitle).toBe('Portal de autentificare');
-    expect(translations.en.authPortalTitle).toBe('Authentication portal');
+    expect(translations.ro.brandName).toBe('SmartQMA');
+    expect(translations.ro.signOut).toBe('Deconectare');
   });
 });

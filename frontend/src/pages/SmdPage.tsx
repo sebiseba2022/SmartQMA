@@ -17,7 +17,7 @@ import { LiveStreamFreezeBanner } from '../components/LiveStreamFreezeBanner';
 import { SearchIcon } from '../components/icons/IndustrialIcons';
 
 interface SmdPageProps {
-  lang: Language;
+  lang?: Language;
   currentUser?: User | null;
 }
 
@@ -39,7 +39,7 @@ const EMPTY_FILTERS: SmdFilters = {
 
 const MIN_EMPTY_TABLE_ROWS = 22;
 
-export function SmdPage({ lang, currentUser }: SmdPageProps) {
+export function SmdPage({ currentUser }: SmdPageProps) {
   const [feeders, setFeeders] = useState<StationFeederItem[]>([]);
   const [inventoryList, setInventoryList] = useState<WarehouseOrder[]>([]);
   const [totalCount, setTotalCount] = useState<number>(0);
@@ -166,10 +166,7 @@ export function SmdPage({ lang, currentUser }: SmdPageProps) {
       if (!res.ok) throw new Error(data.message || 'Eroare la amplasare.');
 
       setNotice(
-        lang === 'ro'
-          ? `Amplasarea componentei pe poziția ${placePosition} pentru PCB-ul ${cleanSerial} a fost înregistrată.`
-          : `Component placement on ${placePosition} for PCB ${cleanSerial} recorded.`
-      );
+        `Amplasarea componentei pe poziția ${placePosition} pentru PCB-ul ${cleanSerial} a fost înregistrată.`);
       setIsPlaceModalOpen(false);
       setPlacePcbSerial('');
       fetchPlacements();
@@ -208,10 +205,7 @@ export function SmdPage({ lang, currentUser }: SmdPageProps) {
       if (!res.ok) throw new Error(data.message || 'Eroare la amplasare.');
 
       setNotice(
-        lang === 'ro'
-          ? `Amplasat ${quickFeederPosition} pe PCB ${cleanSerial}.`
-          : `Placed ${quickFeederPosition} on PCB ${cleanSerial}.`
-      );
+        `Amplasat ${quickFeederPosition} pe PCB ${cleanSerial}.`);
       fetchPlacements();
     } catch (err: any) {
       setError(err.message);
@@ -241,10 +235,7 @@ export function SmdPage({ lang, currentUser }: SmdPageProps) {
       if (!res.ok) throw new Error(data.message || 'Eroare la încărcarea rolei.');
 
       setNotice(
-        lang === 'ro'
-          ? `Rola din depozit a fost asociată slotului de alimentare ${feederSlot}.`
-          : `Reel associated with feeder slot ${feederSlot}.`
-      );
+        `Rola din depozit a fost asociată slotului de alimentare ${feederSlot}.`);
       setIsFeederModalOpen(false);
       fetchFeeders();
     } catch (err: any) {
@@ -378,7 +369,7 @@ export function SmdPage({ lang, currentUser }: SmdPageProps) {
             <button
               type="button"
               className="magazie-round-btn primary"
-              title={lang === 'ro' ? 'Încarcă rolă pe alimentator (Feeder)' : 'Load reel onto feeder'}
+              title={'Încarcă rolă pe alimentator (Feeder)'}
               onClick={() => setIsFeederModalOpen(true)}
             >
               <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5">
@@ -390,7 +381,7 @@ export function SmdPage({ lang, currentUser }: SmdPageProps) {
               </svg>
             </button>
             <span className="magazie-round-btn-label">
-              {lang === 'ro' ? 'Încarcă rolă' : 'Load reel'}
+              {'Încarcă rolă'}
             </span>
           </div>
 
@@ -399,7 +390,7 @@ export function SmdPage({ lang, currentUser }: SmdPageProps) {
             <button
               type="button"
               className="magazie-round-btn"
-              title={lang === 'ro' ? 'Înregistrează amplasare SMD' : 'Record SMD placement'}
+              title={'Înregistrează amplasare SMD'}
               onClick={() => setIsPlaceModalOpen(true)}
             >
               <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
@@ -407,7 +398,7 @@ export function SmdPage({ lang, currentUser }: SmdPageProps) {
               </svg>
             </button>
             <span className="magazie-round-btn-label">
-              {lang === 'ro' ? 'Amplasare' : 'Placement'}
+              {'Amplasare'}
             </span>
           </div>
 
@@ -416,7 +407,7 @@ export function SmdPage({ lang, currentUser }: SmdPageProps) {
             <button
               type="button"
               className="magazie-round-btn"
-              title={lang === 'ro' ? 'Reîmprospătează lista' : 'Refresh list'}
+              title={'Reîmprospătează lista'}
               onClick={() => {
                 fetchPlacements();
                 fetchFeeders();
@@ -431,7 +422,7 @@ export function SmdPage({ lang, currentUser }: SmdPageProps) {
               </svg>
             </button>
             <span className="magazie-round-btn-label">
-              {lang === 'ro' ? 'Reîmprospătare' : 'Refresh'}
+              {'Reîmprospătare'}
             </span>
           </div>
 
@@ -440,7 +431,7 @@ export function SmdPage({ lang, currentUser }: SmdPageProps) {
             <button
               type="button"
               className="magazie-round-btn"
-              title={lang === 'ro' ? 'Exportă CSV' : 'Export CSV'}
+              title={'Exportă CSV'}
               onClick={handleExportCsv}
             >
               <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
@@ -452,7 +443,7 @@ export function SmdPage({ lang, currentUser }: SmdPageProps) {
               </svg>
             </button>
             <span className="magazie-round-btn-label">
-              {lang === 'ro' ? 'Exportă CSV' : 'Export CSV'}
+              {'Exportă CSV'}
             </span>
           </div>
         </div>
@@ -481,7 +472,7 @@ export function SmdPage({ lang, currentUser }: SmdPageProps) {
         <section className="station-quick-bar" aria-label="Operare rapidă SMD">
           <div className="station-quick-group">
             <span className="station-quick-label">
-              {lang === 'ro' ? 'Scanare serie PCB:' : 'Scan PCB serial:'}
+              {'Scanare serie PCB:'}
             </span>
             <input
               type="text"
@@ -493,7 +484,7 @@ export function SmdPage({ lang, currentUser }: SmdPageProps) {
                 if (e.key === 'Enter') handleQuickPlaceSubmit();
               }}
             />
-            <span className="station-quick-label">{lang === 'ro' ? 'Slot Feeder:' : 'Feeder slot:'}</span>
+            <span className="station-quick-label">{'Slot Feeder:'}</span>
             <select
               className="station-quick-input"
               style={{ minWidth: '100px' }}
@@ -524,17 +515,17 @@ export function SmdPage({ lang, currentUser }: SmdPageProps) {
               disabled={submitting || !quickPcbSerial.trim()}
               onClick={handleQuickPlaceSubmit}
             >
-              {lang === 'ro' ? 'Amplasează piesă' : 'Place part'}
+              {'Amplasează piesă'}
             </button>
           </div>
 
           <div className="station-kpi-group">
             <div className="station-kpi-chip">
-              <span>{lang === 'ro' ? 'Alimentatoare active:' : 'Active feeders:'}</span>
+              <span>{'Alimentatoare active:'}</span>
               <strong>{feeders.length}</strong>
             </div>
             <div className="station-kpi-chip success">
-              <span>{lang === 'ro' ? 'Total montate:' : 'Total placements:'}</span>
+              <span>{'Total montate:'}</span>
               <strong>{totalCount}</strong>
             </div>
           </div>
@@ -544,20 +535,16 @@ export function SmdPage({ lang, currentUser }: SmdPageProps) {
         <LiveStreamFreezeBanner
           pendingCount={pendingNewCount}
           onResume={resumeLiveStream}
-          lang={lang}
+
         />
 
         {/* Toolbar informativ */}
         <div className="magazie-table-toolbar-info">
           <span>
-            {lang === 'ro'
-              ? 'Zona de amplasare SMD — Linie Pick & Place automată & Alimentatoare role'
-              : 'SMD Placement Area — Automated Pick & Place Line & Feeder Racks'}
+            {'Zona de amplasare SMD — Linie Pick & Place automată & Alimentatoare role'}
           </span>
           <span className="magazie-count-badge">
-            {lang === 'ro'
-              ? `${groupedBoards.length} plăci PCB (${filteredPlacements.length} piese montate) afișate`
-              : `${groupedBoards.length} PCBs (${filteredPlacements.length} mounted parts) displayed`}
+            {`${groupedBoards.length} plăci PCB (${filteredPlacements.length} piese montate) afișate`}
           </span>
         </div>
 
@@ -567,18 +554,18 @@ export function SmdPage({ lang, currentUser }: SmdPageProps) {
             <thead>
               <tr>
                 <th className="col-idx" style={{ width: '65px' }}>#</th>
-                <th style={{ width: '160px' }}>{lang === 'ro' ? 'Serie PCB (Piese)' : 'PCB Serial (Parts)'}</th>
-                <th style={{ width: '110px' }}>{lang === 'ro' ? 'Poziții montate' : 'Positions'}</th>
-                <th style={{ width: '75px' }}>{lang === 'ro' ? 'Ident' : 'Ident'}</th>
+                <th style={{ width: '160px' }}>{'Serie PCB (Piese)'}</th>
+                <th style={{ width: '110px' }}>{'Poziții montate'}</th>
+                <th style={{ width: '75px' }}>{'Ident'}</th>
                 <th style={{ minWidth: '170px' }}>
-                  {lang === 'ro' ? 'Denumire componentă' : 'Component name'}
+                  {'Denumire componentă'}
                 </th>
-                <th style={{ width: '120px' }}>{lang === 'ro' ? 'Lot furnizor' : 'Supplier lot'}</th>
-                <th style={{ width: '130px' }}>{lang === 'ro' ? 'Furnizor' : 'Provider'}</th>
-                <th style={{ width: '100px' }}>{lang === 'ro' ? 'Operator' : 'Operator'}</th>
-                <th style={{ width: '140px' }}>{lang === 'ro' ? 'Data montajului' : 'Mounted at'}</th>
+                <th style={{ width: '120px' }}>{'Lot furnizor'}</th>
+                <th style={{ width: '130px' }}>{'Furnizor'}</th>
+                <th style={{ width: '100px' }}>{'Operator'}</th>
+                <th style={{ width: '140px' }}>{'Data montajului'}</th>
                 <th style={{ width: '85px', textAlign: 'center' }}>
-                  {lang === 'ro' ? 'Sublistă' : 'Sublist'}
+                  {'Sublistă'}
                 </th>
               </tr>
             </thead>
@@ -590,7 +577,7 @@ export function SmdPage({ lang, currentUser }: SmdPageProps) {
                   <input
                     type="text"
                     className="magazie-cell-input ident-input"
-                    placeholder={lang === 'ro' ? 'Filtrează serie...' : 'Filter serial...'}
+                    placeholder={'Filtrează serie...'}
                     value={filters.qr_serial_number}
                     onChange={(e) =>
                       setFilters({ ...filters, qr_serial_number: e.target.value })
@@ -621,7 +608,7 @@ export function SmdPage({ lang, currentUser }: SmdPageProps) {
                   <input
                     type="text"
                     className="magazie-cell-input"
-                    placeholder={lang === 'ro' ? 'Denumire piese...' : 'Part name...'}
+                    placeholder={'Denumire piese...'}
                     value={filters.part_name}
                     onChange={(e) => setFilters({ ...filters, part_name: e.target.value })}
                   />
@@ -671,7 +658,7 @@ export function SmdPage({ lang, currentUser }: SmdPageProps) {
                         </button>
                         <span>{board.qr_serial_number}</span>
                         <span className="smd-count-pill">
-                          {board.items.length} {lang === 'ro' ? 'piese' : 'parts'}
+                          {board.items.length} {'piese'}
                         </span>
                       </td>
                       <td>
@@ -691,9 +678,7 @@ export function SmdPage({ lang, currentUser }: SmdPageProps) {
                       <td className="magazie-name-cell">
                         {board.items.length === 1
                           ? (board.items[0].component?.part_name || `Componentă #${board.items[0].component_internal_id}`)
-                          : (lang === 'ro'
-                              ? `Set complet ${board.items.length} componente SMD montate`
-                              : `Complete set of ${board.items.length} mounted SMD parts`)}
+                          : (`Set complet ${board.items.length} componente SMD montate`)}
                       </td>
                       <td className="magazie-mono-cell" style={{ fontSize: '12px', color: '#475569' }}>
                         {board.sampleComponent?.supplier_lot || '—'}
@@ -712,7 +697,7 @@ export function SmdPage({ lang, currentUser }: SmdPageProps) {
                             toggleExpandSerial(board.qr_serial_number);
                           }}
                         >
-                          {isExpanded ? (lang === 'ro' ? 'Închide' : 'Close') : (lang === 'ro' ? 'Componente' : 'Parts')}
+                          {isExpanded ? ('Închide') : ('Componente')}
                         </button>
                       </td>
                     </tr>
@@ -725,24 +710,22 @@ export function SmdPage({ lang, currentUser }: SmdPageProps) {
                             <div className="smd-subtable-header">
                               <span>
                                 <SearchIcon size={13} style={{ verticalAlign: 'middle', marginRight: '6px' }} />
-                                {lang === 'ro'
-                                  ? `Componente montate pe PCB ${board.qr_serial_number} (${board.items.length} poziții):`
-                                  : `Components mounted on PCB ${board.qr_serial_number} (${board.items.length} positions):`}
+                                {`Componente montate pe PCB ${board.qr_serial_number} (${board.items.length} poziții):`}
                               </span>
                               <span style={{ fontSize: '11px', color: '#94a3b8' }}>
-                                {lang === 'ro' ? 'Fiecare piesă este înregistrată individual în baza de date' : 'Each part is individually tracked in DB'}
+                                {'Fiecare piesă este înregistrată individual în baza de date'}
                               </span>
                             </div>
                             <table className="smd-nested-table">
                               <thead>
                                 <tr>
-                                  <th style={{ width: '80px' }}>{lang === 'ro' ? 'Poziție' : 'Position'}</th>
-                                  <th style={{ width: '100px' }}>{lang === 'ro' ? 'Ident' : 'Ident'}</th>
-                                  <th>{lang === 'ro' ? 'Denumire componentă' : 'Component name'}</th>
-                                  <th style={{ width: '150px' }}>{lang === 'ro' ? 'Lot furnizor' : 'Supplier lot'}</th>
-                                  <th style={{ width: '160px' }}>{lang === 'ro' ? 'Furnizor' : 'Provider'}</th>
-                                  <th style={{ width: '160px' }}>{lang === 'ro' ? 'Data montajului' : 'Mounted at'}</th>
-                                  <th style={{ width: '90px', textAlign: 'center' }}>{lang === 'ro' ? 'Fișă' : 'Doc'}</th>
+                                  <th style={{ width: '80px' }}>{'Poziție'}</th>
+                                  <th style={{ width: '100px' }}>{'Ident'}</th>
+                                  <th>{'Denumire componentă'}</th>
+                                  <th style={{ width: '150px' }}>{'Lot furnizor'}</th>
+                                  <th style={{ width: '160px' }}>{'Furnizor'}</th>
+                                  <th style={{ width: '160px' }}>{'Data montajului'}</th>
+                                  <th style={{ width: '90px', textAlign: 'center' }}>{'Fișă'}</th>
                                 </tr>
                               </thead>
                               <tbody>
@@ -818,7 +801,7 @@ export function SmdPage({ lang, currentUser }: SmdPageProps) {
           <div className="magazie-modal-card" onClick={(e) => e.stopPropagation()}>
             <div className="magazie-modal-header">
               <h3 className="magazie-modal-title">
-                {lang === 'ro' ? 'Configurare alimentator (Feeder)' : 'Configure feeder reel'}
+                {'Configurare alimentator (Feeder)'}
               </h3>
               <button
                 type="button"
@@ -832,7 +815,7 @@ export function SmdPage({ lang, currentUser }: SmdPageProps) {
             <form onSubmit={handleFeederSubmit}>
               <div className="magazie-modal-form">
                 <div className="magazie-form-field">
-                  <label>{lang === 'ro' ? 'Slot alimentator / poziție*' : 'Feeder position*'}</label>
+                  <label>{'Slot alimentator / poziție*'}</label>
                   <input
                     type="text"
                     required
@@ -843,7 +826,7 @@ export function SmdPage({ lang, currentUser }: SmdPageProps) {
                 </div>
 
                 <div className="magazie-form-field">
-                  <label>{lang === 'ro' ? 'Rolă din depozit (Ident)*' : 'Warehouse reel (Ident)*'}</label>
+                  <label>{'Rolă din depozit (Ident)*'}</label>
                   <select
                     value={feederComponentId}
                     onChange={(e) => setFeederComponentId(Number(e.target.value))}
@@ -863,7 +846,7 @@ export function SmdPage({ lang, currentUser }: SmdPageProps) {
                   className="magazie-btn-cancel"
                   onClick={() => setIsFeederModalOpen(false)}
                 >
-                  {lang === 'ro' ? 'Anulează' : 'Cancel'}
+                  {'Anulează'}
                 </button>
                 <button
                   type="submit"
@@ -871,12 +854,7 @@ export function SmdPage({ lang, currentUser }: SmdPageProps) {
                   disabled={submitting || !feederSlot.trim()}
                 >
                   {submitting
-                    ? lang === 'ro'
-                      ? 'Se asociază...'
-                      : 'Saving...'
-                    : lang === 'ro'
-                    ? 'Asociază rola pe feeder'
-                    : 'Bind reel to feeder'}
+                    ? 'Se asociază...': 'Asociază rola pe feeder'}
                 </button>
               </div>
             </form>
@@ -890,7 +868,7 @@ export function SmdPage({ lang, currentUser }: SmdPageProps) {
           <div className="magazie-modal-card" onClick={(e) => e.stopPropagation()}>
             <div className="magazie-modal-header">
               <h3 className="magazie-modal-title">
-                {lang === 'ro' ? 'Înregistrare amplasare SMD' : 'Record SMD placement'}
+                {'Înregistrare amplasare SMD'}
               </h3>
               <button
                 type="button"
@@ -904,7 +882,7 @@ export function SmdPage({ lang, currentUser }: SmdPageProps) {
             <form onSubmit={handlePlaceSubmit}>
               <div className="magazie-modal-form">
                 <div className="magazie-form-field" style={{ gridColumn: 'span 2' }}>
-                  <label>{lang === 'ro' ? 'Serie placă PCB (12 cifre)*' : 'PCB serial (12 digits)*'}</label>
+                  <label>{'Serie placă PCB (12 cifre)*'}</label>
                   <input
                     type="text"
                     required
@@ -921,7 +899,7 @@ export function SmdPage({ lang, currentUser }: SmdPageProps) {
                 </div>
 
                 <div className="magazie-form-field">
-                  <label>{lang === 'ro' ? 'Poziție Bestück*' : 'Bestück position*'}</label>
+                  <label>{'Poziție Bestück*'}</label>
                   <input
                     type="text"
                     required
@@ -932,7 +910,7 @@ export function SmdPage({ lang, currentUser }: SmdPageProps) {
                 </div>
 
                 <div className="magazie-form-field">
-                  <label>{lang === 'ro' ? 'Componentă (Ident)*' : 'Component (Ident)*'}</label>
+                  <label>{'Componentă (Ident)*'}</label>
                   <select
                     value={placeComponentId}
                     onChange={(e) => setPlaceComponentId(Number(e.target.value))}
@@ -952,7 +930,7 @@ export function SmdPage({ lang, currentUser }: SmdPageProps) {
                   className="magazie-btn-cancel"
                   onClick={() => setIsPlaceModalOpen(false)}
                 >
-                  {lang === 'ro' ? 'Anulează' : 'Cancel'}
+                  {'Anulează'}
                 </button>
                 <button
                   type="submit"
@@ -960,12 +938,7 @@ export function SmdPage({ lang, currentUser }: SmdPageProps) {
                   disabled={submitting || !placePcbSerial.trim()}
                 >
                   {submitting
-                    ? lang === 'ro'
-                      ? 'Se înregistrează...'
-                      : 'Saving...'
-                    : lang === 'ro'
-                    ? 'Confirmă amplasare'
-                    : 'Confirm placement'}
+                    ? 'Se înregistrează...': 'Confirmă amplasare'}
                 </button>
               </div>
             </form>
@@ -979,7 +952,7 @@ export function SmdPage({ lang, currentUser }: SmdPageProps) {
           <div className="magazie-modal-card" onClick={(e) => e.stopPropagation()}>
             <div className="magazie-modal-header">
               <h3 className="magazie-modal-title">
-                {lang === 'ro' ? 'Detalii amplasare SMD' : 'SMD placement details'}
+                {'Detalii amplasare SMD'}
               </h3>
               <button
                 type="button"
@@ -1003,43 +976,43 @@ export function SmdPage({ lang, currentUser }: SmdPageProps) {
               }}
             >
               <div>
-                <span style={{ color: '#64748b' }}>{lang === 'ro' ? 'Serie PCB:' : 'PCB Serial:'}</span>
+                <span style={{ color: '#64748b' }}>{'Serie PCB:'}</span>
                 <div style={{ fontFamily: 'monospace', fontWeight: 700, color: '#7a0c22' }}>
                   {selectedPlacement.qr_serial_number}
                 </div>
               </div>
 
               <div>
-                <span style={{ color: '#64748b' }}>{lang === 'ro' ? 'Poziție:' : 'Position:'}</span>
+                <span style={{ color: '#64748b' }}>{'Poziție:'}</span>
                 <div style={{ fontWeight: 700 }}>{selectedPlacement.bestuck_position}</div>
               </div>
 
               <div style={{ gridColumn: 'span 2' }}>
-                <span style={{ color: '#64748b' }}>{lang === 'ro' ? 'Componentă:' : 'Part:'}</span>
+                <span style={{ color: '#64748b' }}>{'Componentă:'}</span>
                 <div style={{ fontWeight: 600, color: '#0f172a' }}>
                   {selectedPlacement.component?.part_name || `ID #${selectedPlacement.component_internal_id}`}
                 </div>
               </div>
 
               <div>
-                <span style={{ color: '#64748b' }}>{lang === 'ro' ? 'Lot furnizor:' : 'Supplier lot:'}</span>
+                <span style={{ color: '#64748b' }}>{'Lot furnizor:'}</span>
                 <div style={{ fontFamily: 'monospace' }}>
                   {selectedPlacement.component?.supplier_lot || '—'}
                 </div>
               </div>
 
               <div>
-                <span style={{ color: '#64748b' }}>{lang === 'ro' ? 'Furnizor:' : 'Provider:'}</span>
+                <span style={{ color: '#64748b' }}>{'Furnizor:'}</span>
                 <div>{selectedPlacement.component?.provider || '—'}</div>
               </div>
 
               <div>
-                <span style={{ color: '#64748b' }}>{lang === 'ro' ? 'Operator linie:' : 'Operator:'}</span>
+                <span style={{ color: '#64748b' }}>{'Operator linie:'}</span>
                 <div>{selectedPlacement.operator_username || '—'}</div>
               </div>
 
               <div>
-                <span style={{ color: '#64748b' }}>{lang === 'ro' ? 'Data amplasării:' : 'Mounted at:'}</span>
+                <span style={{ color: '#64748b' }}>{'Data amplasării:'}</span>
                 <div>
                   {selectedPlacement.mounted_at
                     ? new Date(selectedPlacement.mounted_at).toLocaleString('ro-RO')
@@ -1054,7 +1027,7 @@ export function SmdPage({ lang, currentUser }: SmdPageProps) {
                 className="magazie-btn-cancel"
                 onClick={() => setSelectedPlacement(null)}
               >
-                {lang === 'ro' ? 'Închide' : 'Close'}
+                {'Închide'}
               </button>
             </div>
           </div>
