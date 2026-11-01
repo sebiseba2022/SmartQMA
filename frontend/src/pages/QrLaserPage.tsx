@@ -707,7 +707,7 @@ export function QrLaserPage({ lang, currentUser }: QrLaserPageProps) {
                   <td className="col-idx-cell" style={{ fontWeight: 700, color: '#64748b' }}>
                     #{m.id}
                   </td>
-                  <td className="magazie-mono-cell" style={{ fontWeight: 700, color: '#ea580c' }}>
+                  <td className="magazie-mono-cell" style={{ fontWeight: 700, color: '#7a0c22' }}>
                     {m.qr_serial_number}
                   </td>
                   <td className="magazie-name-cell">{m.product_model}</td>
@@ -800,8 +800,8 @@ export function QrLaserPage({ lang, currentUser }: QrLaserPageProps) {
 
               <div
                 style={{
-                  background: '#181512',
-                  border: '1.5px solid #ea580c',
+                  background: '#fdf2f4',
+                  border: '1.5px solid #f2c7ce',
                   borderRadius: '8px',
                   padding: '16px',
                   textAlign: 'center',
@@ -910,7 +910,7 @@ export function QrLaserPage({ lang, currentUser }: QrLaserPageProps) {
                       fontFamily: 'JetBrains Mono, monospace',
                       fontSize: '16px',
                       fontWeight: 700,
-                      color: '#ea580c',
+                      color: '#7a0c22',
                       letterSpacing: '1px',
                     }}
                     placeholder={nextSerialInfo?.next_serial || '261029000001'}
@@ -1144,8 +1144,8 @@ export function QrLaserPage({ lang, currentUser }: QrLaserPageProps) {
                 style={{
                   width: '90px',
                   height: '90px',
-                  background: '#181512',
-                  border: '2px solid #ea580c',
+                  background: '#fdf2f4',
+                  border: '2px solid #7a0c22',
                   borderRadius: '8px',
                   display: 'flex',
                   flexDirection: 'column',
@@ -1154,7 +1154,7 @@ export function QrLaserPage({ lang, currentUser }: QrLaserPageProps) {
                   color: '#ffffff',
                 }}
               >
-                <svg viewBox="0 0 24 24" width="48" height="48" fill="none" stroke="#ea580c" strokeWidth="2">
+                <svg viewBox="0 0 24 24" width="48" height="48" fill="none" stroke="#7a0c22" strokeWidth="2">
                   <path strokeLinecap="round" strokeLinejoin="round" d="M3 7V5a2 2 0 012-2h2m10 0h2a2 2 0 012 2v2M3 17v2a2 2 0 002 2h2m10 0h2a2 2 0 002-2v-2M9 9h6v6H9V9z" />
                 </svg>
                 <span style={{ fontSize: '10px', color: '#94a3b8' }}>DataMatrix 2D</span>
@@ -1169,7 +1169,7 @@ export function QrLaserPage({ lang, currentUser }: QrLaserPageProps) {
                     fontFamily: 'JetBrains Mono, monospace',
                     fontSize: '22px',
                     fontWeight: 800,
-                    color: '#ea580c',
+                    color: '#7a0c22',
                   }}
                 >
                   {selectedMarking.qr_serial_number}

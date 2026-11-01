@@ -19,9 +19,12 @@ export function StatisticaPage({ lang, currentUser }: StatisticaPageProps) {
 
   return (
     <div className="stats-workspace-layout">
-      {/* Meniu lateral stânga */}
+      {/* Meniu lateral stânga - Elegat, temă Bordeaux / Deep Wine */}
       <aside className="stats-sidebar" aria-label={t.statsMenuTitle}>
-        <div className="stats-sidebar-header">{t.statsMenuTitle}</div>
+        <div className="stats-sidebar-header">
+          <span className="stats-sidebar-brand-dot" />
+          <span>{t.statsMenuTitle}</span>
+        </div>
         <nav className="stats-sidebar-nav">
           {STATS_MODEL_PAGES.map((page) => {
             const isActive = activeStatsPageId === page.id;
@@ -40,8 +43,8 @@ export function StatisticaPage({ lang, currentUser }: StatisticaPageProps) {
         </nav>
       </aside>
 
-      {/* Spațiu de lucru pentru pagina selectată */}
-      <main className={`stats-main-content ${activeStatsPageId === 'pagina-6' ? 'dark-bg' : ''}`}>
+      {/* Spațiu de lucru pentru pagina selectată - Temă luminoasă, aerisită */}
+      <main className="stats-main-content">
         {activeStatsPageId === 'pagina-6' ? (
           <FlowGeneratorView lang={lang} currentUser={currentUser} />
         ) : (

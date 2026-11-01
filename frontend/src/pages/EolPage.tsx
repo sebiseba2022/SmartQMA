@@ -540,7 +540,7 @@ export function EolPage({ lang, currentUser }: EolPageProps) {
                   <td className="col-idx-cell" style={{ fontWeight: 700, color: '#64748b' }}>
                     #{r.id}
                   </td>
-                  <td className="magazie-mono-cell" style={{ fontWeight: 700, color: '#ea580c' }}>
+                  <td className="magazie-mono-cell" style={{ fontWeight: 700, color: '#7a0c22' }}>
                     {r.qr_serial_number}
                   </td>
                   <td className="magazie-name-cell">{r.product_ident}</td>
@@ -772,7 +772,7 @@ export function EolPage({ lang, currentUser }: EolPageProps) {
             >
               <div>
                 <span style={{ color: '#64748b' }}>{lang === 'ro' ? 'Serie PCB:' : 'PCB Serial:'}</span>
-                <div style={{ fontFamily: 'monospace', fontWeight: 700, color: '#ea580c' }}>
+                <div style={{ fontFamily: 'monospace', fontWeight: 700, color: '#7a0c22' }}>
                   {selectedResult.qr_serial_number}
                 </div>
               </div>

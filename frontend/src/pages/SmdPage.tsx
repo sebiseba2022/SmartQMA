@@ -657,7 +657,7 @@ export function SmdPage({ lang, currentUser }: SmdPageProps) {
                       <td className="col-idx-cell" style={{ fontWeight: 700, color: '#64748b' }}>
                         #{board.id}
                       </td>
-                      <td className="magazie-mono-cell" style={{ fontWeight: 700, color: '#ea580c' }}>
+                      <td className="magazie-mono-cell" style={{ fontWeight: 700, color: '#7a0c22' }}>
                         <button
                           type="button"
                           className={`accordion-toggle-btn ${isExpanded ? 'expanded' : ''}`}
@@ -1004,7 +1004,7 @@ export function SmdPage({ lang, currentUser }: SmdPageProps) {
             >
               <div>
                 <span style={{ color: '#64748b' }}>{lang === 'ro' ? 'Serie PCB:' : 'PCB Serial:'}</span>
-                <div style={{ fontFamily: 'monospace', fontWeight: 700, color: '#ea580c' }}>
+                <div style={{ fontFamily: 'monospace', fontWeight: 700, color: '#7a0c22' }}>
                   {selectedPlacement.qr_serial_number}
                 </div>
               </div>

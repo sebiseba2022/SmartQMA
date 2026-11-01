@@ -1,112 +1,217 @@
 /* ==============================================================================
-   SmartQMA — Stilizare în Culori Calde (Warm Palette)
-   Paletă: Espresso/Cărbune cald (#181512), Oranj Cald (#ea580c), Roșu (#dc2626), 
-           Chihlimbar (#f59e0b), Fildeș cald (#faf8f5 / #ffffff)
+   SmartQMA — Design System & Stilizare Integrală
+   Paletă: Abundență de alb (#FFFFFF, #FAFBFC, #F5F6F8),
+           Roșu & Vișiniu Bogat / Bordeaux (#6B0F24, #7A0C22, #8B1535, #54091A),
+           Accente discrete de Albastru Cobalt (#1E3A8A, #1D4ED8, #2563EB),
+           Tipografie Serif distinsă + Sans & Mono industrial,
+           Stil flat, distins, fără neon sau elemente futuristice.
    ============================================================================== */
 
 /* ==============================================================================
-   1. ECRAN LOGIN (SPLIT SCREEN - Imaginea 1 adaptată)
+   1. ECRAN AUTENTIFICARE (LOGIN - SPLIT SCREEN ELEGANT & AERISIT)
    ============================================================================== */
 .login-split-layout {
   display: flex;
   min-height: 100vh;
   width: 100%;
+  background-color: var(--qma-bg-white, #ffffff);
 }
 
-/* Coloana Stânga: Imagine colaj fabrici cu fadeout și umbră caldă */
+/* Coloana Stânga: Banner Aerisit, Abundență de Alb & Gri Deschis, Grafic Trasabilitate */
 .login-left-banner {
   flex: 1.15;
-  background-color: #14110e;
-  color: #fffaf5;
-  padding: 48px;
+  background-color: #fafbfc;
+  border-right: 1px solid var(--qma-border-light, #eaecf0);
+  color: var(--qma-text-main, #1e293b);
+  padding: 48px 56px;
   display: flex;
   flex-direction: column;
   justify-content: space-between;
   position: relative;
-  background: 
-    linear-gradient(180deg, rgba(20, 17, 14, 0.75) 0%, rgba(20, 17, 14, 0.42) 30%, rgba(20, 17, 14, 0.85) 100%),
-    linear-gradient(90deg, rgba(20, 17, 14, 0.5) 0%, rgba(20, 17, 14, 0.85) 100%),
-    url('/factory-bg.jpg') center center / cover no-repeat;
   overflow: hidden;
+}
+
+/* Fading decorativ subtil de fundal în nuanțe foarte pale de vișiniu */
+.login-left-banner::before {
+  content: '';
+  position: absolute;
+  top: -120px;
+  left: -80px;
+  width: 480px;
+  height: 480px;
+  background: radial-gradient(circle, rgba(122, 12, 34, 0.04) 0%, transparent 70%);
+  pointer-events: none;
+}
+
+.login-left-banner::after {
+  content: '';
+  position: absolute;
+  bottom: -100px;
+  right: -60px;
+  width: 420px;
+  height: 420px;
+  background: radial-gradient(circle, rgba(30, 58, 138, 0.035) 0%, transparent 70%);
+  pointer-events: none;
 }
 
 .banner-top-brand {
   display: flex;
   align-items: center;
+  position: relative;
+  z-index: 2;
 }
 
-/* Logo cu Fading Radial și Drop-Shadow */
+/* Logo Hero pe fundal alb curat, fără neon */
 .logo-wrapper-hero {
   position: relative;
   display: inline-flex;
   align-items: center;
   justify-content: center;
-  padding: 18px 26px;
-  border-radius: 20px;
-  background: radial-gradient(ellipse at center, rgba(234, 88, 12, 0.28) 0%, rgba(220, 38, 38, 0.12) 55%, transparent 80%);
-  box-shadow: 0 8px 32px rgba(234, 88, 12, 0.22), inset 0 0 24px rgba(234, 88, 12, 0.12);
-  border: 1px solid rgba(234, 88, 12, 0.25);
-  backdrop-filter: blur(4px);
+  padding: 12px 18px;
+  background: #ffffff;
+  border-radius: 16px;
+  border: 1px solid #eaecf0;
+  box-shadow: 0 4px 16px rgba(107, 15, 36, 0.04);
+  transition: transform 0.25s ease, box-shadow 0.25s ease;
+}
+
+.logo-wrapper-hero:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 8px 22px rgba(107, 15, 36, 0.08);
 }
 
 .hero-logo-img {
-  max-width: 330px;
+  max-width: 290px;
   width: 100%;
   height: auto;
   display: block;
-  filter: drop-shadow(0 6px 20px rgba(234, 88, 12, 0.65)) drop-shadow(0 2px 8px rgba(0, 0, 0, 0.9));
-  transition: transform 0.25s ease, filter 0.25s ease;
-}
-
-.hero-logo-img:hover {
-  transform: translateY(-2px);
-  filter: drop-shadow(0 10px 28px rgba(234, 88, 12, 0.85)) drop-shadow(0 2px 10px rgba(0, 0, 0, 0.95));
 }
 
 .banner-center-content {
-  max-width: 480px;
+  max-width: 520px;
+  margin: 32px 0;
+  position: relative;
+  z-index: 2;
+}
+
+/* Linii de accent vișiniu și puncte cobalt */
+.banner-bordeaux-accent {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  margin-bottom: 20px;
+}
+
+.accent-cobalt-dot {
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+  background-color: var(--qma-cobalt, #1e3a8a);
+  display: inline-block;
+}
+
+.accent-line-bordeaux {
+  width: 48px;
+  height: 3px;
+  background: #7a0c22;
+  border-radius: 3px;
+  display: inline-block;
 }
 
 .red-accent-line {
   width: 44px;
-  height: 4px;
-  background: linear-gradient(90deg, #dc2626, #ea580c);
+  height: 3.5px;
+  background: #7a0c22;
   border-radius: 3px;
-  margin-bottom: 24px;
+  margin-bottom: 20px;
 }
 
+/* Titlu în font serif elegant, nuanță bordeaux profund */
 .banner-headline {
-  font-size: 44px;
-  font-weight: 800;
-  line-height: 1.15;
-  color: #ffffff;
+  font-family: var(--font-serif, 'Playfair Display', Georgia, serif);
+  font-size: 38px;
+  font-weight: 700;
+  line-height: 1.25;
+  color: #54091a;
   margin-bottom: 16px;
   letter-spacing: -0.5px;
-  text-shadow: 0 2px 14px rgba(0, 0, 0, 0.85);
 }
 
 .banner-description {
   font-size: 15px;
-  color: #c4b9aa;
-  line-height: 1.6;
+  color: #475569;
+  line-height: 1.65;
+  margin-bottom: 24px;
 }
+
+.banner-graphic-container {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin: 20px 0 24px 0;
+}
+
+/* Rând de repere de trasabilitate */
+.banner-features-row {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 16px;
+  margin-top: 14px;
+}
+
+.banner-feature-item {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  background: #ffffff;
+  border: 1px solid #eaecf0;
+  border-radius: 9999px;
+  padding: 6px 14px;
+  font-size: 12.5px;
+  font-weight: 600;
+  color: #334155;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.02);
+}
+
+.feature-node-dot {
+  width: 7px;
+  height: 7px;
+  border-radius: 50%;
+}
+.feature-node-dot.cobalt { background-color: #1e3a8a; }
+.feature-node-dot.bordeaux { background-color: #7a0c22; }
 
 .banner-footer {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
   font-size: 12px;
-  color: #796e62;
+  color: #94a3b8;
+  border-top: 1px solid #eaecf0;
+  padding-top: 20px;
+  position: relative;
+  z-index: 2;
 }
 
-/* Coloana Dreapta (Warm Light Panel) */
+.banner-footer-tagline {
+  color: #7a0c22;
+  font-weight: 600;
+  font-family: var(--font-serif, serif);
+  font-style: italic;
+}
+
+/* Coloana Dreapta: Panou Curat, Alb, Formular Autentificare */
 .login-right-panel {
   flex: 1;
   background-color: #ffffff;
   display: flex;
   flex-direction: column;
-  padding: 32px 48px;
+  padding: 36px 54px;
   position: relative;
+  justify-content: space-between;
 }
 
-/* Switcher limbă discret RO / EN */
+/* Comutator discret de limbă RO / EN - Stil Pill */
 .top-lang-bar {
   display: flex;
   justify-content: flex-end;
@@ -116,103 +221,136 @@
   display: inline-flex;
   align-items: center;
   gap: 4px;
+  background: #f8fafc;
+  border: 1px solid #e2e8f0;
+  border-radius: 9999px;
+  padding: 4px 10px;
   font-size: 12px;
-  color: #8c7f71;
 }
 
 .lang-btn-discreet {
   background: none;
   border: none;
-  color: #a89f91;
+  color: #64748b;
   font-size: 12px;
   font-weight: 600;
   cursor: pointer;
-  padding: 2px 4px;
-  transition: color 0.15s ease;
+  padding: 2px 6px;
+  border-radius: 9999px;
+  transition: all 0.15s ease;
 }
 
 .lang-btn-discreet:hover {
-  color: #1f1c19;
+  color: #7a0c22;
 }
 
 .lang-btn-discreet.active {
-  color: #ea580c;
-  font-weight: 800;
-  text-decoration: underline;
-  text-underline-offset: 3px;
+  background: #7a0c22;
+  color: #ffffff;
+  font-weight: 700;
 }
 
 .lang-sep-discreet {
-  color: #d1c8bd;
+  color: #cbd5e1;
   font-size: 11px;
 }
 
 .login-card-container {
-  max-width: 420px;
+  max-width: 440px;
   width: 100%;
   margin: auto;
-  padding-bottom: 30px;
+  padding: 30px 0;
 }
 
-.login-card-title {
-  font-size: 26px;
-  font-weight: 700;
-  color: #1f1c19;
-  margin-bottom: 6px;
-}
-
-.login-card-subtitle {
-  font-size: 14px;
-  color: #796e62;
+.login-card-header {
   margin-bottom: 24px;
 }
 
+.login-portal-badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  background-color: #eff6ff;
+  border: 1px solid #bfdbfe;
+  color: #1e3a8a;
+  font-size: 11px;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  padding: 3px 10px;
+  border-radius: 9999px;
+  margin-bottom: 12px;
+}
+
+.badge-pulse-dot {
+  width: 6px;
+  height: 6px;
+  border-radius: 50%;
+  background-color: #1e3a8a;
+}
+
+.login-card-title {
+  font-family: var(--font-serif, 'Playfair Display', Georgia, serif);
+  font-size: 28px;
+  font-weight: 700;
+  color: #54091a;
+  margin-bottom: 6px;
+  letter-spacing: -0.3px;
+}
+
+.login-card-subtitle {
+  font-size: 14.5px;
+  color: #64748b;
+  margin-bottom: 24px;
+  line-height: 1.5;
+}
+
 .login-error-alert {
-  background-color: #fff1f2;
-  border: 1.5px solid #fecdd3;
-  color: #be123c;
-  padding: 10px 14px;
-  border-radius: 12px;
-  font-size: 13px;
-  margin-bottom: 18px;
+  background-color: #fef2f2;
+  border: 1.5px solid #fecaca;
+  color: #991b1b;
+  padding: 11px 16px;
+  border-radius: 10px;
+  font-size: 13.5px;
+  margin-bottom: 20px;
   font-weight: 500;
 }
 
 .auth-form {
   display: flex;
   flex-direction: column;
-  gap: 16px;
+  gap: 18px;
 }
 
 .auth-form-group {
   display: flex;
   flex-direction: column;
-  gap: 6px;
+  gap: 7px;
 }
 
 .auth-form-group label {
   font-size: 13px;
   font-weight: 600;
-  color: #292421;
+  color: #334155;
 }
 
 .auth-form-group input,
 .auth-form-group select {
   width: 100%;
-  padding: 11px 14px;
+  padding: 11px 15px;
   font-size: 14px;
-  border: 1.5px solid #dcd5cc;
-  border-radius: 12px;
+  border: 1.5px solid #d0d5dd;
+  border-radius: 10px;
   background-color: #ffffff;
-  color: #1f1c19;
-  transition: all 0.2s ease;
+  color: #1e293b;
+  transition: all 0.18s ease;
 }
 
 .auth-form-group input:focus,
 .auth-form-group select:focus {
   outline: none;
-  border-color: #ea580c;
-  box-shadow: 0 0 0 3px rgba(234, 88, 12, 0.18);
+  border-color: #7a0c22;
+  box-shadow: 0 0 0 3px rgba(122, 12, 34, 0.12);
 }
 
 .password-input-wrapper {
@@ -231,77 +369,93 @@
   background: none;
   border: none;
   cursor: pointer;
+  color: #64748b;
   font-size: 16px;
   padding: 0;
   line-height: 1;
+  transition: color 0.15s ease;
 }
 
-/* Autofill test container cu butoane rotunjite și evidențiate */
+.btn-toggle-eye:hover {
+  color: #7a0c22;
+}
+
+/* Caseta Conturi Test — Butoane Conturate Bordeaux Pill */
 .test-autofill-box {
-  background-color: #faf8f5;
-  border: 1.5px solid #ede7df;
-  border-radius: 14px;
-  padding: 12px 14px;
+  background-color: #fafbfc;
+  border: 1px solid #eaecf0;
+  border-radius: 12px;
+  padding: 14px 16px;
   margin-top: 4px;
 }
 
 .autofill-label {
   font-size: 11px;
   font-weight: 700;
-  color: #8c7f71;
-  display: block;
-  margin-bottom: 8px;
-  letter-spacing: 0.5px;
+  color: #54091a;
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  margin-bottom: 10px;
+  letter-spacing: 0.05em;
+  text-transform: uppercase;
+}
+
+.autofill-cobalt-dot {
+  width: 6px;
+  height: 6px;
+  border-radius: 50%;
+  background-color: #1e3a8a;
 }
 
 .autofill-buttons-row {
-  display: grid;
-  grid-template-columns: repeat(4, 1fr);
+  display: flex;
+  flex-wrap: wrap;
   gap: 8px;
 }
 
+/* Butoane de test: rotunjite pill, contur bordeaux elegant */
 .autofill-btn {
   background-color: #ffffff;
-  border: 1.5px solid #ea580c;
-  border-radius: 20px;
-  padding: 7px 6px;
+  border: 1.5px solid #7a0c22;
+  border-radius: 9999px;
+  padding: 6px 12px;
   font-size: 12px;
-  font-weight: 700;
-  color: #c2410c;
+  font-weight: 600;
+  color: #7a0c22;
   cursor: pointer;
   text-align: center;
-  transition: all 0.2s ease;
-  box-shadow: 0 2px 5px rgba(234, 88, 12, 0.12);
+  transition: all 0.18s ease;
+  box-shadow: 0 1px 2px rgba(0, 0, 0, 0.02);
 }
 
 .autofill-btn:hover {
-  background: linear-gradient(135deg, #ea580c 0%, #dc2626 100%);
+  background-color: #7a0c22;
   color: #ffffff;
-  border-color: transparent;
   transform: translateY(-1px);
-  box-shadow: 0 4px 10px rgba(234, 88, 12, 0.35);
+  box-shadow: 0 3px 8px rgba(122, 12, 34, 0.22);
 }
 
-/* Butonul de Autentificare - Foarte rotunjit și evidențiat */
+/* Buton Principal Autentificare: Pill Bordeaux Bogat */
 .btn-signin {
-  margin-top: 8px;
-  background: linear-gradient(135deg, #ea580c 0%, #dc2626 100%);
+  margin-top: 10px;
+  background: #7a0c22;
   color: #ffffff;
   border: none;
-  border-radius: 30px;
-  padding: 13px 20px;
+  border-radius: 9999px;
+  padding: 14px 24px;
   font-size: 15px;
   font-weight: 700;
-  letter-spacing: 0.3px;
+  letter-spacing: 0.01em;
   cursor: pointer;
-  box-shadow: 0 4px 16px rgba(234, 88, 12, 0.4);
+  box-shadow: 0 4px 14px rgba(122, 12, 34, 0.25);
   transition: all 0.2s cubic-bezier(0.16, 1, 0.3, 1);
 }
 
 .btn-signin:hover:not(:disabled) {
-  transform: translateY(-2px);
-  box-shadow: 0 6px 22px rgba(234, 88, 12, 0.6);
-  background: linear-gradient(135deg, #f97316 0%, #ef4444 100%);
+  background: #8b1535;
+  transform: translateY(-1px);
+  box-shadow: 0 6px 18px rgba(122, 12, 34, 0.35);
 }
 
 .btn-signin:active:not(:disabled) {
@@ -314,7 +468,7 @@
 }
 
 /* ==============================================================================
-   2. PAGINA POSTULUI DE LUCRU
+   2. NAVBAR PRINCIPAL (PORTAL NAVBAR) — ALB CURAT, BORDURĂ BORDEAUX & ACCENTE
    ============================================================================== */
 .station-page-layout {
   min-height: 100vh;
@@ -323,47 +477,69 @@
   background-color: #ffffff;
 }
 
-/* Top Navbar cu dungă roșie dedesubt */
 .portal-navbar {
-  height: 60px;
-  background-color: #181512;
-  border-bottom: 3px solid #dc2626;
+  height: 64px;
+  background-color: #ffffff;
+  border-bottom: 2px solid #7a0c22;
   display: flex;
   align-items: center;
   justify-content: space-between;
-  padding: 0 24px;
-  color: #ffffff;
+  padding: 0 28px;
+  color: #1e293b;
   position: sticky;
   top: 0;
   z-index: 100;
+  box-shadow: 0 2px 10px rgba(107, 15, 36, 0.04);
 }
 
 .navbar-brand {
   display: flex;
   align-items: center;
-  gap: 14px;
+  gap: 16px;
 }
 
 .logo-wrapper-small {
-  display: flex;
+  display: inline-flex;
   align-items: center;
-  background: radial-gradient(circle, rgba(234, 88, 12, 0.3) 0%, transparent 75%);
-  padding: 4px 8px;
-  border-radius: 8px;
+  text-decoration: none;
 }
 
 .navbar-logo-img {
-  height: 28px;
+  height: 32px;
   width: auto;
   display: block;
-  filter: drop-shadow(0 2px 8px rgba(234, 88, 12, 0.6));
+}
+
+.navbar-divider-accent {
+  width: 1px;
+  height: 24px;
+  background-color: #e2e8f0;
+}
+
+.navbar-station-info {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.navbar-station-badge {
+  background-color: #fdf2f4;
+  border: 1px solid #f2c7ce;
+  color: #7a0c22;
+  font-family: var(--font-mono, monospace);
+  font-size: 11px;
+  font-weight: 700;
+  padding: 2px 8px;
+  border-radius: 9999px;
+  letter-spacing: 0.04em;
 }
 
 .navbar-station-name {
-  font-size: 17px;
+  font-family: var(--font-serif, 'Playfair Display', Georgia, serif);
+  font-size: 18px;
   font-weight: 700;
-  color: #ffffff;
-  letter-spacing: -0.3px;
+  color: #54091a;
+  letter-spacing: -0.2px;
 }
 
 .navbar-right-actions {
@@ -375,92 +551,127 @@
 .navbar-user-chip {
   display: inline-flex;
   align-items: center;
-  gap: 6px;
-  background-color: rgba(255, 255, 255, 0.08);
-  border: 1px solid rgba(255, 255, 255, 0.15);
-  padding: 4px 11px;
-  border-radius: 999px;
-  font-size: 12px;
+  gap: 7px;
+  background-color: #f8fafc;
+  border: 1px solid #e2e8f0;
+  padding: 5px 14px;
+  border-radius: 9999px;
+  font-size: 12.5px;
+}
+
+.user-status-dot.cobalt {
+  width: 7px;
+  height: 7px;
+  border-radius: 50%;
+  background-color: #1e3a8a;
+  display: inline-block;
 }
 
 .navbar-user-name {
-  color: #f5f5f4;
+  color: #1e293b;
   font-weight: 600;
 }
 
 .navbar-user-role {
-  color: #fb923c;
-  font-size: 11px;
-  text-transform: capitalize;
+  color: #7a0c22;
+  font-size: 11.5px;
+  font-weight: 600;
+}
+
+/* Buton Ieșire Pill */
+.btn-logout-pill {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  background: #ffffff;
+  border: 1.5px solid #7a0c22;
+  color: #7a0c22;
+  padding: 6px 14px;
+  border-radius: 9999px;
+  font-size: 12.5px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.18s ease;
+}
+
+.btn-logout-pill:hover {
+  background-color: #7a0c22;
+  color: #ffffff;
+  transform: translateY(-1px);
+  box-shadow: 0 3px 8px rgba(122, 12, 34, 0.2);
 }
 
 .btn-logout-x {
   background: transparent;
-  border: 1.5px solid rgba(220, 38, 38, 0.5);
-  color: #ef4444;
+  border: 1.5px solid #7a0c22;
+  color: #7a0c22;
   width: 32px;
   height: 32px;
   border-radius: 50%;
   display: inline-flex;
   align-items: center;
   justify-content: center;
-  font-size: 14px;
+  font-size: 13px;
   font-weight: 800;
   cursor: pointer;
-  transition: all 0.2s ease;
+  transition: all 0.18s ease;
   line-height: 1;
   padding: 0;
 }
 
 .btn-logout-x:hover {
-  background-color: #dc2626;
-  border-color: #dc2626;
+  background-color: #7a0c22;
   color: #ffffff;
-  transform: scale(1.08);
-  box-shadow: 0 0 10px rgba(220, 38, 38, 0.5);
+  transform: scale(1.05);
 }
 
-/* Structură & Stilizare Generală Posturi de Lucru */
+/* ==============================================================================
+   3. STRUCTURĂ GENERALĂ POSTURI DE LUCRU (WORKSTATIONS)
+   ============================================================================== */
 .station-content-wrapper {
   display: flex;
   flex-direction: column;
   flex: 1;
-  min-height: calc(100vh - 60px);
-  background-color: #fafaf9;
+  min-height: calc(100vh - 64px);
+  background-color: #ffffff;
 }
 
 .station-banner-card {
   padding: 22px 32px 18px 32px;
-  background: linear-gradient(180deg, #ffffff 0%, #fcfbf9 100%);
-  border-bottom: 1.5px solid #e7e5e4;
-  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.03);
+  background-color: #ffffff;
+  border-bottom: 1px solid #eaecf0;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.02);
 }
 
 .station-code-pill {
   display: inline-block;
-  background-color: #181512;
-  color: #ea580c;
+  background-color: #fdf2f4;
+  color: #7a0c22;
+  border: 1px solid #f2c7ce;
+  font-family: var(--font-mono, monospace);
   font-size: 11px;
-  font-weight: 800;
+  font-weight: 700;
   letter-spacing: 0.05em;
-  padding: 3px 8px;
-  border-radius: 4px;
+  padding: 3px 9px;
+  border-radius: 9999px;
   margin-bottom: 8px;
 }
 
 .station-headline {
-  font-size: 20px;
+  font-family: var(--font-serif, 'Playfair Display', Georgia, serif);
+  font-size: 22px;
   font-weight: 700;
-  color: #1c1917;
+  color: #54091a;
   margin: 0 0 6px 0;
+  letter-spacing: -0.2px;
 }
 
 .station-description {
-  font-size: 13.5px;
-  color: #78716c;
+  font-size: 14px;
+  color: #64748b;
   margin: 0;
-  max-width: 800px;
-  line-height: 1.5;
+  max-width: 820px;
+  line-height: 1.55;
 }
 
 .station-workspace-area {
@@ -469,247 +680,205 @@
   padding: 24px 32px;
 }
 
-/* Modul Statistică */
-.stats-main-content {
-  flex: 1;
+/* ==============================================================================
+   4. BARA RAPIDĂ DE SCANARE INDUSTRIALĂ (STATION QUICK BAR)
+   ============================================================================== */
+.station-quick-bar {
   display: flex;
-  flex-direction: column;
-  background-color: #ffffff;
-  overflow-y: auto;
+  align-items: center;
+  justify-content: space-between;
+  gap: 14px;
+  padding: 10px 20px;
+  background-color: #fafbfc;
+  border-bottom: 1.5px solid #eaecf0;
+  color: #1e293b;
+  flex-wrap: wrap;
 }
 
-.stats-main-content.dark-bg {
-  background-color: #0b1120;
+.station-quick-group {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.station-quick-label {
+  font-size: 12.5px;
+  font-weight: 600;
+  color: #475569;
+  white-space: nowrap;
+}
+
+.station-quick-input {
+  background-color: #ffffff;
+  border: 1.5px solid #d0d5dd;
+  border-radius: 8px;
+  color: #1e293b;
+  padding: 7px 14px;
+  font-size: 13.5px;
+  font-family: var(--font-mono, monospace);
+  min-width: 240px;
+  outline: none;
+  transition: all 0.18s ease;
+}
+
+.station-quick-input:focus {
+  border-color: #7a0c22;
+  box-shadow: 0 0 0 3px rgba(122, 12, 34, 0.12);
+}
+
+.station-quick-btn {
+  background: #7a0c22;
+  border: 1.5px solid #7a0c22;
+  border-radius: 9999px;
+  color: #ffffff;
+  padding: 7px 18px;
+  font-size: 13px;
+  font-weight: 700;
+  cursor: pointer;
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  transition: all 0.18s ease;
+  white-space: nowrap;
+  box-shadow: 0 2px 8px rgba(122, 12, 34, 0.2);
+}
+
+.station-quick-btn:hover:not(:disabled) {
+  background: #8b1535;
+  border-color: #8b1535;
+  transform: translateY(-1px);
+}
+
+.station-quick-btn:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+
+.station-quick-btn.secondary {
+  background: #ffffff;
+  border: 1.5px solid #d0d5dd;
+  color: #334155;
+  box-shadow: none;
+}
+
+.station-quick-btn.secondary:hover:not(:disabled) {
+  background: #f8fafc;
+  border-color: #7a0c22;
+  color: #7a0c22;
+}
+
+/* KPI Chips */
+.station-kpi-group {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
+.station-kpi-chip {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  background-color: #ffffff;
+  border: 1px solid #eaecf0;
+  border-radius: 9999px;
+  padding: 4px 12px;
+  font-size: 12px;
+  color: #64748b;
+  box-shadow: 0 1px 2px rgba(0, 0, 0, 0.02);
+}
+
+.station-kpi-chip strong {
+  color: #7a0c22;
+  font-weight: 700;
+  font-family: var(--font-mono, monospace);
+}
+
+.station-kpi-chip.success strong {
+  color: #15803d;
+}
+
+.station-kpi-chip.danger strong {
+  color: #b91c1c;
 }
 
 /* ==============================================================================
-   6. LIVE STREAM BANNER & ACCORDION SUBTABLE STYLES
+   5. STATUTURI & BADGES (PASS, FAIL, OK, RESCAN) — FLAT & RAFINAT
    ============================================================================== */
-.live-stream-freeze-banner {
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  gap: 12px;
-  background: #111827;
-  border: 1px solid #0284c7;
-  color: #f0f9ff;
-  padding: 8px 14px;
-  border-radius: 6px;
-  margin-bottom: 8px;
-  font-size: 13px;
-  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3);
-  cursor: pointer;
-  transition: all 0.15s ease-in-out;
-}
-
-.live-stream-freeze-banner:hover {
-  background: #0f172a;
-  border-color: #38bdf8;
-}
-
-.live-stream-pulse-dot {
-  width: 8px;
-  height: 8px;
-  border-radius: 50%;
-  background: #38bdf8;
-  flex-shrink: 0;
-  animation: pulse-dot 1.5s infinite;
-}
-
-.live-stream-banner-text {
-  flex: 1;
-  font-weight: 500;
-  color: #e0f2fe;
-}
-
-.live-stream-resume-pill {
-  background: #0284c7;
-  color: #ffffff;
-  border: none;
-  font-size: 12px;
-  font-weight: 600;
-  padding: 4px 10px;
-  border-radius: 4px;
-  cursor: pointer;
-  flex-shrink: 0;
-}
-
-.live-stream-resume-pill:hover {
-  background: #0369a1;
-}
-
-/* Animație Cascadă rânduri noi la intrare în top */
-@keyframes cascadeRowEnter {
-  0% {
-    background-color: rgba(14, 165, 233, 0.28) !important;
-    transform: translateY(-8px);
-  }
-  50% {
-    background-color: rgba(14, 165, 233, 0.16) !important;
-  }
-  100% {
-    background-color: transparent;
-    transform: translateY(0);
-  }
-}
-
-.row-cascade-new {
-  animation: cascadeRowEnter 2.4s cubic-bezier(0.16, 1, 0.3, 1);
-}
-
-/* Accordion Subtable Styles */
-.accordion-toggle-btn {
+.status-badge {
   display: inline-flex;
   align-items: center;
-  justify-content: center;
-  width: 22px;
-  height: 22px;
-  border-radius: 4px;
-  background: #1e293b;
-  border: 1px solid #334155;
-  color: #94a3b8;
-  cursor: pointer;
-  margin-right: 6px;
-  transition: all 0.15s ease;
-  vertical-align: middle;
-}
-
-.accordion-toggle-btn:hover {
-  background: #334155;
-  color: #ffffff;
-}
-
-.accordion-toggle-btn.expanded {
-  background: #ea580c;
-  border-color: #ea580c;
-  color: #ffffff;
-}
-
-.smd-count-pill {
-  display: inline-block;
-  font-size: 11px;
-  font-weight: 600;
-  padding: 1px 6px;
-  border-radius: 10px;
-  background: #1e293b;
-  border: 1px solid #334155;
-  color: #38bdf8;
-  margin-left: 6px;
-}
-
-.smd-subrow {
-  background: #0f172a !important;
-}
-
-.smd-subrow > td {
-  padding: 0 !important;
-  border-bottom: 2px solid #334155 !important;
-}
-
-.smd-subtable-container {
-  padding: 10px 16px 14px 38px;
-  background: linear-gradient(180deg, #090e1a 0%, #0f172a 100%);
-  border-left: 3px solid #ea580c;
-}
-
-.smd-subtable-header {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  font-size: 12px;
-  font-weight: 600;
-  color: #cbd5e1;
-  margin-bottom: 8px;
-}
-
-.smd-nested-table {
-  width: 100%;
-  border-collapse: collapse;
-  font-size: 12px;
-  background: #1e293b;
-  border: 1px solid #334155;
-  border-radius: 4px;
-  overflow: hidden;
-}
-
-.smd-nested-table th {
-  background: #111827;
-  color: #94a3b8;
-  font-weight: 600;
-  text-align: left;
-  padding: 6px 10px;
-  border-bottom: 1px solid #334155;
-  font-size: 11px;
+  gap: 5px;
+  padding: 3px 10px;
+  font-size: 11.5px;
+  font-weight: 700;
+  border-radius: 9999px;
+  letter-spacing: 0.03em;
   text-transform: uppercase;
 }
 
-.smd-nested-table td {
-  padding: 6px 10px;
-  border-bottom: 1px solid #2d3748;
-  color: #e2e8f0;
+.status-badge.pass {
+  background-color: #f0fdf4;
+  color: #15803d;
+  border: 1px solid #bbf7d0;
 }
 
-.smd-nested-table tr:last-child td {
-  border-bottom: none;
+.status-badge.fail {
+  background-color: #fef2f2;
+  color: #b91c1c;
+  border: 1px solid #fecaca;
 }
 
-.badge-position {
-  display: inline-block;
+.status-badge.ok {
+  background-color: #f0fdf4;
+  color: #166534;
+  border: 1px solid #86efac;
+}
+
+.status-badge.rescan {
+  background-color: #fffbe9;
+  color: #b45309;
+  border: 1px solid #fde68a;
+}
+
+.status-badge.warning {
+  background-color: #fdf2f4;
+  color: #7a0c22;
+  border: 1px solid #f2c7ce;
+}
+
+.mono-tag {
+  font-family: var(--font-mono, monospace);
+  font-size: 13px;
   font-weight: 700;
-  font-size: 11px;
-  color: #ea580c;
-  background: rgba(234, 88, 12, 0.12);
-  border: 1px solid rgba(234, 88, 12, 0.3);
-  padding: 2px 6px;
-  border-radius: 3px;
 }
 
-.stats-content-header {
-  padding: 20px 28px;
-  background: #fafaf9;
-  border-bottom: 1px solid #e7e5e4;
+.mono-tag.orange, .mono-tag.bordeaux {
+  color: #7a0c22;
 }
 
-.stats-content-title {
-  font-size: 19px;
-  font-weight: 700;
-  color: #1c1917;
-  margin: 0 0 4px 0;
-}
-
-.stats-content-subtitle {
-  font-size: 12.5px;
-  color: #78716c;
-}
-
-/* Pe pagină: COMPLET ALB */
-.blank-page-white {
-  flex: 1;
-  background-color: #ffffff;
-  min-height: calc(100vh - 60px);
-  width: 100%;
+.mono-tag.slate {
+  color: #1e3a8a;
 }
 
 /* ==============================================================================
-   3. ZONA DE STOCARE - MAGAZIE (COLOANA BUTOANE ROTUNDE + TABEL GOL PÂNĂ JOS)
+   6. ZONA DE STOCARE — MAGAZIE (COLOANĂ BUTOANE ROTUNDE & TABEL AERISIT)
    ============================================================================== */
 .magazie-workspace-split {
   display: flex;
   flex: 1;
-  height: calc(100vh - 60px);
-  min-height: calc(100vh - 60px);
+  height: calc(100vh - 64px);
+  min-height: calc(100vh - 64px);
   width: 100%;
   background-color: #ffffff;
   overflow: hidden;
-  font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Arial, sans-serif;
 }
 
-/* Coloana din stânga: Butoane rotunde în coloană */
+/* Coloana din stânga: Butoane rotunde pe fundal gri foarte deschis / alb */
 .magazie-left-rail {
   width: 112px;
   flex-shrink: 0;
-  background-color: #181512;
-  border-right: 2px solid #2e2924;
+  background-color: #fafbfc;
+  border-right: 1.5px solid #eaecf0;
   padding: 24px 10px;
   display: flex;
   flex-direction: column;
@@ -739,15 +908,15 @@
   width: 52px;
   height: 52px;
   border-radius: 50%;
-  border: 1.5px solid #3f3831;
-  background-color: #24201c;
-  color: #f3efe9;
+  border: 1.5px solid #eaecf0;
+  background-color: #ffffff;
+  color: #334155;
   display: inline-flex;
   align-items: center;
   justify-content: center;
   cursor: pointer;
   transition: all 0.2s cubic-bezier(0.16, 1, 0.3, 1);
-  box-shadow: 0 3px 10px rgba(0, 0, 0, 0.35);
+  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.04);
   padding: 0;
 }
 
@@ -757,11 +926,11 @@
 }
 
 .magazie-round-btn:hover:not(:disabled) {
-  border-color: #ea580c;
-  background-color: #2e2721;
-  color: #ffffff;
+  border-color: #7a0c22;
+  background-color: #fdf2f4;
+  color: #7a0c22;
   transform: translateY(-2px);
-  box-shadow: 0 5px 14px rgba(234, 88, 12, 0.35);
+  box-shadow: 0 4px 12px rgba(122, 12, 34, 0.15);
 }
 
 .magazie-round-btn:active:not(:disabled) {
@@ -769,22 +938,23 @@
 }
 
 .magazie-round-btn.primary {
-  background: linear-gradient(135deg, #ea580c 0%, #dc2626 100%);
-  border-color: #f97316;
+  background: #7a0c22;
+  border-color: #7a0c22;
   color: #ffffff;
-  box-shadow: 0 4px 14px rgba(234, 88, 12, 0.45);
+  box-shadow: 0 4px 12px rgba(122, 12, 34, 0.25);
 }
 
 .magazie-round-btn.primary:hover:not(:disabled) {
-  background: linear-gradient(135deg, #f97316 0%, #ef4444 100%);
-  box-shadow: 0 6px 18px rgba(234, 88, 12, 0.65);
+  background: #8b1535;
+  border-color: #8b1535;
+  box-shadow: 0 6px 16px rgba(122, 12, 34, 0.35);
 }
 
 .magazie-round-btn.active {
-  border-color: #ea580c;
-  background: rgba(234, 88, 12, 0.22);
-  color: #fb923c;
-  box-shadow: 0 0 12px rgba(234, 88, 12, 0.4);
+  border-color: #7a0c22;
+  background: #fdf2f4;
+  color: #7a0c22;
+  box-shadow: 0 0 0 3px rgba(122, 12, 34, 0.15);
 }
 
 .magazie-round-btn:disabled {
@@ -795,14 +965,14 @@
 .magazie-round-btn-label {
   font-size: 11px;
   font-weight: 600;
-  color: #cbbba8;
+  color: #64748b;
   text-align: center;
   line-height: 1.25;
   max-width: 92px;
   user-select: none;
 }
 
-/* Zona principală: Tabel până în josul paginii */
+/* Tabel Magazie - Abundență de alb */
 .magazie-table-fullpage {
   flex: 1;
   height: 100%;
@@ -817,13 +987,12 @@
   display: flex;
   align-items: center;
   gap: 10px;
-  background: linear-gradient(90deg, #fef2f2 0%, #fff1f2 100%);
-  border-bottom: 1.5px solid #fecaca;
+  background-color: #fef2f2;
+  border-bottom: 1px solid #fecaca;
   color: #991b1b;
   padding: 9px 18px;
   font-size: 13px;
   font-weight: 600;
-  box-shadow: 0 2px 6px rgba(220, 38, 38, 0.08);
   z-index: 15;
 }
 
@@ -831,12 +1000,11 @@
   width: 18px;
   height: 18px;
   flex-shrink: 0;
-  stroke: #dc2626;
+  stroke: #7a0c22;
 }
 
 .magazie-table-notice span {
   flex: 1;
-  letter-spacing: 0.01em;
 }
 
 .magazie-notice-close {
@@ -846,37 +1014,31 @@
   cursor: pointer;
   padding: 2px 7px;
   font-size: 12px;
-  line-height: 1;
   border-radius: 4px;
   font-weight: 700;
-  transition: all 0.15s ease;
-}
-
-.magazie-notice-close:hover {
-  background-color: #fee2e2;
-  color: #7f1d1d;
 }
 
 .magazie-table-toolbar-info {
   display: flex;
   align-items: center;
   justify-content: space-between;
-  padding: 6px 14px;
-  background-color: #faf8f5;
-  border-bottom: 1px solid #e7e5e4;
-  font-size: 11.5px;
-  color: #78716c;
+  padding: 8px 18px;
+  background-color: #fafbfc;
+  border-bottom: 1px solid #eaecf0;
+  font-size: 12px;
+  color: #64748b;
   font-weight: 500;
 }
 
 .magazie-count-badge {
-  color: #c2410c;
-  font-weight: 600;
+  color: #7a0c22;
+  font-weight: 700;
+  font-family: var(--font-mono, monospace);
 }
 
 .magazie-loading-row td {
-  background-color: #fff7ed !important;
-  border-bottom: 1px dashed #fdba74 !important;
+  background-color: #fdf2f4 !important;
+  border-bottom: 1px dashed #f2c7ce !important;
   text-align: center !important;
   padding: 8px 12px !important;
 }
@@ -884,9 +1046,8 @@
 .magazie-scroll-loader {
   display: inline-flex;
   align-items: center;
-  justify-content: center;
   gap: 8px;
-  color: #ea580c;
+  color: #7a0c22;
   font-size: 12.5px;
   font-weight: 600;
 }
@@ -894,16 +1055,10 @@
 .magazie-mini-spinner {
   width: 14px;
   height: 14px;
-  border: 2px solid rgba(234, 88, 12, 0.25);
-  border-top-color: #ea580c;
+  border: 2px solid rgba(122, 12, 34, 0.25);
+  border-top-color: #7a0c22;
   border-radius: 50%;
   animation: spin 0.7s linear infinite;
-}
-
-@keyframes spin {
-  to {
-    transform: rotate(360deg);
-  }
 }
 
 .magazie-fulltable-container {
@@ -920,26 +1075,26 @@
   border-collapse: collapse;
   table-layout: fixed;
   font-size: 13px;
-  color: #111827;
+  color: #1e293b;
 }
 
-/* Antetul tabelului stilizat profesional */
+/* Antet Tabel - Stil Bordeaux Rafinat */
 .magazie-pro-table thead th {
   position: sticky;
   top: 0;
   z-index: 5;
-  background: linear-gradient(180deg, #1f1b18 0%, #141210 100%);
-  color: #f8fafc;
+  background: #54091a;
+  color: #ffffff;
+  font-family: var(--font-sans, sans-serif);
   font-weight: 700;
-  font-size: 13px;
-  letter-spacing: 0.01em;
-  padding: 12px 8px;
+  font-size: 12.5px;
+  letter-spacing: 0.02em;
+  padding: 12px 10px;
   text-align: left;
-  border-right: 1px solid #2e2924;
-  border-bottom: 2px solid #ea580c;
+  border-right: 1px solid rgba(255, 255, 255, 0.12);
+  border-bottom: 2px solid #7a0c22;
   white-space: nowrap;
   user-select: none;
-  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.12);
 }
 
 .magazie-pro-table thead th:last-child {
@@ -953,37 +1108,21 @@
   text-align: center;
   padding: 12px 4px;
 }
-.magazie-pro-table th.col-ident {
-  width: 100px;
-}
-.magazie-pro-table th.col-name {
-  min-width: 170px;
-}
-.magazie-pro-table th.col-date {
-  width: 140px;
-}
-.magazie-pro-table th.col-qty {
-  width: 95px;
-}
-.magazie-pro-table th.col-provider {
-  width: 140px;
-}
-.magazie-pro-table th.col-tracking {
-  width: 145px;
-}
-.magazie-pro-table th.col-arrived {
-  width: 125px;
-}
-.magazie-pro-table th.col-arrival-time {
-  width: 125px;
-}
+.magazie-pro-table th.col-ident { width: 105px; }
+.magazie-pro-table th.col-name { min-width: 180px; }
+.magazie-pro-table th.col-date { width: 140px; }
+.magazie-pro-table th.col-qty { width: 95px; }
+.magazie-pro-table th.col-provider { width: 145px; }
+.magazie-pro-table th.col-tracking { width: 150px; }
+.magazie-pro-table th.col-arrived { width: 130px; }
+.magazie-pro-table th.col-arrival-time { width: 130px; }
 
-/* Celule de tabel & Rânduri goale până în josul paginii */
+/* Celule de Tabel */
 .magazie-pro-table tbody td {
-  height: 36px;
-  padding: 0 8px;
-  border-bottom: 1px solid #e2e8f0;
-  border-right: 1px solid #e2e8f0;
+  height: 38px;
+  padding: 0 10px;
+  border-bottom: 1px solid #eaecf0;
+  border-right: 1px solid #eaecf0;
   vertical-align: middle;
   overflow: hidden;
   text-overflow: ellipsis;
@@ -994,24 +1133,23 @@
   border-right: none;
 }
 
-/* Primul rând de sub antet: Rândul de interogare pe coloane */
+/* Primul rând: Rândul de interogare pe coloane */
 .magazie-query-row td {
   padding: 0;
-  height: 36px;
-  background-color: #ffffff;
-  border-bottom: 1px solid #cbd5e1;
-  transition: background-color 0.15s ease;
+  height: 38px;
+  background-color: #fafbfc;
+  border-bottom: 1.5px solid #d0d5dd;
 }
 
 .magazie-query-row.has-query td {
-  background-color: #fffaf5;
-  border-bottom: 1.5px solid #fdba74;
+  background-color: #fdf2f4;
+  border-bottom: 2px solid #7a0c22;
 }
 
 .magazie-query-idx-cell {
   text-align: center;
   font-size: 12px;
-  color: #ea580c;
+  color: #7a0c22;
   user-select: none;
 }
 
@@ -1021,29 +1159,29 @@
 }
 
 .magazie-query-cell:focus-within {
-  background-color: #fff7ed !important;
-  box-shadow: inset 0 0 0 2px #ea580c;
+  background-color: #ffffff !important;
+  box-shadow: inset 0 0 0 2px #7a0c22;
 }
 
 .magazie-cell-input {
   width: 100%;
-  height: 35px;
+  height: 36px;
   border: none;
   outline: none;
   background: transparent;
-  padding: 0 12px;
+  padding: 0 10px;
   font-size: 13px;
   font-family: inherit;
-  color: #111827;
+  color: #1e293b;
 }
 
 .magazie-cell-input.ident-input {
   font-weight: 700;
-  font-family: 'JetBrains Mono', Consolas, monospace;
-  color: #c2410c;
+  font-family: var(--font-mono, monospace);
+  color: #7a0c22;
 }
 
-/* Rânduri cu date returnate la interogare */
+/* Rânduri cu date */
 .magazie-data-row {
   background-color: #ffffff;
   cursor: context-menu;
@@ -1051,11 +1189,11 @@
 }
 
 .magazie-data-row:nth-child(even) {
-  background-color: #f8fafc;
+  background-color: #fafbfc;
 }
 
 .magazie-data-row:hover {
-  background-color: #fff7ed;
+  background-color: #fdf2f4;
 }
 
 .col-idx-cell {
@@ -1064,63 +1202,58 @@
   font-weight: 700;
   font-size: 12px;
   padding: 0 4px !important;
-  white-space: nowrap;
 }
 
-/* Rânduri goale până în josul paginii */
 .magazie-blank-row {
   background-color: #ffffff;
 }
 
 .magazie-blank-row:nth-child(even) {
-  background-color: #fcfcfd;
-}
-
-.magazie-blank-row td {
-  cursor: text;
+  background-color: #fafbfc;
 }
 
 .magazie-ident-cell {
   font-weight: 700;
-  font-family: 'JetBrains Mono', Consolas, monospace;
-  color: #111827;
+  font-family: var(--font-mono, monospace);
+  color: #1e293b;
 }
 
 .magazie-mono-cell {
-  font-family: 'JetBrains Mono', Consolas, monospace;
+  font-family: var(--font-mono, monospace);
+  color: #1e3a8a;
 }
 
 .magazie-name-cell {
   font-weight: 600;
-  color: #111827;
+  color: #1e293b;
 }
 
 .magazie-status-label {
   display: inline-block;
-  padding: 2px 8px;
-  font-size: 12px;
-  font-weight: 600;
-  border-radius: 4px;
+  padding: 2px 9px;
+  font-size: 11.5px;
+  font-weight: 700;
+  border-radius: 9999px;
 }
 
 .magazie-status-label.arrived-yes {
-  background-color: #dcfce7;
-  color: #166534;
-  border: 1px solid #86efac;
+  background-color: #f0fdf4;
+  color: #15803d;
+  border: 1px solid #bbf7d0;
 }
 
 .magazie-status-label.arrived-no {
-  background-color: #fef3c7;
-  color: #92400e;
-  border: 1px solid #fcd34d;
+  background-color: #fffbe9;
+  color: #b45309;
+  border: 1px solid #fde68a;
 }
 
-/* Modal Adaugă Comandă Nouă */
+/* Modale Magazie */
 .magazie-modal-backdrop {
   position: fixed;
   inset: 0;
-  background-color: rgba(15, 13, 11, 0.6);
-  backdrop-filter: blur(2px);
+  background-color: rgba(30, 41, 59, 0.45);
+  backdrop-filter: blur(4px);
   z-index: 2000;
   display: flex;
   align-items: center;
@@ -1130,12 +1263,12 @@
 
 .magazie-modal-card {
   width: 100%;
-  max-width: 560px;
+  max-width: 580px;
   background-color: #ffffff;
-  border-radius: 12px;
-  border: 1px solid #e2e8f0;
-  box-shadow: 0 20px 45px rgba(0, 0, 0, 0.28);
-  padding: 24px 26px;
+  border-radius: 16px;
+  border: 1px solid #eaecf0;
+  box-shadow: 0 20px 45px rgba(107, 15, 36, 0.12);
+  padding: 28px;
 }
 
 .magazie-modal-header {
@@ -1143,49 +1276,51 @@
   align-items: center;
   justify-content: space-between;
   padding-bottom: 14px;
-  margin-bottom: 18px;
-  border-bottom: 1px solid #e5e7eb;
+  margin-bottom: 20px;
+  border-bottom: 1px solid #eaecf0;
 }
 
 .magazie-modal-title {
-  font-size: 18px;
+  font-family: var(--font-serif, 'Playfair Display', Georgia, serif);
+  font-size: 20px;
   font-weight: 700;
-  color: #111827;
+  color: #54091a;
   margin: 0;
 }
 
 .magazie-modal-close {
-  width: 30px;
-  height: 30px;
+  width: 32px;
+  height: 32px;
   border-radius: 50%;
-  border: 1px solid #d1d5db;
-  background: #f9fafb;
-  color: #4b5563;
+  border: 1px solid #d0d5dd;
+  background: #f8fafc;
+  color: #64748b;
   font-size: 13px;
   font-weight: 700;
   cursor: pointer;
   display: inline-flex;
   align-items: center;
   justify-content: center;
+  transition: all 0.15s ease;
 }
 
 .magazie-modal-close:hover {
-  background-color: #fee2e2;
-  border-color: #fca5a5;
-  color: #dc2626;
+  background-color: #fdf2f4;
+  border-color: #f2c7ce;
+  color: #7a0c22;
 }
 
 .magazie-modal-form {
   display: grid;
   grid-template-columns: 1fr 1fr;
-  gap: 14px;
+  gap: 16px;
 }
 
 .magazie-ident-preview {
-  background-color: #f8fafc;
-  border: 1px solid #e2e8f0;
-  border-left: 3px solid #ea580c;
-  border-radius: 6px;
+  background-color: #fafbfc;
+  border: 1px solid #eaecf0;
+  border-left: 3px solid #7a0c22;
+  border-radius: 8px;
   padding: 10px 14px;
   display: flex;
   flex-wrap: wrap;
@@ -1197,113 +1332,103 @@
 .magazie-form-field {
   display: flex;
   flex-direction: column;
-  gap: 5px;
+  gap: 6px;
 }
 
 .magazie-form-field label {
   font-size: 13px;
   font-weight: 600;
-  color: #374151;
+  color: #334155;
 }
 
 .magazie-form-field input,
 .magazie-form-field select {
-  padding: 8px 11px;
-  font-size: 13px;
-  color: #111827;
+  padding: 9px 12px;
+  font-size: 13.5px;
+  color: #1e293b;
   background-color: #ffffff;
-  border: 1px solid #cbd5e1;
-  border-radius: 6px;
+  border: 1.5px solid #d0d5dd;
+  border-radius: 8px;
 }
 
 .magazie-form-field input:focus,
 .magazie-form-field select:focus {
   outline: none;
-  border-color: #ea580c;
-  box-shadow: 0 0 0 3px rgba(234, 88, 12, 0.15);
+  border-color: #7a0c22;
+  box-shadow: 0 0 0 3px rgba(122, 12, 34, 0.12);
 }
 
 .magazie-modal-actions {
   grid-column: span 2;
   display: flex;
   justify-content: flex-end;
-  gap: 10px;
-  margin-top: 8px;
-  padding-top: 14px;
-  border-top: 1px solid #f1f5f9;
+  gap: 12px;
+  margin-top: 10px;
+  padding-top: 16px;
+  border-top: 1px solid #eaecf0;
 }
 
 .magazie-btn-cancel {
-  padding: 8px 16px;
-  font-size: 13px;
+  padding: 9px 18px;
+  font-size: 13.5px;
   font-weight: 600;
-  color: #374151;
-  background-color: #f3f4f6;
-  border: 1px solid #d1d5db;
-  border-radius: 6px;
+  color: #344054;
+  background-color: #ffffff;
+  border: 1.5px solid #d0d5dd;
+  border-radius: 9999px;
   cursor: pointer;
 }
 
 .magazie-btn-cancel:hover {
-  background-color: #e5e7eb;
+  background-color: #f8fafc;
 }
 
 .magazie-btn-submit {
-  padding: 8px 18px;
-  font-size: 13px;
-  font-weight: 600;
+  padding: 9px 22px;
+  font-size: 13.5px;
+  font-weight: 700;
   color: #ffffff;
-  background: linear-gradient(135deg, #ea580c 0%, #dc2626 100%);
+  background: #7a0c22;
   border: none;
-  border-radius: 6px;
+  border-radius: 9999px;
   cursor: pointer;
-  box-shadow: 0 2px 8px rgba(234, 88, 12, 0.35);
+  box-shadow: 0 2px 8px rgba(122, 12, 34, 0.25);
 }
 
 .magazie-btn-submit:hover:not(:disabled) {
-  background: linear-gradient(135deg, #f97316 0%, #ef4444 100%);
-}
-
-.magazie-btn-submit:disabled {
-  opacity: 0.6;
-  cursor: not-allowed;
+  background: #8b1535;
 }
 
 .magazie-standard-error {
   background-color: #fef2f2;
-  border: 1px solid #f87171;
+  border: 1px solid #fecaca;
   color: #991b1b;
-  padding: 8px 12px;
-  border-radius: 6px;
+  padding: 9px 14px;
+  border-radius: 8px;
   font-size: 13px;
   margin-bottom: 14px;
 }
 
-/* Meniu contextual standard (Click Dreapta) */
+/* Meniu Contextual */
 .magazie-context-menu {
   position: fixed;
   z-index: 9999;
-  min-width: 210px;
+  min-width: 220px;
   background-color: #ffffff;
-  border: 1px solid #9ca3af;
-  border-radius: 4px;
-  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
-  padding: 4px 0;
-  font-family: Arial, Helvetica, sans-serif;
+  border: 1px solid #d0d5dd;
+  border-radius: 8px;
+  box-shadow: 0 10px 25px rgba(0, 0, 0, 0.08);
+  padding: 6px 0;
 }
 
 .magazie-context-menu-header {
-  padding: 6px 12px;
+  padding: 6px 14px;
   font-size: 12px;
   font-weight: 700;
-  color: #374151;
-  background-color: #f3f4f6;
-  border-bottom: 1px solid #e5e7eb;
+  color: #54091a;
+  background-color: #fafbfc;
+  border-bottom: 1px solid #eaecf0;
   margin-bottom: 4px;
-  white-space: nowrap;
-  overflow: hidden;
-  text-overflow: ellipsis;
-  max-width: 280px;
 }
 
 .magazie-context-menu-item {
@@ -1312,46 +1437,48 @@
   text-align: left;
   background: none;
   border: none;
-  padding: 7px 14px;
+  padding: 8px 16px;
   font-size: 13px;
-  color: #111827;
+  color: #1e293b;
   cursor: pointer;
 }
 
 .magazie-context-menu-item:hover {
-  background-color: #e5e7eb;
+  background-color: #fdf2f4;
+  color: #7a0c22;
 }
 
 .magazie-context-menu-item.danger {
-  color: #b91c1c;
+  color: #991b1b;
 }
 
 .magazie-context-menu-item.danger:hover {
-  background-color: #fee2e2;
+  background-color: #fef2f2;
 }
 
 .magazie-context-menu-divider {
   height: 1px;
-  background-color: #e5e7eb;
+  background-color: #eaecf0;
   margin: 4px 0;
 }
 
 /* ==============================================================================
-   4. LAYOUT PAGINĂ STATISTICĂ (MENIU STÂNGA CU PAGINA 1 ... PAGINA 6)
+   7. MODUL STATISTICĂ & SIDEBAR BORDEAUX (CONFORM MOCKUP TABLETĂ)
    ============================================================================== */
 .stats-workspace-layout {
   display: flex;
   flex: 1;
-  min-height: calc(100vh - 60px);
+  min-height: calc(100vh - 64px);
   width: 100%;
   background-color: #ffffff;
 }
 
+/* Meniu lateral stânga — nuanță bordeaux profund, ca în mockup-ul tabletă */
 .stats-sidebar {
   width: 250px;
   flex-shrink: 0;
-  background-color: #181512;
-  border-right: 1px solid #2e2924;
+  background-color: #54091a;
+  border-right: 1px solid #3f0513;
   padding: 24px 14px;
   display: flex;
   flex-direction: column;
@@ -1359,13 +1486,23 @@
 }
 
 .stats-sidebar-header {
+  display: flex;
+  align-items: center;
+  gap: 8px;
   font-size: 11px;
   font-weight: 800;
-  letter-spacing: 0.9px;
-  color: #9c8f80;
-  padding: 0 12px 8px;
-  border-bottom: 1px solid rgba(255, 255, 255, 0.08);
+  letter-spacing: 0.08em;
+  color: #f8c0cb;
+  padding: 0 12px 10px;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.12);
   text-transform: uppercase;
+}
+
+.stats-sidebar-brand-dot {
+  width: 6px;
+  height: 6px;
+  border-radius: 50%;
+  background-color: #bfdbfe;
 }
 
 .stats-sidebar-nav {
@@ -1379,12 +1516,12 @@
   display: flex;
   align-items: center;
   gap: 12px;
-  padding: 11px 14px;
-  border-radius: 10px;
+  padding: 10px 14px;
+  border-radius: 9999px;
   border: 1px solid transparent;
   background: transparent;
-  color: #d6cec2;
-  font-size: 14px;
+  color: #fdf2f4;
+  font-size: 13.5px;
   font-weight: 600;
   text-align: left;
   cursor: pointer;
@@ -1392,168 +1529,161 @@
 }
 
 .stats-nav-item:hover {
-  background-color: rgba(234, 88, 12, 0.12);
+  background-color: rgba(255, 255, 255, 0.08);
   color: #ffffff;
 }
 
 .stats-nav-item.active {
-  background: linear-gradient(135deg, rgba(234, 88, 12, 0.24) 0%, rgba(220, 38, 38, 0.18) 100%);
-  border-color: rgba(234, 88, 12, 0.55);
-  color: #ffffff;
+  background: #ffffff;
+  color: #54091a;
   font-weight: 700;
-  box-shadow: 0 2px 10px rgba(234, 88, 12, 0.18);
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.12);
 }
 
 .stats-nav-dot {
   width: 8px;
   height: 8px;
   border-radius: 50%;
-  background-color: #6b6156;
+  background-color: rgba(255, 255, 255, 0.4);
   transition: all 0.18s ease;
   flex-shrink: 0;
 }
 
 .stats-nav-item:hover .stats-nav-dot {
-  background-color: #f97316;
+  background-color: #bfdbfe;
 }
 
 .stats-nav-item.active .stats-nav-dot {
-  background-color: #ea580c;
-  box-shadow: 0 0 8px rgba(234, 88, 12, 0.85);
+  background-color: #1e3a8a; /* Accent Albastru Cobalt în starea activă */
 }
 
 .stats-nav-text {
   line-height: 1.2;
 }
 
+.stats-main-content {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  background-color: #ffffff;
+  overflow-y: auto;
+}
+
+.stats-content-header {
+  padding: 24px 32px;
+  background: #fafbfc;
+  border-bottom: 1px solid #eaecf0;
+}
+
+.stats-content-title {
+  font-family: var(--font-serif, 'Playfair Display', Georgia, serif);
+  font-size: 22px;
+  font-weight: 700;
+  color: #54091a;
+  margin: 0 0 4px 0;
+}
+
+.stats-content-subtitle {
+  font-size: 13.5px;
+  color: #64748b;
+}
+
+.blank-page-white {
+  flex: 1;
+  background-color: #ffffff;
+  min-height: calc(100vh - 64px);
+  width: 100%;
+}
+
 /* ==============================================================================
-   5. ECRAN ACCES RESTRICȚIONAT (403 - DOAR DIRECTOR ȘI OWNER PE STATISTICĂ)
+   8. ECRAN ACCES RESTRICȚIONAT (403)
    ============================================================================== */
 .restricted-access-container {
   flex: 1;
   display: flex;
   align-items: center;
   justify-content: center;
-  padding: 32px;
-  background-color: #faf8f5;
-  min-height: calc(100vh - 60px);
+  padding: 36px;
+  background-color: #fafbfc;
+  min-height: calc(100vh - 64px);
 }
 
 .restricted-access-card {
-  max-width: 440px;
+  max-width: 460px;
   width: 100%;
   background-color: #ffffff;
-  border: 1.5px solid #fecdd3;
-  border-radius: 18px;
-  padding: 32px 28px;
+  border: 1.5px solid #fecaca;
+  border-radius: 20px;
+  padding: 36px 32px;
   text-align: center;
-  box-shadow: 0 10px 30px rgba(220, 38, 38, 0.08);
+  box-shadow: 0 10px 30px rgba(107, 15, 36, 0.06);
 }
 
 .restricted-badge {
   display: inline-flex;
   align-items: center;
   justify-content: center;
-  padding: 6px 14px;
-  border-radius: 999px;
-  background-color: #fff1f2;
-  color: #dc2626;
-  font-size: 13px;
-  font-weight: 800;
-  letter-spacing: 0.6px;
-  margin-bottom: 14px;
-  border: 1px solid #fecdd3;
+  padding: 6px 16px;
+  border-radius: 9999px;
+  background-color: #fef2f2;
+  color: #991b1b;
+  font-size: 12.5px;
+  font-weight: 700;
+  letter-spacing: 0.05em;
+  margin-bottom: 16px;
+  border: 1px solid #fecaca;
 }
 
 .restricted-title {
-  font-size: 22px;
-  font-weight: 800;
-  color: #181512;
+  font-family: var(--font-serif, 'Playfair Display', Georgia, serif);
+  font-size: 24px;
+  font-weight: 700;
+  color: #54091a;
   margin-bottom: 10px;
 }
 
 .restricted-message {
-  font-size: 14px;
-  color: #57534e;
-  line-height: 1.55;
-  margin-bottom: 20px;
+  font-size: 14.5px;
+  color: #64748b;
+  line-height: 1.6;
+  margin-bottom: 24px;
 }
 
-/* Responsive */
-@media (max-width: 900px) {
-  .login-split-layout {
-    flex-direction: column;
-  }
-  .login-left-banner {
-    padding: 32px;
-  }
-  .login-right-panel {
-    padding: 24px;
-  }
-  .portal-navbar {
-    padding: 0 16px;
-  }
-  .navbar-station-name {
-    font-size: 14px;
-  }
-  .stats-workspace-layout {
-    flex-direction: column;
-  }
-  .stats-sidebar {
-    width: 100%;
-    border-right: none;
-    border-bottom: 1px solid #2e2924;
-    padding: 16px;
-  }
-  .stats-sidebar-nav {
-    flex-direction: row;
-    flex-wrap: wrap;
-  }
-  .stats-nav-item {
-    width: auto;
-  }
-  .magazie-standard-container {
-    padding: 16px;
-  }
-}
-
-/* ==========================================================================
-   Product Lifetime Management (PLM) & Operator Barcode Modal Styles
-   ========================================================================== */
-
+/* ==============================================================================
+   9. PLM (PRODUCT LIFETIME MANAGEMENT) & MODAL VIZUALIZARE DATASHEET
+   ============================================================================== */
 .plm-pkg-badge {
   display: inline-block;
-  padding: 2px 7px;
-  background-color: #272421;
-  color: #fb923c;
-  border: 1px solid rgba(251, 146, 60, 0.25);
+  padding: 3px 8px;
+  background-color: #eff6ff;
+  color: #1e3a8a;
+  border: 1px solid #bfdbfe;
   border-radius: 4px;
-  font-size: 11px;
+  font-size: 11.5px;
   font-weight: 600;
-  letter-spacing: 0.3px;
+  letter-spacing: 0.02em;
 }
 
 .plm-datasheet-btn {
   display: inline-flex;
   align-items: center;
   justify-content: center;
-  padding: 4px 10px;
-  background-color: #262320;
-  color: #fdba74;
-  border: 1px solid #443e38;
-  border-radius: 5px;
-  font-size: 11.5px;
+  padding: 5px 12px;
+  background-color: #ffffff;
+  color: #7a0c22;
+  border: 1.5px solid #7a0c22;
+  border-radius: 9999px;
+  font-size: 12px;
   font-weight: 600;
   cursor: pointer;
-  transition: all 0.15s ease-in-out;
+  transition: all 0.18s ease-in-out;
 }
 
 .plm-datasheet-btn:hover {
-  background-color: #ea580c;
+  background-color: #7a0c22;
   color: #ffffff;
-  border-color: #ea580c;
   transform: translateY(-1px);
-  box-shadow: 0 2px 8px rgba(234, 88, 12, 0.35);
+  box-shadow: 0 2px 8px rgba(122, 12, 34, 0.2);
 }
 
 .plm-datasheet-modal,
@@ -1564,45 +1694,47 @@
   max-height: 92vh;
   display: flex;
   flex-direction: column;
-  padding: 16px 20px;
+  padding: 20px 24px;
   overflow: hidden;
   box-sizing: border-box;
 }
 
 .plm-modal-ident-pill {
-  padding: 3px 8px;
-  background-color: #ea580c;
+  padding: 3px 10px;
+  background-color: #7a0c22;
   color: #ffffff;
-  border-radius: 4px;
+  border-radius: 9999px;
   font-size: 12px;
   font-weight: 700;
-  font-family: monospace;
+  font-family: var(--font-mono, monospace);
 }
 
 .plm-datasheet-info-bar {
   display: flex;
   flex-wrap: wrap;
   gap: 16px;
-  padding: 8px 14px;
-  background-color: #231f1c;
-  border: 1px solid #332d27;
-  border-radius: 6px;
-  font-size: 12px;
-  color: #cbd5e1;
+  padding: 10px 16px;
+  background-color: #fafbfc;
+  border: 1px solid #eaecf0;
+  border-radius: 8px;
+  font-size: 12.5px;
+  color: #334155;
   flex-shrink: 0;
 }
 
 .plm-datasheet-info-bar strong {
-  color: #94a3b8;
-  font-weight: 600;
+  color: #54091a;
+  font-weight: 700;
 }
 
 .plm-datasheet-info-bar code {
-  background-color: #1a1715;
-  color: #fb923c;
-  padding: 1px 5px;
-  border-radius: 3px;
+  background-color: #ffffff;
+  border: 1px solid #e2e8f0;
+  color: #1e3a8a;
+  padding: 2px 6px;
+  border-radius: 4px;
   font-size: 12px;
+  font-family: var(--font-mono, monospace);
 }
 
 .plm-pdf-viewer-frame {
@@ -1610,12 +1742,12 @@
   width: 100%;
   min-height: 0;
   height: 100%;
-  background-color: #0f172a;
+  background-color: #f8fafc;
   position: relative;
   border-radius: 8px;
   overflow: hidden;
-  margin: 10px 0;
-  border: 1px solid #334155;
+  margin: 12px 0;
+  border: 1px solid #eaecf0;
   box-sizing: border-box;
 }
 
@@ -1630,194 +1762,245 @@
 }
 
 .quick-fill-pill {
-  background-color: #272320;
-  color: #fdba74;
-  border: 1px solid #443e38;
-  border-radius: 4px;
-  padding: 3px 8px;
-  font-size: 11px;
+  background-color: #ffffff;
+  color: #7a0c22;
+  border: 1px solid #f2c7ce;
+  border-radius: 9999px;
+  padding: 3px 10px;
+  font-size: 11.5px;
   cursor: pointer;
   transition: all 0.15s ease;
 }
 
 .quick-fill-pill:hover:not(:disabled) {
-  background-color: #ea580c;
+  background-color: #7a0c22;
   color: #ffffff;
-  border-color: #ea580c;
+  border-color: #7a0c22;
 }
 
 /* ==============================================================================
-   Stiluri pentru Posturile de Lucru Industriale (QR Laser, SMD, AOI, THT, ICT, EOL)
+   10. BANNER LIVE STREAM & ACORDEON SUBTABELĂ SMD
    ============================================================================== */
-.status-badge {
-  display: inline-flex;
-  align-items: center;
-  gap: 5px;
-  padding: 3px 9px;
-  font-size: 11.5px;
-  font-weight: 700;
-  border-radius: 4px;
-  letter-spacing: 0.02em;
-  text-transform: uppercase;
-}
-
-.status-badge.pass {
-  background-color: #dcfce7;
-  color: #15803d;
-  border: 1px solid #86efac;
-}
-
-.status-badge.fail {
-  background-color: #fee2e2;
-  color: #b91c1c;
-  border: 1px solid #fca5a5;
-}
-
-.status-badge.ok {
-  background-color: #ecfdf5;
-  color: #047857;
-  border: 1px solid #6ee7b7;
-}
-
-.status-badge.rescan {
-  background-color: #fef3c7;
-  color: #b45309;
-  border: 1px solid #fcd34d;
-}
-
-.status-badge.warning {
-  background-color: #fff7ed;
-  color: #c2410c;
-  border: 1px solid #fdba74;
-}
-
-.mono-tag {
-  font-family: 'JetBrains Mono', Consolas, monospace;
-  font-size: 12.5px;
-  font-weight: 700;
-}
-
-.mono-tag.orange {
-  color: #ea580c;
-}
-
-.mono-tag.slate {
-  color: #334155;
-}
-
-/* Bara rapidă de scanare / introducere manuală serie */
-.station-quick-bar {
+.live-stream-freeze-banner {
   display: flex;
   align-items: center;
   justify-content: space-between;
   gap: 12px;
-  padding: 8px 16px;
-  background-color: #1e1b18;
-  border-bottom: 1.5px solid #38312b;
-  color: #f3efe9;
-  flex-wrap: wrap;
+  background: #eff6ff;
+  border: 1px solid #bfdbfe;
+  color: #1e3a8a;
+  padding: 9px 16px;
+  border-radius: 8px;
+  margin-bottom: 12px;
+  font-size: 13px;
+  cursor: pointer;
+  transition: all 0.18s ease;
 }
 
-.station-quick-group {
-  display: flex;
-  align-items: center;
-  gap: 10px;
+.live-stream-freeze-banner:hover {
+  background: #dbeafe;
 }
 
-.station-quick-label {
+.live-stream-pulse-dot {
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+  background: #1e3a8a;
+  flex-shrink: 0;
+  animation: pulse-dot-cobalt 1.5s infinite;
+}
+
+@keyframes pulse-dot-cobalt {
+  0% { transform: scale(0.95); box-shadow: 0 0 0 0 rgba(30, 58, 138, 0.7); }
+  70% { transform: scale(1.15); box-shadow: 0 0 0 6px rgba(30, 58, 138, 0); }
+  100% { transform: scale(0.95); box-shadow: 0 0 0 0 rgba(30, 58, 138, 0); }
+}
+
+.live-stream-banner-text {
+  flex: 1;
+  font-weight: 600;
+  color: #1e3a8a;
+}
+
+.live-stream-resume-pill {
+  background: #1e3a8a;
+  color: #ffffff;
+  border: none;
   font-size: 12px;
   font-weight: 600;
-  color: #c4b9aa;
-  white-space: nowrap;
+  padding: 5px 12px;
+  border-radius: 9999px;
+  cursor: pointer;
+  flex-shrink: 0;
 }
 
-.station-quick-input {
-  background-color: #2a2520;
-  border: 1px solid #4a4239;
-  border-radius: 6px;
-  color: #ffffff;
-  padding: 6px 12px;
-  font-size: 13px;
-  font-family: 'JetBrains Mono', Consolas, monospace;
-  min-width: 220px;
-  outline: none;
+.live-stream-resume-pill:hover {
+  background: #1d4ed8;
+}
+
+/* Animație Cascadă rânduri noi */
+@keyframes cascadeRowEnter {
+  0% {
+    background-color: #fdf2f4 !important;
+    transform: translateY(-6px);
+  }
+  50% {
+    background-color: #fae8eb !important;
+  }
+  100% {
+    background-color: transparent;
+    transform: translateY(0);
+  }
+}
+
+.row-cascade-new {
+  animation: cascadeRowEnter 2s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+.accordion-toggle-btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 24px;
+  height: 24px;
+  border-radius: 50%;
+  background: #f8fafc;
+  border: 1px solid #d0d5dd;
+  color: #475569;
+  cursor: pointer;
+  margin-right: 6px;
   transition: all 0.15s ease;
+  vertical-align: middle;
 }
 
-.station-quick-input:focus {
-  border-color: #ea580c;
-  box-shadow: 0 0 0 2px rgba(234, 88, 12, 0.25);
-  background-color: #322b25;
-}
-
-.station-quick-btn {
-  background: linear-gradient(135deg, #ea580c 0%, #dc2626 100%);
-  border: none;
-  border-radius: 6px;
+.accordion-toggle-btn:hover {
+  background: #7a0c22;
+  border-color: #7a0c22;
   color: #ffffff;
-  padding: 6px 14px;
+}
+
+.accordion-toggle-btn.expanded {
+  background: #7a0c22;
+  border-color: #7a0c22;
+  color: #ffffff;
+}
+
+.smd-count-pill {
+  display: inline-block;
+  font-size: 11px;
+  font-weight: 700;
+  padding: 1px 7px;
+  border-radius: 9999px;
+  background: #eff6ff;
+  border: 1px solid #bfdbfe;
+  color: #1e3a8a;
+  margin-left: 6px;
+}
+
+.smd-subrow {
+  background: #fafbfc !important;
+}
+
+.smd-subrow > td {
+  padding: 0 !important;
+  border-bottom: 2px solid #eaecf0 !important;
+}
+
+.smd-subtable-container {
+  padding: 12px 18px 16px 36px;
+  background: #ffffff;
+  border-left: 3px solid #7a0c22;
+}
+
+.smd-subtable-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
   font-size: 12.5px;
   font-weight: 700;
-  cursor: pointer;
-  display: inline-flex;
-  align-items: center;
-  gap: 6px;
-  transition: all 0.15s ease;
-  white-space: nowrap;
+  color: #54091a;
+  margin-bottom: 10px;
 }
 
-.station-quick-btn:hover:not(:disabled) {
-  background: linear-gradient(135deg, #f97316 0%, #ef4444 100%);
-  box-shadow: 0 2px 10px rgba(234, 88, 12, 0.4);
-}
-
-.station-quick-btn:disabled {
-  opacity: 0.5;
-  cursor: not-allowed;
-}
-
-.station-quick-btn.secondary {
-  background: #2f2924;
-  border: 1px solid #4d443b;
-  color: #f3efe9;
-}
-
-.station-quick-btn.secondary:hover:not(:disabled) {
-  background: #3c342e;
-  border-color: #ea580c;
-  color: #ffffff;
-}
-
-/* KPI Chips */
-.station-kpi-group {
-  display: flex;
-  align-items: center;
-  gap: 12px;
-}
-
-.station-kpi-chip {
-  display: inline-flex;
-  align-items: center;
-  gap: 6px;
-  background-color: #27221d;
-  border: 1px solid #3f3830;
+.smd-nested-table {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: 12.5px;
+  background: #ffffff;
+  border: 1px solid #eaecf0;
   border-radius: 6px;
-  padding: 4px 10px;
-  font-size: 11.5px;
-  color: #d6cbbe;
+  overflow: hidden;
 }
 
-.station-kpi-chip strong {
-  color: #fb923c;
+.smd-nested-table th {
+  background: #fafbfc;
+  color: #64748b;
   font-weight: 700;
+  text-align: left;
+  padding: 8px 12px;
+  border-bottom: 1px solid #eaecf0;
+  font-size: 11.5px;
+  text-transform: uppercase;
 }
 
-.station-kpi-chip.success strong {
-  color: #4ade80;
+.smd-nested-table td {
+  padding: 8px 12px;
+  border-bottom: 1px solid #f1f5f9;
+  color: #1e293b;
 }
 
-.station-kpi-chip.danger strong {
-  color: #f87171;
+.smd-nested-table tr:last-child td {
+  border-bottom: none;
 }
 
+.badge-position {
+  display: inline-block;
+  font-weight: 700;
+  font-size: 11.5px;
+  color: #7a0c22;
+  background: #fdf2f4;
+  border: 1px solid #f2c7ce;
+  padding: 2px 7px;
+  border-radius: 4px;
+  font-family: var(--font-mono, monospace);
+}
 
+/* ==============================================================================
+   11. RESPONSIVE DESIGN
+   ============================================================================== */
+@media (max-width: 900px) {
+  .login-split-layout {
+    flex-direction: column;
+  }
+  .login-left-banner {
+    padding: 32px 24px;
+  }
+  .banner-headline {
+    font-size: 28px;
+  }
+  .login-right-panel {
+    padding: 28px 24px;
+  }
+  .portal-navbar {
+    padding: 0 16px;
+  }
+  .navbar-station-name {
+    font-size: 15px;
+  }
+  .stats-workspace-layout {
+    flex-direction: column;
+  }
+  .stats-sidebar {
+    width: 100%;
+    border-right: none;
+    border-bottom: 1px solid #3f0513;
+    padding: 16px;
+  }
+  .stats-sidebar-nav {
+    flex-direction: row;
+    flex-wrap: wrap;
+  }
+  .stats-nav-item {
+    width: auto;
+  }
+}

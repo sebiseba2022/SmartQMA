@@ -23,24 +23,32 @@ export function PortalNavbar({
 
   return (
     <header className="portal-navbar">
-      {/* Stânga: Logo + Numele postului de lucru curent */}
+      {/* Stânga: Logo oficial SmartQMA + Separator subtil + Numele postului curent */}
       <div className="navbar-brand">
-        <div className="logo-wrapper-small">
-          <img src="/logo-transparent.png" alt="Logo SmartQMA" className="navbar-logo-img" />
+        <a href="/" className="logo-wrapper-small" title="SmartQMA — Trasability at it's finest">
+          <img src="/logo-tight.png" alt="SmartQMA Logo" className="navbar-logo-img" />
+        </a>
+
+        <div className="navbar-divider-accent" />
+
+        <div className="navbar-station-info">
+          <span className="navbar-station-badge">{currentWs.code}</span>
+          <span className="navbar-station-name">{currentWs.name[lang]}</span>
         </div>
-        <span className="navbar-station-name">{currentWs.name[lang]}</span>
       </div>
 
-      {/* Dreapta: Selector discret RO/EN + Utilizator curent + Buton 'X' pentru Deconectare */}
+      {/* Dreapta: Informații utilizator activ, comutator limbă RO/EN și buton deconectare */}
       <div className="navbar-right-actions">
         {currentUser && (
           <div className="navbar-user-chip" title={`Rol: ${roleDisplay}`}>
+            <span className="user-status-dot cobalt" />
             <span className="navbar-user-name">{currentUser.name}</span>
             <span className="navbar-user-role">({roleDisplay})</span>
           </div>
         )}
 
-        <div className="lang-switcher-discreet" title="Language">
+        {/* Comutator discret RO / EN */}
+        <div className="lang-switcher-discreet" title="Language selection">
           <button
             type="button"
             className={`lang-btn-discreet ${lang === 'ro' ? 'active' : ''}`}
@@ -58,14 +66,16 @@ export function PortalNavbar({
           </button>
         </div>
 
+        {/* Buton Deconectare elegant, rotund cu contur bordeaux */}
         <button
           type="button"
-          className="btn-logout-x"
+          className="btn-logout-pill"
           onClick={onLogout}
-          title={lang === 'ro' ? 'Deconectare' : 'Disconnect'}
-          aria-label="Disconnect"
+          title={lang === 'ro' ? 'Deconectare din sesiune' : 'Log out from session'}
+          aria-label="Logout"
         >
-          ✕
+          <span className="logout-icon">✕</span>
+          <span className="logout-text">{lang === 'ro' ? 'Ieșire' : 'Sign out'}</span>
         </button>
       </div>
     </header>

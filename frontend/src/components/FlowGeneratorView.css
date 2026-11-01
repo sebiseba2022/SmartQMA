@@ -1,12 +1,16 @@
-/* Flow Generator Minimalist Pro Theme - Refined, Low Color Saturation, Clean Industrial Engineering */
+/* ==============================================================================
+   SmartQMA — Flow Generator View Theme
+   Design elegant și aerisit: Abundență de alb, accente Vișiniu/Bordeaux (#7A0C22),
+   detalii discrete Albastru Cobalt (#1E3A8A), stil flat și distins, fără neon.
+   ============================================================================== */
 
 .flow-gen-container {
   display: flex;
   flex-direction: column;
   gap: 1.25rem;
-  padding: 1.25rem;
-  background-color: #0b1120;
-  color: #e2e8f0;
+  padding: 1.5rem;
+  background-color: var(--qma-bg-white, #ffffff);
+  color: var(--qma-text-main, #1e293b);
   min-height: 100%;
   font-family: inherit;
   box-sizing: border-box;
@@ -17,30 +21,30 @@
   display: flex;
   justify-content: space-between;
   align-items: center;
-  padding: 0.65rem 0.9rem;
-  border-radius: 4px;
+  padding: 0.75rem 1rem;
+  border-radius: 8px;
   font-size: 0.85rem;
   font-weight: 500;
   border: 1px solid transparent;
 }
 
 .flow-gen-alert.danger {
-  background: rgba(239, 68, 68, 0.08);
-  border-color: rgba(239, 68, 68, 0.3);
-  color: #fca5a5;
+  background: #fef2f2;
+  border-color: #fecaca;
+  color: #991b1b;
 }
 
 .flow-gen-alert.success {
-  background: rgba(16, 185, 129, 0.08);
-  border-color: rgba(16, 185, 129, 0.3);
-  color: #86efac;
+  background: #f0fdf4;
+  border-color: #bbf7d0;
+  color: #166534;
 }
 
 .flow-gen-alert button {
   background: transparent;
   border: none;
   color: inherit;
-  font-size: 0.9rem;
+  font-size: 0.95rem;
   cursor: pointer;
   padding: 0 0.25rem;
   opacity: 0.8;
@@ -55,16 +59,17 @@
   display: flex;
   flex-direction: column;
   gap: 1rem;
-  background: #111827;
-  border: 1px solid #1f2937;
-  border-radius: 6px;
-  padding: 1.15rem;
+  background: #ffffff;
+  border: 1px solid var(--qma-border-light, #eaecf0);
+  border-radius: 12px;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.02);
+  padding: 1.25rem 1.5rem;
 }
 
 .flow-gen-title-block {
   display: flex;
   flex-direction: column;
-  gap: 0.3rem;
+  gap: 0.4rem;
 }
 
 .flow-gen-badge-row {
@@ -75,62 +80,63 @@
 }
 
 .flow-gen-badge {
-  font-size: 0.7rem;
+  font-size: 0.72rem;
   text-transform: uppercase;
   letter-spacing: 0.04em;
-  font-weight: 600;
-  padding: 0.2rem 0.5rem;
-  border-radius: 3px;
+  font-weight: 700;
+  padding: 0.25rem 0.6rem;
+  border-radius: 9999px;
   border: 1px solid transparent;
 }
 
 .flow-gen-badge.primary {
-  background: #1e293b;
-  border-color: #334155;
-  color: #cbd5e1;
+  background: #fdf2f4;
+  border-color: #f2c7ce;
+  color: #7a0c22;
 }
 
 .flow-gen-badge.warning {
-  background: rgba(245, 158, 11, 0.08);
-  border-color: rgba(245, 158, 11, 0.25);
-  color: #fcd34d;
+  background: #fffbe9;
+  border-color: #fde68a;
+  color: #b45309;
 }
 
 .flow-gen-badge.secondary {
-  background: #1e293b;
-  border-color: #334155;
-  color: #94a3b8;
+  background: #eff6ff;
+  border-color: #bfdbfe;
+  color: #1e3a8a;
 }
 
 .flow-gen-badge.success {
-  background: rgba(16, 185, 129, 0.1);
-  border-color: rgba(16, 185, 129, 0.3);
-  color: #6ee7b7;
+  background: #f0fdf4;
+  border-color: #bbf7d0;
+  color: #15803d;
 }
 
 .flow-gen-badge.pulse {
-  animation: pulse-border 2s infinite;
+  animation: pulse-border-soft 2s infinite;
 }
 
-@keyframes pulse-border {
-  0% { border-color: rgba(16, 185, 129, 0.4); }
-  50% { border-color: rgba(16, 185, 129, 0.9); }
-  100% { border-color: rgba(16, 185, 129, 0.4); }
+@keyframes pulse-border-soft {
+  0% { border-color: rgba(21, 128, 61, 0.3); }
+  50% { border-color: rgba(21, 128, 61, 0.8); }
+  100% { border-color: rgba(21, 128, 61, 0.3); }
 }
 
 .flow-gen-main-heading {
-  font-size: 1.25rem;
+  font-family: var(--font-serif, serif);
+  font-size: 1.35rem;
   font-weight: 700;
-  color: #f3f4f6;
+  color: #54091a;
   margin: 0;
   letter-spacing: -0.01em;
 }
 
 .flow-gen-subtext {
-  font-size: 0.82rem;
-  color: #9ca3af;
+  font-size: 0.85rem;
+  color: #64748b;
   margin: 0;
-  line-height: 1.45;
+  line-height: 1.5;
 }
 
 /* Actions Card */
@@ -141,7 +147,7 @@
   align-items: center;
   gap: 0.85rem;
   padding-top: 0.85rem;
-  border-top: 1px solid #1f2937;
+  border-top: 1px solid var(--qma-border-light, #eaecf0);
 }
 
 .flow-gen-action-group {
@@ -155,58 +161,63 @@
 }
 
 .flow-action-label {
-  font-size: 0.78rem;
-  font-weight: 500;
-  color: #9ca3af;
+  font-size: 0.8rem;
+  font-weight: 600;
+  color: #475569;
 }
 
 .flow-batch-controls, .flow-live-controls {
   display: flex;
   align-items: center;
-  gap: 0.4rem;
+  gap: 0.45rem;
 }
 
 .flow-input-small {
-  width: 58px;
-  background: #0f172a;
-  border: 1px solid #374151;
-  color: #f3f4f6;
-  padding: 0.35rem 0.45rem;
-  border-radius: 4px;
+  width: 62px;
+  background: #ffffff;
+  border: 1px solid #d0d5dd;
+  color: #1e293b;
+  padding: 0.38rem 0.5rem;
+  border-radius: 6px;
   font-size: 0.82rem;
   text-align: center;
+  font-weight: 600;
 }
 
 .flow-input-small:focus {
   outline: none;
-  border-color: #ea580c;
+  border-color: #7a0c22;
+  box-shadow: 0 0 0 2px rgba(122, 12, 34, 0.15);
 }
 
 .flow-select-small {
-  background: #0f172a;
-  border: 1px solid #374151;
-  color: #f3f4f6;
-  padding: 0.35rem 0.5rem;
-  border-radius: 4px;
-  font-size: 0.8rem;
+  background: #ffffff;
+  border: 1px solid #d0d5dd;
+  color: #1e293b;
+  padding: 0.38rem 0.6rem;
+  border-radius: 6px;
+  font-size: 0.82rem;
+  font-weight: 500;
 }
 
 .flow-select-small:focus {
   outline: none;
-  border-color: #ea580c;
+  border-color: #7a0c22;
+  box-shadow: 0 0 0 2px rgba(122, 12, 34, 0.15);
 }
 
+/* Butoane Flow - Stil Pill / Rotunjite Elegante */
 .flow-btn {
   display: inline-flex;
   align-items: center;
-  gap: 0.4rem;
-  font-size: 0.8rem;
-  font-weight: 500;
-  padding: 0.42rem 0.75rem;
-  border-radius: 4px;
-  border: 1px solid transparent;
+  gap: 0.45rem;
+  font-size: 0.82rem;
+  font-weight: 600;
+  padding: 0.45rem 0.95rem;
+  border-radius: 9999px;
+  border: 1.5px solid transparent;
   cursor: pointer;
-  transition: all 0.15s ease-in-out;
+  transition: all 0.18s ease-in-out;
 }
 
 .flow-btn:disabled {
@@ -215,74 +226,80 @@
 }
 
 .flow-btn.primary {
-  background: #ea580c;
+  background: #7a0c22;
   color: #ffffff;
-  border-color: #ea580c;
+  border-color: #7a0c22;
+  box-shadow: 0 2px 8px rgba(122, 12, 34, 0.2);
 }
 .flow-btn.primary:hover:not(:disabled) {
-  background: #c2410c;
+  background: #8b1535;
+  border-color: #8b1535;
+  transform: translateY(-1px);
 }
 
 .flow-btn.secondary {
-  background: #1f2937;
-  border-color: #374151;
-  color: #d1d5db;
+  background: #ffffff;
+  border-color: #d0d5dd;
+  color: #344054;
 }
 .flow-btn.secondary:hover:not(:disabled) {
-  background: #374151;
-  color: #ffffff;
+  background: #f8fafc;
+  border-color: #98a2b3;
+  color: #1e293b;
 }
 
 .flow-btn.success {
-  background: #059669;
-  border-color: #059669;
+  background: #15803d;
+  border-color: #15803d;
   color: #ffffff;
+  box-shadow: 0 2px 6px rgba(21, 128, 61, 0.15);
 }
 .flow-btn.success:hover:not(:disabled) {
-  background: #047857;
+  background: #166534;
 }
 
 .flow-btn.danger {
-  background: #dc2626;
-  border-color: #dc2626;
+  background: #991b1b;
+  border-color: #991b1b;
   color: #ffffff;
+  box-shadow: 0 2px 6px rgba(153, 27, 27, 0.15);
 }
 .flow-btn.danger:hover:not(:disabled) {
-  background: #b91c1c;
+  background: #7f1d1d;
 }
 
 .flow-btn.outline {
-  background: transparent;
-  border-color: #374151;
-  color: #d1d5db;
+  background: #ffffff;
+  border-color: #7a0c22;
+  color: #7a0c22;
 }
 .flow-btn.outline:hover:not(:disabled) {
-  background: #1f2937;
-  border-color: #4b5563;
+  background: #fdf2f4;
 }
 
 .flow-btn.save {
-  background: #2563eb;
-  border-color: #2563eb;
+  background: #1e3a8a;
+  border-color: #1e3a8a;
   color: #ffffff;
+  box-shadow: 0 2px 8px rgba(30, 58, 138, 0.2);
 }
 .flow-btn.save:hover:not(:disabled) {
   background: #1d4ed8;
 }
 
 .flow-btn.reset {
-  background: #1f2937;
-  border-color: #374151;
-  color: #9ca3af;
+  background: #ffffff;
+  border-color: #d0d5dd;
+  color: #64748b;
 }
 .flow-btn.reset:hover:not(:disabled) {
-  background: #374151;
-  color: #e5e7eb;
+  background: #f1f5f9;
+  color: #1e293b;
 }
 
 .flow-btn-spinner {
-  width: 12px;
-  height: 12px;
+  width: 13px;
+  height: 13px;
   border: 2px solid #ffffff;
   border-top-color: transparent;
   border-radius: 50%;
@@ -296,57 +313,76 @@
 /* KPI Bar */
 .flow-kpi-bar {
   display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
-  gap: 0.65rem;
+  grid-template-columns: repeat(auto-fit, minmax(160px, 1fr));
+  gap: 0.75rem;
 }
 
 .flow-kpi-card {
   display: flex;
   flex-direction: column;
-  gap: 0.15rem;
-  background: #111827;
-  border: 1px solid #1f2937;
-  border-radius: 5px;
-  padding: 0.7rem 0.85rem;
+  gap: 0.25rem;
+  background: #ffffff;
+  border: 1px solid var(--qma-border-light, #eaecf0);
+  border-radius: 10px;
+  padding: 0.85rem 1rem;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.02);
+  position: relative;
+}
+
+.flow-kpi-card::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 3px;
+  height: 100%;
+  background: #7a0c22;
+  border-top-left-radius: 10px;
+  border-bottom-left-radius: 10px;
 }
 
 .flow-kpi-card.highlight {
-  border-color: #374151;
-  background: #182234;
+  border-color: #f2c7ce;
+  background: #fffcfd;
+}
+.flow-kpi-card.highlight::before {
+  background: #1e3a8a;
 }
 
 .flow-kpi-title {
-  font-size: 0.68rem;
+  font-size: 0.7rem;
   text-transform: uppercase;
-  color: #9ca3af;
-  font-weight: 600;
-  letter-spacing: 0.04em;
+  color: #64748b;
+  font-weight: 700;
+  letter-spacing: 0.05em;
 }
 
 .flow-kpi-value {
-  font-size: 1.15rem;
+  font-size: 1.3rem;
   font-weight: 700;
-  color: #f9fafb;
+  color: #1e293b;
+  font-family: var(--font-mono, monospace);
 }
 
 .flow-kpi-sub {
-  font-size: 0.68rem;
-  color: #6b7280;
+  font-size: 0.72rem;
+  color: #94a3b8;
 }
 
-.text-success { color: #34d399; }
-.text-danger { color: #f87171; }
-.text-accent { color: #fb923c; }
+.text-success { color: #15803d; }
+.text-danger { color: #b91c1c; }
+.text-accent { color: #7a0c22; }
 
-/* Visual Conveyor Pipeline - Unified Sleek Industrial Slate (No Rainbow) */
+/* Visual Conveyor Pipeline */
 .flow-pipeline-section {
   display: flex;
   flex-direction: column;
-  gap: 0.75rem;
-  background: #111827;
-  border: 1px solid #1f2937;
-  border-radius: 6px;
-  padding: 1.15rem;
+  gap: 0.85rem;
+  background: #ffffff;
+  border: 1px solid var(--qma-border-light, #eaecf0);
+  border-radius: 12px;
+  padding: 1.35rem;
+  box-shadow: 0 2px 10px rgba(0, 0, 0, 0.02);
 }
 
 .flow-pipeline-header {
@@ -356,63 +392,68 @@
 }
 
 .flow-section-heading {
-  font-size: 0.95rem;
-  font-weight: 600;
-  color: #f3f4f6;
+  font-family: var(--font-serif, serif);
+  font-size: 1.05rem;
+  font-weight: 700;
+  color: #54091a;
   margin: 0;
 }
 
 .flow-section-badge {
-  font-size: 0.7rem;
-  color: #9ca3af;
-  background: #1f2937;
-  padding: 0.2rem 0.45rem;
-  border-radius: 3px;
-  border: 1px solid #374151;
+  font-size: 0.72rem;
+  color: #1e3a8a;
+  background: #eff6ff;
+  padding: 0.2rem 0.55rem;
+  border-radius: 9999px;
+  border: 1px solid #bfdbfe;
+  font-weight: 600;
 }
 
 .flow-conveyor-wrapper {
   overflow-x: auto;
-  padding-bottom: 0.5rem;
+  padding: 0.6rem 0.2rem;
 }
 
 .flow-conveyor-track {
   display: inline-flex;
   align-items: center;
-  gap: 0.45rem;
+  gap: 0.55rem;
   min-width: 100%;
 }
 
-/* Minimalist Uniform Station Nodes */
+/* Noduri Stații Producție - Design Elegant, Aerisit, Alb */
 .flow-station-node {
   position: relative;
   display: flex;
   flex-direction: column;
-  gap: 0.3rem;
-  width: 165px;
-  background: #0f172a;
-  border: 1px solid #334155;
-  border-radius: 6px;
-  padding: 0.75rem 0.7rem;
+  gap: 0.35rem;
+  width: 175px;
+  background: #ffffff;
+  border: 1.5px solid #eaecf0;
+  border-radius: 10px;
+  padding: 0.85rem 0.75rem;
   flex-shrink: 0;
-  transition: border-color 0.15s ease;
+  transition: all 0.18s ease;
+  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.03);
 }
 
 .flow-station-node:hover {
-  border-color: #475569;
+  border-color: #7a0c22;
+  box-shadow: 0 4px 12px rgba(122, 12, 34, 0.08);
+  transform: translateY(-2px);
 }
 
 .flow-node-tag {
   position: absolute;
-  top: -8px;
-  left: 8px;
-  font-size: 0.62rem;
-  font-weight: 600;
-  color: #94a3b8;
-  background: #1e293b;
-  border: 1px solid #334155;
-  padding: 0.05rem 0.35rem;
-  border-radius: 3px;
+  top: -9px;
+  left: 10px;
+  font-size: 0.64rem;
+  font-weight: 700;
+  color: #7a0c22;
+  background: #fdf2f4;
+  border: 1px solid #f2c7ce;
+  padding: 0.08rem 0.45rem;
+  border-radius: 9999px;
   text-transform: uppercase;
 }
 
@@ -420,23 +461,23 @@
   display: inline-flex;
   align-items: center;
   justify-content: center;
-  width: 28px;
-  height: 28px;
-  border-radius: 4px;
-  background: #1e293b;
-  color: #e2e8f0;
+  width: 32px;
+  height: 32px;
+  border-radius: 8px;
+  background: #fdf2f4;
+  color: #7a0c22;
   margin-top: 0.2rem;
 }
 
 .flow-node-title {
-  font-size: 0.82rem;
-  font-weight: 600;
-  color: #f1f5f9;
+  font-size: 0.85rem;
+  font-weight: 700;
+  color: #1e293b;
 }
 
 .flow-node-desc {
-  font-size: 0.68rem;
-  color: #94a3b8;
+  font-size: 0.72rem;
+  color: #64748b;
   line-height: 1.35;
   min-height: 2.3em;
 }
@@ -444,163 +485,165 @@
 .flow-node-badges {
   display: flex;
   flex-direction: column;
-  gap: 0.2rem;
-  margin-top: 0.25rem;
+  gap: 0.25rem;
+  margin-top: 0.3rem;
 }
 
 .node-chip {
-  font-size: 0.66rem;
-  font-weight: 500;
-  padding: 0.15rem 0.35rem;
-  border-radius: 3px;
-  background: #1e293b;
-  border: 1px solid #334155;
-  color: #cbd5e1;
+  font-size: 0.68rem;
+  font-weight: 600;
+  padding: 0.18rem 0.45rem;
+  border-radius: 4px;
+  background: #f8fafc;
+  border: 1px solid #e2e8f0;
+  color: #475569;
   text-align: center;
 }
 
 .node-chip.cycle {
-  color: #93c5fd;
-  border-color: rgba(59, 130, 246, 0.3);
-  background: rgba(59, 130, 246, 0.08);
+  color: #1e3a8a;
+  border-color: #bfdbfe;
+  background: #eff6ff;
 }
 
 .node-chip.danger {
-  color: #fca5a5;
-  border-color: rgba(239, 68, 68, 0.3);
-  background: rgba(239, 68, 68, 0.08);
+  color: #991b1b;
+  border-color: #fecaca;
+  background: #fef2f2;
 }
 
 .node-chip.success {
-  color: #86efac;
-  border-color: rgba(16, 185, 129, 0.3);
-  background: rgba(16, 185, 129, 0.08);
+  color: #15803d;
+  border-color: #bbf7d0;
+  background: #f0fdf4;
 }
 
 .node-chip.secondary {
-  color: #94a3b8;
+  color: #64748b;
 }
 
-/* Transit arrows - Subdued */
+/* Săgeți de Tranzit și Linii Conexiune */
 .flow-transit-arrow {
   display: flex;
   flex-direction: column;
   align-items: center;
   justify-content: center;
-  gap: 0.15rem;
+  gap: 0.2rem;
   flex-shrink: 0;
-  width: 80px;
+  width: 85px;
 }
 
 .flow-transit-arrow.highlight-carrier {
-  width: 135px;
+  width: 140px;
 }
 
 .arrow-line {
   font-size: 1rem;
-  color: #64748b;
+  color: #7a0c22;
   font-weight: 700;
 }
 
 .transit-label {
-  font-size: 0.66rem;
-  font-weight: 500;
-  color: #94a3b8;
+  font-size: 0.68rem;
+  font-weight: 600;
+  color: #64748b;
   text-align: center;
   line-height: 1.2;
 }
 
 .transit-label.carrier {
-  color: #cbd5e1;
-  background: #1e293b;
-  padding: 0.2rem 0.45rem;
-  border-radius: 4px;
-  border: 1px solid #334155;
+  color: #1e3a8a;
+  background: #eff6ff;
+  padding: 0.2rem 0.5rem;
+  border-radius: 9999px;
+  border: 1px solid #bfdbfe;
 }
 
 .transit-label small {
   display: block;
-  font-size: 0.6rem;
-  color: #64748b;
+  font-size: 0.62rem;
+  color: #94a3b8;
 }
 
-/* Tabs & Config - Minimalist Slate */
+/* Tabs & Config */
 .flow-config-section {
   display: flex;
   flex-direction: column;
   gap: 1rem;
-  background: #111827;
-  border: 1px solid #1f2937;
-  border-radius: 6px;
-  padding: 1.15rem;
+  background: #ffffff;
+  border: 1px solid var(--qma-border-light, #eaecf0);
+  border-radius: 12px;
+  padding: 1.35rem;
+  box-shadow: 0 2px 10px rgba(0, 0, 0, 0.02);
 }
 
 .flow-tabs-header {
   display: flex;
   flex-wrap: wrap;
-  gap: 0.4rem;
-  border-bottom: 1px solid #1f2937;
-  padding-bottom: 0.65rem;
+  gap: 0.5rem;
+  border-bottom: 1px solid var(--qma-border-light, #eaecf0);
+  padding-bottom: 0.75rem;
 }
 
 .flow-tab-btn {
   display: inline-flex;
   align-items: center;
-  gap: 0.4rem;
-  background: #0f172a;
-  border: 1px solid #1f2937;
-  color: #9ca3af;
-  font-size: 0.78rem;
-  font-weight: 500;
-  padding: 0.4rem 0.75rem;
-  border-radius: 4px;
+  gap: 0.45rem;
+  background: #ffffff;
+  border: 1px solid #d0d5dd;
+  color: #475569;
+  font-size: 0.8rem;
+  font-weight: 600;
+  padding: 0.45rem 0.85rem;
+  border-radius: 9999px;
   cursor: pointer;
-  transition: all 0.15s ease-in-out;
+  transition: all 0.18s ease-in-out;
 }
 
 .flow-tab-btn:hover {
-  background: #1f2937;
-  color: #f3f4f6;
-  border-color: #374151;
+  background: #fdf2f4;
+  color: #7a0c22;
+  border-color: #f2c7ce;
 }
 
 .flow-tab-btn.active {
-  background: #1f2937;
-  border-color: #ea580c;
-  color: #f3f4f6;
-  font-weight: 600;
+  background: #7a0c22;
+  border-color: #7a0c22;
+  color: #ffffff;
+  box-shadow: 0 2px 8px rgba(122, 12, 34, 0.25);
 }
 
 .flow-tab-pane {
   display: flex;
   flex-direction: column;
-  gap: 0.85rem;
+  gap: 0.95rem;
 }
 
 .flow-grid-2 {
   display: grid;
   grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
-  gap: 0.85rem;
+  gap: 1rem;
 }
 
 .flow-grid-3 {
   display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
-  gap: 0.85rem;
+  grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+  gap: 1rem;
 }
 
 .flow-panel-card {
   display: flex;
   flex-direction: column;
-  gap: 0.65rem;
-  background: #0f172a;
-  border: 1px solid #1f2937;
-  border-radius: 5px;
-  padding: 0.85rem;
+  gap: 0.75rem;
+  background: #fafbfc;
+  border: 1px solid var(--qma-border-light, #eaecf0);
+  border-radius: 8px;
+  padding: 1rem;
 }
 
 .flow-panel-card.highlight-border {
-  border-color: #374151;
+  border-color: #f2c7ce;
+  background: #fffcfd;
 }
 
 .flow-card-head {
@@ -610,117 +653,121 @@
 }
 
 .flow-panel-title {
-  font-size: 0.88rem;
-  font-weight: 600;
-  color: #f3f4f6;
+  font-size: 0.9rem;
+  font-weight: 700;
+  color: #54091a;
   margin: 0;
 }
 
 .flow-panel-desc {
-  font-size: 0.75rem;
-  color: #9ca3af;
+  font-size: 0.78rem;
+  color: #64748b;
   margin: 0;
-  line-height: 1.4;
+  line-height: 1.45;
 }
 
 .flow-field-group {
   display: flex;
   flex-direction: column;
-  gap: 0.3rem;
+  gap: 0.35rem;
 }
 
 .flow-field-label {
-  font-size: 0.75rem;
-  font-weight: 500;
-  color: #d1d5db;
+  font-size: 0.78rem;
+  font-weight: 600;
+  color: #334155;
 }
 
 .flow-input-field {
-  background: #111827;
-  border: 1px solid #374151;
-  color: #f3f4f6;
-  padding: 0.45rem 0.6rem;
-  border-radius: 4px;
-  font-size: 0.82rem;
+  background: #ffffff;
+  border: 1px solid #d0d5dd;
+  color: #1e293b;
+  padding: 0.48rem 0.7rem;
+  border-radius: 6px;
+  font-size: 0.85rem;
 }
 
 .flow-input-field:focus {
   outline: none;
-  border-color: #ea580c;
+  border-color: #7a0c22;
+  box-shadow: 0 0 0 2px rgba(122, 12, 34, 0.15);
 }
 
 .field-hint {
-  font-size: 0.68rem;
-  color: #6b7280;
+  font-size: 0.7rem;
+  color: #94a3b8;
 }
 
 .flow-slider-field {
   display: flex;
   flex-direction: column;
-  gap: 0.2rem;
-  padding: 0.4rem 0;
-  border-bottom: 1px solid #1f2937;
+  gap: 0.3rem;
+  padding: 0.45rem 0;
+  border-bottom: 1px solid #f1f5f9;
 }
 
 .slider-label-row {
   display: flex;
   justify-content: space-between;
-  font-size: 0.78rem;
-  color: #d1d5db;
+  font-size: 0.8rem;
+  color: #334155;
+  font-weight: 500;
 }
 
 .slider-label-row strong {
-  color: #f87171;
+  color: #7a0c22;
+  font-weight: 700;
 }
 
 .flow-slider {
   width: 100%;
-  accent-color: #ea580c;
+  accent-color: #7a0c22;
   cursor: pointer;
 }
 
 .slider-hint {
-  font-size: 0.68rem;
-  color: #6b7280;
-  line-height: 1.25;
+  font-size: 0.7rem;
+  color: #94a3b8;
+  line-height: 1.3;
 }
 
 .flow-summary-chip {
   display: flex;
   justify-content: space-between;
   align-items: center;
-  padding: 0.45rem 0.65rem;
-  border-radius: 4px;
-  font-size: 0.78rem;
-  font-weight: 500;
+  padding: 0.5rem 0.75rem;
+  border-radius: 6px;
+  font-size: 0.8rem;
+  font-weight: 600;
   margin-top: 0.4rem;
 }
 
 .flow-summary-chip.success {
-  background: rgba(16, 185, 129, 0.08);
-  color: #34d399;
-  border: 1px solid rgba(16, 185, 129, 0.25);
+  background: #f0fdf4;
+  color: #15803d;
+  border: 1px solid #bbf7d0;
 }
 
 .flow-divider {
   border: 0;
-  border-top: 1px solid #1f2937;
+  border-top: 1px solid #eaecf0;
   margin: 0.4rem 0;
 }
 
 .flow-toggle-label {
   display: flex;
   align-items: center;
-  gap: 0.55rem;
+  gap: 0.6rem;
   cursor: pointer;
-  font-size: 0.78rem;
-  color: #e5e7eb;
+  font-size: 0.82rem;
+  color: #334155;
+  font-weight: 500;
 }
 
 .flow-toggle {
-  width: 15px;
-  height: 15px;
-  accent-color: #ea580c;
+  width: 16px;
+  height: 16px;
+  accent-color: #7a0c22;
   cursor: pointer;
 }
 
@@ -728,103 +775,106 @@
   display: flex;
   flex-direction: column;
   gap: 0.45rem;
-  background: #111827;
-  border: 1px solid #1f2937;
-  border-radius: 4px;
-  padding: 0.65rem;
+  background: #ffffff;
+  border: 1px solid #eaecf0;
+  border-radius: 6px;
+  padding: 0.75rem;
 }
 
 .info-row {
   display: flex;
   justify-content: space-between;
-  font-size: 0.75rem;
-  color: #9ca3af;
+  font-size: 0.78rem;
+  color: #475569;
 }
 
-/* Console Section */
+/* Console Section - Elegant Light Terminal */
 .flow-console-section {
   display: flex;
   flex-direction: column;
-  background: #030712;
-  border: 1px solid #1f2937;
-  border-radius: 6px;
+  background: #ffffff;
+  border: 1px solid var(--qma-border-light, #eaecf0);
+  border-radius: 10px;
   overflow: hidden;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.02);
 }
 
 .flow-console-header {
   display: flex;
   justify-content: space-between;
   align-items: center;
-  background: #0f172a;
-  border-bottom: 1px solid #1f2937;
-  padding: 0.5rem 0.85rem;
+  background: #fafbfc;
+  border-bottom: 1px solid #eaecf0;
+  padding: 0.6rem 1rem;
 }
 
 .console-title-group {
   display: flex;
   align-items: center;
-  gap: 0.45rem;
+  gap: 0.5rem;
 }
 
 .console-dot-live {
-  width: 7px;
-  height: 7px;
+  width: 8px;
+  height: 8px;
   border-radius: 50%;
-  background: #10b981;
+  background: #15803d;
+  box-shadow: 0 0 4px rgba(21, 128, 61, 0.4);
 }
 
 .flow-console-title {
-  font-size: 0.8rem;
-  font-weight: 600;
-  color: #f3f4f6;
+  font-size: 0.85rem;
+  font-weight: 700;
+  color: #54091a;
   margin: 0;
 }
 
 .console-counter {
-  font-size: 0.72rem;
-  color: #6b7280;
+  font-size: 0.75rem;
+  color: #64748b;
 }
 
 .console-controls {
   display: flex;
   align-items: center;
-  gap: 0.65rem;
+  gap: 0.75rem;
 }
 
 .console-toggle-label {
   display: flex;
   align-items: center;
-  gap: 0.3rem;
-  font-size: 0.72rem;
-  color: #9ca3af;
+  gap: 0.35rem;
+  font-size: 0.75rem;
+  color: #475569;
   cursor: pointer;
 }
 
 .console-btn-clear {
-  background: transparent;
-  border: 1px solid #374151;
-  color: #d1d5db;
-  font-size: 0.7rem;
-  padding: 0.2rem 0.45rem;
-  border-radius: 3px;
+  background: #ffffff;
+  border: 1px solid #d0d5dd;
+  color: #475569;
+  font-size: 0.72rem;
+  padding: 0.25rem 0.55rem;
+  border-radius: 4px;
   cursor: pointer;
 }
 
 .console-btn-clear:hover {
-  background: #1f2937;
-  color: #ffffff;
+  background: #f1f5f9;
+  color: #1e293b;
 }
 
 .flow-console-body {
   height: 220px;
   overflow-y: auto;
-  padding: 0.65rem;
-  font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", "Courier New", monospace;
-  font-size: 0.76rem;
-  line-height: 1.45;
+  padding: 0.75rem 1rem;
+  background: #fafbfc;
+  font-family: var(--font-mono, monospace);
+  font-size: 0.78rem;
+  line-height: 1.5;
   display: flex;
   flex-direction: column;
-  gap: 0.2rem;
+  gap: 0.25rem;
 }
 
 .console-empty {
@@ -832,20 +882,20 @@
   align-items: center;
   justify-content: center;
   height: 100%;
-  color: #4b5563;
+  color: #94a3b8;
   font-style: italic;
-  font-size: 0.78rem;
+  font-size: 0.8rem;
 }
 
 .console-line {
   display: flex;
-  gap: 0.55rem;
+  gap: 0.65rem;
   word-break: break-all;
 }
 
 .console-idx {
-  color: #4b5563;
-  min-width: 28px;
+  color: #94a3b8;
+  min-width: 32px;
   user-select: none;
   text-align: right;
 }
@@ -854,11 +904,11 @@
   flex: 1;
 }
 
-.console-line.log-info { color: #60a5fa; }
-.console-line.log-pass { color: #34d399; }
-.console-line.log-fail { color: #f87171; font-weight: 500; }
-.console-line.log-carrier { color: #fbbf24; }
-.console-line.log-warehouse { color: #fb923c; }
+.console-line.log-info { color: #1e3a8a; }
+.console-line.log-pass { color: #15803d; }
+.console-line.log-fail { color: #b91c1c; font-weight: 600; }
+.console-line.log-carrier { color: #b45309; }
+.console-line.log-warehouse { color: #7a0c22; font-weight: 600; }
 
 /* Loading State */
 .flow-gen-loading {
@@ -868,15 +918,15 @@
   justify-content: center;
   min-height: 380px;
   gap: 0.85rem;
-  color: #9ca3af;
-  font-size: 0.88rem;
+  color: #64748b;
+  font-size: 0.9rem;
 }
 
 .flow-gen-spinner {
-  width: 32px;
-  height: 32px;
-  border: 2px solid #374151;
-  border-top-color: #ea580c;
+  width: 36px;
+  height: 36px;
+  border: 3px solid #f2c7ce;
+  border-top-color: #7a0c22;
   border-radius: 50%;
   animation: spin 0.8s linear infinite;
 }

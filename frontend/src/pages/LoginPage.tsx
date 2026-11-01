@@ -2,6 +2,7 @@ import { useState, type FormEvent } from 'react';
 import type { Language, User } from '../types';
 import { WORKSTATIONS, translations } from '../i18n';
 import { EyeIcon, EyeOffIcon } from '../components/icons/IndustrialIcons';
+import TraceabilityGraphic from '../components/TraceabilityGraphic';
 
 interface LoginPageProps {
   lang: Language;
@@ -83,7 +84,7 @@ export function LoginPage({
 
   return (
     <div className="login-split-layout">
-      {/* Coloana Stânga: Banner Cald cu Logo oficial SmartQMA */}
+      {/* Coloana Stânga: Design elegant, aerisit, abundență de alb, grafic de trasabilitate */}
       <div className="login-left-banner">
         <div className="banner-top-brand">
           <div className="logo-wrapper-hero">
@@ -92,14 +93,59 @@ export function LoginPage({
         </div>
 
         <div className="banner-center-content">
-          <div className="red-accent-line"></div>
-          <h1 className="banner-headline">{t.bannerHeadline}</h1>
+          <div className="banner-bordeaux-accent">
+            <span className="accent-cobalt-dot" />
+            <span className="accent-line-bordeaux" />
+          </div>
+
+          <h1 className="banner-headline">
+            {lang === 'ro'
+              ? 'Soluții inteligente pentru trasabilitate completă'
+              : 'Intelligent solutions for complete traceability'}
+          </h1>
+
+          <p className="banner-description">
+            {lang === 'ro'
+              ? 'SmartQMA integrează fiecare post de fabricație: de la primirea componentelor și marcarea QR laser, până la asamblarea SMD/THT, inspecția calității AOI/ICT/EOL și expediție.'
+              : 'SmartQMA unifies every manufacturing station: from raw components intake and QR laser marking, through SMD/THT assembly, AOI/ICT/EOL quality inspection, to final shipping.'}
+          </p>
+
+          <div className="banner-graphic-container">
+            <TraceabilityGraphic size={310} />
+          </div>
+
+          {/* Repere de valoare discrete cu accente cobalt și bordeaux */}
+          <div className="banner-features-row">
+            <div className="banner-feature-item">
+              <span className="feature-node-dot cobalt" />
+              <span className="feature-text">
+                {lang === 'ro' ? 'Trasabilitate per PCB' : 'Per-PCB Traceability'}
+              </span>
+            </div>
+            <div className="banner-feature-item">
+              <span className="feature-node-dot bordeaux" />
+              <span className="feature-text">
+                {lang === 'ro' ? 'Control Calitate 100%' : '100% Quality Control'}
+              </span>
+            </div>
+            <div className="banner-feature-item">
+              <span className="feature-node-dot cobalt" />
+              <span className="feature-text">
+                {lang === 'ro' ? 'Securitate Coduri de Bare' : 'Barcode Badge Security'}
+              </span>
+            </div>
+          </div>
         </div>
 
-        <div className="banner-footer">{t.bannerFooter}</div>
+        <div className="banner-footer">
+          <span>{t.bannerFooter}</span>
+          <span className="banner-footer-tagline">
+            {lang === 'ro' ? 'Eleganță & Precizie Industrială' : 'Elegance & Industrial Precision'}
+          </span>
+        </div>
       </div>
 
-      {/* Coloana Dreapta: Formular Autentificare cu Dropdown Posturi */}
+      {/* Coloana Dreapta: Formular Autentificare curat, luminos, cu butoane stilizate bordeaux */}
       <div className="login-right-panel">
         <div className="top-lang-bar">
           <div className="lang-switcher-discreet" title="Select language">
@@ -122,8 +168,14 @@ export function LoginPage({
         </div>
 
         <div className="login-card-container">
-          <h2 className="login-card-title">{t.authPortalTitle}</h2>
-          <p className="login-card-subtitle">{t.authPortalSubtitle}</p>
+          <div className="login-card-header">
+            <span className="login-portal-badge">
+              <span className="badge-pulse-dot" />
+              {lang === 'ro' ? 'Acces Securizat Producție' : 'Secure Production Access'}
+            </span>
+            <h2 className="login-card-title">{t.authPortalTitle}</h2>
+            <p className="login-card-subtitle">{t.authPortalSubtitle}</p>
+          </div>
 
           {error && <div className="login-error-alert">{error}</div>}
 
@@ -161,6 +213,7 @@ export function LoginPage({
                   onClick={() => setShowPassword(!showPassword)}
                   tabIndex={-1}
                   title={showPassword ? 'Hide password' : 'Show password'}
+                  aria-label={showPassword ? 'Hide password' : 'Show password'}
                 >
                   {showPassword ? <EyeOffIcon size={16} /> : <EyeIcon size={16} />}
                 </button>
@@ -178,16 +231,19 @@ export function LoginPage({
               >
                 {WORKSTATIONS.map((w) => (
                   <option key={w.id} value={w.id}>
-                    {w.name[lang]}
+                    {w.name[lang]} ({w.code})
                   </option>
                 ))}
               </select>
             </div>
 
-            {/* Autofill rapid pentru conturile de test */}
+            {/* Autofill rapid pentru conturile de test - Stil Butoane Pill Elegante */}
             <div className="test-autofill-box">
-              <span className="autofill-label">{t.testAutofillLabel}</span>
-              <div className="autofill-buttons-row" style={{ flexWrap: 'wrap' }}>
+              <span className="autofill-label">
+                <span className="autofill-cobalt-dot" />
+                {t.testAutofillLabel}
+              </span>
+              <div className="autofill-buttons-row">
                 <button
                   type="button"
                   className="autofill-btn"
@@ -243,6 +299,14 @@ export function LoginPage({
                   title="Operator AOI"
                 >
                   Op. AOI
+                </button>
+                <button
+                  type="button"
+                  className="autofill-btn"
+                  onClick={() => handleQuickFill('operator', 'qr-laser')}
+                  title="Operator Producție"
+                >
+                  Operator
                 </button>
               </div>
             </div>
