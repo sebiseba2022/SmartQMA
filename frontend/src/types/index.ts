@@ -1,4 +1,4 @@
-export type Language = 'ro' | 'en';
+export type Language = 'ro';
 
 export interface User {
   id: number;

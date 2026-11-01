@@ -16,7 +16,7 @@ import { LiveStreamFreezeBanner } from '../components/LiveStreamFreezeBanner';
 import { SearchIcon } from '../components/icons/IndustrialIcons';
 
 interface ThtPageProps {
-  lang: Language;
+  lang?: Language;
   currentUser?: User | null;
 }
 
@@ -38,7 +38,7 @@ const EMPTY_FILTERS: ThtFilters = {
 
 const MIN_EMPTY_TABLE_ROWS = 22;
 
-export function ThtPage({ lang, currentUser }: ThtPageProps) {
+export function ThtPage({ currentUser }: ThtPageProps) {
   const [inventoryList, setInventoryList] = useState<WarehouseOrder[]>([]);
   const [totalCount, setTotalCount] = useState<number>(0);
   const [, setLoading] = useState<boolean>(true);
@@ -154,10 +154,7 @@ export function ThtPage({ lang, currentUser }: ThtPageProps) {
       if (!res.ok) throw new Error(data.message || 'Eroare la salvare.');
 
       setNotice(
-        lang === 'ro'
-          ? `Componenta THT ${formPosition} montată pe PCB ${cleanSerial}.`
-          : `THT component ${formPosition} mounted on PCB ${cleanSerial}.`
-      );
+        `Componenta THT ${formPosition} montată pe PCB ${cleanSerial}.`);
       setIsInsertModalOpen(false);
       setFormSerial('');
       fetchPlacements();
@@ -192,10 +189,7 @@ export function ThtPage({ lang, currentUser }: ThtPageProps) {
       if (!res.ok) throw new Error(data.message || 'Eroare la inserție.');
 
       setNotice(
-        lang === 'ro'
-          ? `Inserție THT confirmată pentru ${quickPosition} pe PCB ${cleanSerial}.`
-          : `THT insertion confirmed for ${quickPosition} on PCB ${cleanSerial}.`
-      );
+        `Inserție THT confirmată pentru ${quickPosition} pe PCB ${cleanSerial}.`);
       setQuickPcbSerial('');
       fetchPlacements();
     } catch (err: any) {
@@ -329,7 +323,7 @@ export function ThtPage({ lang, currentUser }: ThtPageProps) {
             <button
               type="button"
               className="magazie-round-btn primary"
-              title={lang === 'ro' ? 'Înregistrează inserție THT' : 'Record THT placement'}
+              title={'Înregistrează inserție THT'}
               onClick={() => setIsInsertModalOpen(true)}
             >
               <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5">
@@ -337,7 +331,7 @@ export function ThtPage({ lang, currentUser }: ThtPageProps) {
               </svg>
             </button>
             <span className="magazie-round-btn-label">
-              {lang === 'ro' ? 'Inserție THT' : 'Insert THT'}
+              {'Inserție THT'}
             </span>
           </div>
 
@@ -346,7 +340,7 @@ export function ThtPage({ lang, currentUser }: ThtPageProps) {
             <button
               type="button"
               className="magazie-round-btn"
-              title={lang === 'ro' ? 'Parametri lipire selectivă' : 'Soldering parameters'}
+              title={'Parametri lipire selectivă'}
               onClick={() => setIsParamsModalOpen(true)}
             >
               <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
@@ -359,7 +353,7 @@ export function ThtPage({ lang, currentUser }: ThtPageProps) {
               </svg>
             </button>
             <span className="magazie-round-btn-label">
-              {lang === 'ro' ? 'Parametri cuvă' : 'Solder params'}
+              {'Parametri cuvă'}
             </span>
           </div>
 
@@ -368,7 +362,7 @@ export function ThtPage({ lang, currentUser }: ThtPageProps) {
             <button
               type="button"
               className="magazie-round-btn"
-              title={lang === 'ro' ? 'Reîmprospătează lista' : 'Refresh list'}
+              title={'Reîmprospătează lista'}
               onClick={fetchPlacements}
             >
               <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
@@ -380,7 +374,7 @@ export function ThtPage({ lang, currentUser }: ThtPageProps) {
               </svg>
             </button>
             <span className="magazie-round-btn-label">
-              {lang === 'ro' ? 'Reîmprospătare' : 'Refresh'}
+              {'Reîmprospătare'}
             </span>
           </div>
 
@@ -389,7 +383,7 @@ export function ThtPage({ lang, currentUser }: ThtPageProps) {
             <button
               type="button"
               className="magazie-round-btn"
-              title={lang === 'ro' ? 'Exportă CSV' : 'Export CSV'}
+              title={'Exportă CSV'}
               onClick={handleExportCsv}
             >
               <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
@@ -401,7 +395,7 @@ export function ThtPage({ lang, currentUser }: ThtPageProps) {
               </svg>
             </button>
             <span className="magazie-round-btn-label">
-              {lang === 'ro' ? 'Exportă CSV' : 'Export CSV'}
+              {'Exportă CSV'}
             </span>
           </div>
         </div>
@@ -430,7 +424,7 @@ export function ThtPage({ lang, currentUser }: ThtPageProps) {
         <section className="station-quick-bar" aria-label="Operare rapidă THT">
           <div className="station-quick-group">
             <span className="station-quick-label">
-              {lang === 'ro' ? 'Serie PCB:' : 'PCB serial:'}
+              {'Serie PCB:'}
             </span>
             <input
               type="text"
@@ -442,7 +436,7 @@ export function ThtPage({ lang, currentUser }: ThtPageProps) {
                 if (e.key === 'Enter') handleQuickInsert();
               }}
             />
-            <span className="station-quick-label">{lang === 'ro' ? 'Poziție:' : 'Position:'}</span>
+            <span className="station-quick-label">{'Poziție:'}</span>
             <select
               className="station-quick-input"
               style={{ minWidth: '100px' }}
@@ -461,17 +455,17 @@ export function ThtPage({ lang, currentUser }: ThtPageProps) {
               disabled={submitting || !quickPcbSerial.trim()}
               onClick={handleQuickInsert}
             >
-              {lang === 'ro' ? 'Montează componentă THT' : 'Mount THT component'}
+              {'Montează componentă THT'}
             </button>
           </div>
 
           <div className="station-kpi-group">
             <div className="station-kpi-chip">
-              <span>{lang === 'ro' ? 'Temp. cositor:' : 'Bath temp:'}</span>
+              <span>{'Temp. cositor:'}</span>
               <strong style={{ color: '#fb923c' }}>{bathTemp}</strong>
             </div>
             <div className="station-kpi-chip success">
-              <span>{lang === 'ro' ? 'Total inserții THT:' : 'Total THT:'}</span>
+              <span>{'Total inserții THT:'}</span>
               <strong>{totalCount}</strong>
             </div>
           </div>
@@ -480,14 +474,10 @@ export function ThtPage({ lang, currentUser }: ThtPageProps) {
         {/* Toolbar informativ */}
         <div className="magazie-table-toolbar-info">
           <span>
-            {lang === 'ro'
-              ? 'Zona de amplasare THT — Inserție componente Through-Hole & Lipire selectivă'
-              : 'THT Placement Area — Through-Hole Component Insertion & Selective Wave Soldering'}
+            {'Zona de amplasare THT — Inserție componente Through-Hole & Lipire selectivă'}
           </span>
           <span className="magazie-count-badge">
-            {lang === 'ro'
-              ? `${groupedBoards.length} plăci PCB (${filteredPlacements.length} componente THT) din ${totalCount} înregistrate`
-              : `${groupedBoards.length} PCBs (${filteredPlacements.length} THT components) of ${totalCount} recorded`}
+            {`${groupedBoards.length} plăci PCB (${filteredPlacements.length} componente THT) din ${totalCount} înregistrate`}
           </span>
         </div>
 
@@ -495,7 +485,7 @@ export function ThtPage({ lang, currentUser }: ThtPageProps) {
         <LiveStreamFreezeBanner
           pendingCount={pendingNewCount}
           onResume={resumeLiveStream}
-          lang={lang}
+
         />
 
         {/* Tabel */}
@@ -504,18 +494,18 @@ export function ThtPage({ lang, currentUser }: ThtPageProps) {
             <thead>
               <tr>
                 <th className="col-idx" style={{ width: '65px' }}>#</th>
-                <th style={{ width: '155px' }}>{lang === 'ro' ? 'Serie PCB' : 'PCB Serial'}</th>
-                <th style={{ width: '105px' }}>{lang === 'ro' ? 'Poziții Bestück' : 'Positions'}</th>
-                <th style={{ width: '75px' }}>{lang === 'ro' ? 'Ident' : 'Ident'}</th>
+                <th style={{ width: '155px' }}>{'Serie PCB'}</th>
+                <th style={{ width: '105px' }}>{'Poziții Bestück'}</th>
+                <th style={{ width: '75px' }}>{'Ident'}</th>
                 <th style={{ minWidth: '170px' }}>
-                  {lang === 'ro' ? 'Denumire componentă THT' : 'THT component name'}
+                  {'Denumire componentă THT'}
                 </th>
-                <th style={{ width: '120px' }}>{lang === 'ro' ? 'Lot furnizor' : 'Supplier lot'}</th>
-                <th style={{ width: '130px' }}>{lang === 'ro' ? 'Furnizor' : 'Provider'}</th>
-                <th style={{ width: '100px' }}>{lang === 'ro' ? 'Operator' : 'Operator'}</th>
-                <th style={{ width: '140px' }}>{lang === 'ro' ? 'Data montajului' : 'Mounted at'}</th>
+                <th style={{ width: '120px' }}>{'Lot furnizor'}</th>
+                <th style={{ width: '130px' }}>{'Furnizor'}</th>
+                <th style={{ width: '100px' }}>{'Operator'}</th>
+                <th style={{ width: '140px' }}>{'Data montajului'}</th>
                 <th style={{ width: '85px', textAlign: 'center' }}>
-                  {lang === 'ro' ? 'Acțiuni' : 'Actions'}
+                  {'Acțiuni'}
                 </th>
               </tr>
             </thead>
@@ -527,7 +517,7 @@ export function ThtPage({ lang, currentUser }: ThtPageProps) {
                   <input
                     type="text"
                     className="magazie-cell-input ident-input"
-                    placeholder={lang === 'ro' ? 'Filtrează serie...' : 'Filter serial...'}
+                    placeholder={'Filtrează serie...'}
                     value={filters.qr_serial_number}
                     onChange={(e) =>
                       setFilters({ ...filters, qr_serial_number: e.target.value })
@@ -558,7 +548,7 @@ export function ThtPage({ lang, currentUser }: ThtPageProps) {
                   <input
                     type="text"
                     className="magazie-cell-input"
-                    placeholder={lang === 'ro' ? 'Denumire piesă...' : 'Part name...'}
+                    placeholder={'Denumire piesă...'}
                     value={filters.part_name}
                     onChange={(e) => setFilters({ ...filters, part_name: e.target.value })}
                   />
@@ -594,7 +584,7 @@ export function ThtPage({ lang, currentUser }: ThtPageProps) {
                       <td className="col-idx-cell" style={{ fontWeight: 700, color: '#64748b' }}>
                         #{board.id}
                       </td>
-                      <td className="magazie-mono-cell" style={{ fontWeight: 700, color: '#ea580c' }}>
+                      <td className="magazie-mono-cell" style={{ fontWeight: 700, color: '#7a0c22' }}>
                         <button
                           type="button"
                           className={`accordion-toggle-btn ${isExpanded ? 'expanded' : ''}`}
@@ -609,7 +599,7 @@ export function ThtPage({ lang, currentUser }: ThtPageProps) {
                         <span>{board.qr_serial_number}</span>
                         {board.items.length > 1 && (
                           <span className="smd-count-pill">
-                            {board.items.length} {lang === 'ro' ? 'piese' : 'parts'}
+                            {board.items.length} {'piese'}
                           </span>
                         )}
                       </td>
@@ -630,9 +620,7 @@ export function ThtPage({ lang, currentUser }: ThtPageProps) {
                       <td className="magazie-name-cell">
                         {board.items.length === 1
                           ? (board.items[0].component?.part_name || `Componentă #${board.items[0].component_internal_id}`)
-                          : (lang === 'ro'
-                              ? `Set complet ${board.items.length} componente THT montate`
-                              : `Complete set of ${board.items.length} mounted THT parts`)}
+                          : (`Set complet ${board.items.length} componente THT montate`)}
                       </td>
                       <td className="magazie-mono-cell" style={{ fontSize: '12px', color: '#475569' }}>
                         {board.sampleComponent?.supplier_lot || '—'}
@@ -656,8 +644,8 @@ export function ThtPage({ lang, currentUser }: ThtPageProps) {
                           }}
                         >
                           {board.items.length > 1
-                            ? (isExpanded ? (lang === 'ro' ? 'Închide' : 'Close') : (lang === 'ro' ? 'Componente' : 'Parts'))
-                            : (lang === 'ro' ? 'Detalii' : 'Details')}
+                            ? (isExpanded ? ('Închide') : ('Componente'))
+                            : ('Detalii')}
                         </button>
                       </td>
                     </tr>
@@ -670,24 +658,22 @@ export function ThtPage({ lang, currentUser }: ThtPageProps) {
                             <div className="smd-subtable-header">
                               <span>
                                 <SearchIcon size={13} style={{ verticalAlign: 'middle', marginRight: '6px' }} />
-                                {lang === 'ro'
-                                  ? `Componente THT montate pe PCB ${board.qr_serial_number} (${board.items.length} poziții):`
-                                  : `THT components mounted on PCB ${board.qr_serial_number} (${board.items.length} positions):`}
+                                {`Componente THT montate pe PCB ${board.qr_serial_number} (${board.items.length} poziții):`}
                               </span>
                               <span style={{ fontSize: '11px', color: '#94a3b8' }}>
-                                {lang === 'ro' ? 'Fiecare piesă THT este înregistrată individual în baza de date' : 'Each THT part is individually tracked in DB'}
+                                {'Fiecare piesă THT este înregistrată individual în baza de date'}
                               </span>
                             </div>
                             <table className="smd-nested-table">
                               <thead>
                                 <tr>
-                                  <th style={{ width: '80px' }}>{lang === 'ro' ? 'Poziție' : 'Position'}</th>
-                                  <th style={{ width: '100px' }}>{lang === 'ro' ? 'Ident' : 'Ident'}</th>
-                                  <th>{lang === 'ro' ? 'Denumire componentă' : 'Component name'}</th>
-                                  <th style={{ width: '150px' }}>{lang === 'ro' ? 'Lot furnizor' : 'Supplier lot'}</th>
-                                  <th style={{ width: '160px' }}>{lang === 'ro' ? 'Furnizor' : 'Provider'}</th>
-                                  <th style={{ width: '160px' }}>{lang === 'ro' ? 'Data montajului' : 'Mounted at'}</th>
-                                  <th style={{ width: '90px', textAlign: 'center' }}>{lang === 'ro' ? 'Fișă' : 'Doc'}</th>
+                                  <th style={{ width: '80px' }}>{'Poziție'}</th>
+                                  <th style={{ width: '100px' }}>{'Ident'}</th>
+                                  <th>{'Denumire componentă'}</th>
+                                  <th style={{ width: '150px' }}>{'Lot furnizor'}</th>
+                                  <th style={{ width: '160px' }}>{'Furnizor'}</th>
+                                  <th style={{ width: '160px' }}>{'Data montajului'}</th>
+                                  <th style={{ width: '90px', textAlign: 'center' }}>{'Fișă'}</th>
                                 </tr>
                               </thead>
                               <tbody>
@@ -763,7 +749,7 @@ export function ThtPage({ lang, currentUser }: ThtPageProps) {
           <div className="magazie-modal-card" onClick={(e) => e.stopPropagation()}>
             <div className="magazie-modal-header">
               <h3 className="magazie-modal-title">
-                {lang === 'ro' ? 'Înregistrare inserție Through-Hole' : 'Record THT insertion'}
+                {'Înregistrare inserție Through-Hole'}
               </h3>
               <button
                 type="button"
@@ -777,7 +763,7 @@ export function ThtPage({ lang, currentUser }: ThtPageProps) {
             <form onSubmit={handleInsertSubmit}>
               <div className="magazie-modal-form">
                 <div className="magazie-form-field" style={{ gridColumn: 'span 2' }}>
-                  <label>{lang === 'ro' ? 'Serie placă PCB (12 cifre)*' : 'PCB serial (12 digits)*'}</label>
+                  <label>{'Serie placă PCB (12 cifre)*'}</label>
                   <input
                     type="text"
                     required
@@ -794,7 +780,7 @@ export function ThtPage({ lang, currentUser }: ThtPageProps) {
                 </div>
 
                 <div className="magazie-form-field">
-                  <label>{lang === 'ro' ? 'Poziție Bestück THT*' : 'THT position*'}</label>
+                  <label>{'Poziție Bestück THT*'}</label>
                   <input
                     type="text"
                     required
@@ -805,7 +791,7 @@ export function ThtPage({ lang, currentUser }: ThtPageProps) {
                 </div>
 
                 <div className="magazie-form-field">
-                  <label>{lang === 'ro' ? 'Componentă (Ident)*' : 'Component (Ident)*'}</label>
+                  <label>{'Componentă (Ident)*'}</label>
                   <select
                     value={formComponentId}
                     onChange={(e) => setFormComponentId(Number(e.target.value))}
@@ -825,7 +811,7 @@ export function ThtPage({ lang, currentUser }: ThtPageProps) {
                   className="magazie-btn-cancel"
                   onClick={() => setIsInsertModalOpen(false)}
                 >
-                  {lang === 'ro' ? 'Anulează' : 'Cancel'}
+                  {'Anulează'}
                 </button>
                 <button
                   type="submit"
@@ -833,12 +819,7 @@ export function ThtPage({ lang, currentUser }: ThtPageProps) {
                   disabled={submitting || !formSerial.trim()}
                 >
                   {submitting
-                    ? lang === 'ro'
-                      ? 'Se înregistrează...'
-                      : 'Saving...'
-                    : lang === 'ro'
-                    ? 'Confirmă inserție THT'
-                    : 'Confirm THT'}
+                    ? 'Se înregistrează...': 'Confirmă inserție THT'}
                 </button>
               </div>
             </form>
@@ -852,7 +833,7 @@ export function ThtPage({ lang, currentUser }: ThtPageProps) {
           <div className="magazie-modal-card" onClick={(e) => e.stopPropagation()}>
             <div className="magazie-modal-header">
               <h3 className="magazie-modal-title">
-                {lang === 'ro' ? 'Parametri cuvă lipire selectivă & val' : 'Soldering bath parameters'}
+                {'Parametri cuvă lipire selectivă & val'}
               </h3>
               <button
                 type="button"
@@ -876,22 +857,22 @@ export function ThtPage({ lang, currentUser }: ThtPageProps) {
               }}
             >
               <div>
-                <span style={{ color: '#64748b' }}>{lang === 'ro' ? 'Temperatură cuvă:' : 'Bath temperature:'}</span>
-                <div style={{ fontSize: '18px', fontWeight: 800, color: '#ea580c' }}>{bathTemp}</div>
+                <span style={{ color: '#64748b' }}>{'Temperatură cuvă:'}</span>
+                <div style={{ fontSize: '18px', fontWeight: 800, color: '#7a0c22' }}>{bathTemp}</div>
               </div>
 
               <div>
-                <span style={{ color: '#64748b' }}>{lang === 'ro' ? 'Înălțime val:' : 'Wave height:'}</span>
+                <span style={{ color: '#64748b' }}>{'Înălțime val:'}</span>
                 <div style={{ fontSize: '18px', fontWeight: 800, color: '#0f172a' }}>{waveHeight}</div>
               </div>
 
               <div style={{ gridColumn: 'span 2' }}>
-                <span style={{ color: '#64748b' }}>{lang === 'ro' ? 'Aliaj cositor ecologic:' : 'Solder alloy:'}</span>
+                <span style={{ color: '#64748b' }}>{'Aliaj cositor ecologic:'}</span>
                 <div style={{ fontWeight: 600, color: '#0f172a' }}>{solderAlloy}</div>
               </div>
 
               <div style={{ gridColumn: 'span 2' }}>
-                <span style={{ color: '#64748b' }}>{lang === 'ro' ? 'Tip fluxant aplicat:' : 'Flux type:'}</span>
+                <span style={{ color: '#64748b' }}>{'Tip fluxant aplicat:'}</span>
                 <div style={{ fontWeight: 600, color: '#0f172a' }}>{fluxType}</div>
               </div>
             </div>
@@ -902,7 +883,7 @@ export function ThtPage({ lang, currentUser }: ThtPageProps) {
                 className="magazie-btn-cancel"
                 onClick={() => setIsParamsModalOpen(false)}
               >
-                {lang === 'ro' ? 'Închide' : 'Close'}
+                {'Închide'}
               </button>
             </div>
           </div>
@@ -915,7 +896,7 @@ export function ThtPage({ lang, currentUser }: ThtPageProps) {
           <div className="magazie-modal-card" onClick={(e) => e.stopPropagation()}>
             <div className="magazie-modal-header">
               <h3 className="magazie-modal-title">
-                {lang === 'ro' ? 'Detalii componentă THT' : 'THT component details'}
+                {'Detalii componentă THT'}
               </h3>
               <button
                 type="button"
@@ -939,43 +920,43 @@ export function ThtPage({ lang, currentUser }: ThtPageProps) {
               }}
             >
               <div>
-                <span style={{ color: '#64748b' }}>{lang === 'ro' ? 'Serie PCB:' : 'PCB Serial:'}</span>
-                <div style={{ fontFamily: 'monospace', fontWeight: 700, color: '#ea580c' }}>
+                <span style={{ color: '#64748b' }}>{'Serie PCB:'}</span>
+                <div style={{ fontFamily: 'monospace', fontWeight: 700, color: '#7a0c22' }}>
                   {selectedPlacement.qr_serial_number}
                 </div>
               </div>
 
               <div>
-                <span style={{ color: '#64748b' }}>{lang === 'ro' ? 'Poziție:' : 'Position:'}</span>
+                <span style={{ color: '#64748b' }}>{'Poziție:'}</span>
                 <div style={{ fontWeight: 700 }}>{selectedPlacement.bestuck_position}</div>
               </div>
 
               <div style={{ gridColumn: 'span 2' }}>
-                <span style={{ color: '#64748b' }}>{lang === 'ro' ? 'Componentă:' : 'Part:'}</span>
+                <span style={{ color: '#64748b' }}>{'Componentă:'}</span>
                 <div style={{ fontWeight: 600, color: '#0f172a' }}>
                   {selectedPlacement.component?.part_name || `ID #${selectedPlacement.component_internal_id}`}
                 </div>
               </div>
 
               <div>
-                <span style={{ color: '#64748b' }}>{lang === 'ro' ? 'Lot furnizor:' : 'Supplier lot:'}</span>
+                <span style={{ color: '#64748b' }}>{'Lot furnizor:'}</span>
                 <div style={{ fontFamily: 'monospace' }}>
                   {selectedPlacement.component?.supplier_lot || '—'}
                 </div>
               </div>
 
               <div>
-                <span style={{ color: '#64748b' }}>{lang === 'ro' ? 'Furnizor:' : 'Provider:'}</span>
+                <span style={{ color: '#64748b' }}>{'Furnizor:'}</span>
                 <div>{selectedPlacement.component?.provider || '—'}</div>
               </div>
 
               <div>
-                <span style={{ color: '#64748b' }}>{lang === 'ro' ? 'Operator:' : 'Operator:'}</span>
+                <span style={{ color: '#64748b' }}>{'Operator:'}</span>
                 <div>{selectedPlacement.operator_username || '—'}</div>
               </div>
 
               <div>
-                <span style={{ color: '#64748b' }}>{lang === 'ro' ? 'Data montajului:' : 'Mounted at:'}</span>
+                <span style={{ color: '#64748b' }}>{'Data montajului:'}</span>
                 <div>
                   {selectedPlacement.mounted_at
                     ? new Date(selectedPlacement.mounted_at).toLocaleString('ro-RO')
@@ -990,7 +971,7 @@ export function ThtPage({ lang, currentUser }: ThtPageProps) {
                 className="magazie-btn-cancel"
                 onClick={() => setSelectedPlacement(null)}
               >
-                {lang === 'ro' ? 'Închide' : 'Close'}
+                {'Închide'}
               </button>
             </div>
           </div>

@@ -1,4 +1,4 @@
-export type Language = 'ro' | 'en';
+export type Language = 'ro';
 
 export interface WorkstationDef {
   id: string;
@@ -6,31 +6,29 @@ export interface WorkstationDef {
   allowedRoles: string[];
   name: {
     ro: string;
-    en: string;
   };
   category: {
     ro: string;
-    en: string;
   };
 }
 
 export const STATS_MODEL_PAGES = [
-  { id: 'pagina-1', name: { ro: 'Pagina 1', en: 'Page 1' } },
-  { id: 'pagina-2', name: { ro: 'Pagina 2', en: 'Page 2' } },
-  { id: 'pagina-3', name: { ro: 'Pagina 3', en: 'Page 3' } },
-  { id: 'pagina-4', name: { ro: 'Pagina 4', en: 'Page 4' } },
-  { id: 'pagina-5', name: { ro: 'Pagina 5', en: 'Page 5' } },
-  { id: 'pagina-6', name: { ro: 'Pagina 6', en: 'Page 6' } },
+  { id: 'pagina-1', name: { ro: 'Pagina 1' } },
+  { id: 'pagina-2', name: { ro: 'Pagina 2' } },
+  { id: 'pagina-3', name: { ro: 'Pagina 3' } },
+  { id: 'pagina-4', name: { ro: 'Pagina 4' } },
+  { id: 'pagina-5', name: { ro: 'Pagina 5' } },
+  { id: 'pagina-6', name: { ro: 'Pagina 6' } },
 ];
 
-export const ROLE_NAMES: Record<string, { ro: string; en: string }> = {
-  owner: { ro: 'Proprietar (Owner)', en: 'Owner' },
-  director: { ro: 'Director Fabricație', en: 'Production Director' },
-  engineer: { ro: 'Inginer Proces & Calitate', en: 'Process & Quality Engineer' },
-  magazioner: { ro: 'Magazioner', en: 'Warehouse Keeper' },
-  analist_calitate: { ro: 'Analist Calitate', en: 'Quality Analyst' },
-  operator: { ro: 'Operator Producție', en: 'Production Operator' },
-  production: { ro: 'Operator Producție', en: 'Production Operator' },
+export const ROLE_NAMES: Record<string, { ro: string }> = {
+  owner: { ro: 'Proprietar (Owner)' },
+  director: { ro: 'Director Fabricație' },
+  engineer: { ro: 'Inginer Proces & Calitate' },
+  magazioner: { ro: 'Magazioner' },
+  analist_calitate: { ro: 'Analist Calitate' },
+  operator: { ro: 'Operator Producție' },
+  production: { ro: 'Operator Producție' },
 };
 
 export const WORKSTATIONS: WorkstationDef[] = [
@@ -38,144 +36,78 @@ export const WORKSTATIONS: WorkstationDef[] = [
     id: 'magazie',
     code: 'WS-MAG-01',
     allowedRoles: ['magazioner', 'analist_calitate', 'engineer', 'director', 'owner'],
-    name: {
-      ro: 'Zona de stocare - Magazie',
-      en: 'Storage Area - Warehouse',
-    },
-    category: {
-      ro: 'Stocare & Logistică',
-      en: 'Storage & Logistics',
-    },
+    name: { ro: 'Zona de stocare - Magazie' },
+    category: { ro: 'Stocare & Logistică' },
   },
   {
     id: 'receptie-marfa',
     code: 'WS-REC-02',
     allowedRoles: ['analist_calitate', 'magazioner', 'engineer', 'director', 'owner'],
-    name: {
-      ro: 'Punct de verificare - Receptie marfa',
-      en: 'Inspection Point - Goods Receipt',
-    },
-    category: {
-      ro: 'Control Calitate Intrare',
-      en: 'Incoming Quality Control',
-    },
+    name: { ro: 'Punct de verificare - Receptie marfa' },
+    category: { ro: 'Control Calitate Intrare' },
   },
   {
     id: 'qr-laser',
     code: 'WS-LSR-03',
     allowedRoles: ['operator', 'production', 'engineer', 'director', 'owner'],
-    name: {
-      ro: 'Zona de marcare - QR Laser',
-      en: 'Marking Area - QR Laser',
-    },
-    category: {
-      ro: 'Identificare & Marcare Laser',
-      en: 'Laser Marking & Identification',
-    },
+    name: { ro: 'Zona de marcare - QR Laser' },
+    category: { ro: 'Identificare & Marcare Laser' },
   },
   {
     id: 'smd',
     code: 'WS-SMD-04',
     allowedRoles: ['operator', 'production', 'engineer', 'director', 'owner'],
-    name: {
-      ro: 'Zona de amplasare - SMD',
-      en: 'Placement Area - SMD',
-    },
-    category: {
-      ro: 'Asamblare Suprafață',
-      en: 'Surface Mount Technology',
-    },
+    name: { ro: 'Zona de amplasare - SMD' },
+    category: { ro: 'Asamblare Suprafață' },
   },
   {
     id: 'aoi',
     code: 'WS-AOI-05',
     allowedRoles: ['operator', 'production', 'engineer', 'director', 'owner'],
-    name: {
-      ro: 'Punct de verificare - AOI',
-      en: 'Inspection Point - AOI',
-    },
-    category: {
-      ro: 'Inspecție Optică Automată',
-      en: 'Automated Optical Inspection',
-    },
+    name: { ro: 'Punct de verificare - AOI' },
+    category: { ro: 'Inspecție Optică Automată' },
   },
   {
     id: 'tht',
     code: 'WS-THT-06',
     allowedRoles: ['operator', 'production', 'engineer', 'director', 'owner'],
-    name: {
-      ro: 'Zona de amplasare - THT',
-      en: 'Placement Area - THT',
-    },
-    category: {
-      ro: 'Asamblare Manuală / THT',
-      en: 'Through-Hole Technology',
-    },
+    name: { ro: 'Zona de amplasare - THT' },
+    category: { ro: 'Asamblare Manuală / THT' },
   },
   {
     id: 'ict',
     code: 'WS-ICT-07',
     allowedRoles: ['operator', 'production', 'engineer', 'director', 'owner'],
-    name: {
-      ro: 'Punct de verificare - ICT',
-      en: 'Inspection Point - ICT',
-    },
-    category: {
-      ro: 'Testare Electrică În Circuit',
-      en: 'In-Circuit Electrical Testing',
-    },
+    name: { ro: 'Punct de verificare - ICT' },
+    category: { ro: 'Testare Electrică În Circuit' },
   },
   {
     id: 'eol',
     code: 'WS-EOL-08',
     allowedRoles: ['operator', 'production', 'engineer', 'director', 'owner'],
-    name: {
-      ro: 'Punct de verificare - EOL',
-      en: 'Inspection Point - EOL',
-    },
-    category: {
-      ro: 'Testare Funcțională Finală',
-      en: 'End-Of-Line Functional Testing',
-    },
+    name: { ro: 'Punct de verificare - EOL' },
+    category: { ro: 'Testare Funcțională Finală' },
   },
   {
     id: 'export',
     code: 'WS-EXP-09',
     allowedRoles: ['operator', 'production', 'engineer', 'director', 'owner'],
-    name: {
-      ro: 'Zona de scanare - Export',
-      en: 'Scanning Area - Export',
-    },
-    category: {
-      ro: 'Scanare & Ambalare Finală',
-      en: 'Final Packaging & Shipping',
-    },
+    name: { ro: 'Zona de scanare - Export' },
+    category: { ro: 'Scanare & Ambalare Finală' },
   },
   {
     id: 'statistica',
     code: 'WS-STA-10',
     allowedRoles: ['director', 'owner'],
-    name: {
-      ro: 'Statistica',
-      en: 'Statistics & Analytics',
-    },
-    category: {
-      ro: 'Management & Analiză Producție',
-      en: 'Production & Yield Management',
-    },
+    name: { ro: 'Statistica' },
+    category: { ro: 'Management & Analiză Producție' },
   },
   {
     id: 'plm',
     code: 'WS-PLM-11',
     allowedRoles: ['engineer', 'director', 'owner', 'magazioner', 'analist_calitate'],
-    name: {
-      ro: 'Product Lifetime Management (PLM)',
-      en: 'Product Lifetime Management (PLM)',
-    },
-    category: {
-      ro: 'Management Date Tehnice & Nomenclator',
-      en: 'Technical Data & Lifecycle Management',
-    },
+    name: { ro: 'Product Lifetime Management (PLM)' },
+    category: { ro: 'Management Date Tehnice & Nomenclator' },
   },
 ];
 
@@ -222,48 +154,5 @@ export const translations = {
     statisticaAccessDenied:
       'Acces restricționat: Pe paginile de Statistică au acces doar rolurile Director și Owner.',
     restrictedAccessTitle: 'Acces Restricționat',
-  },
-  en: {
-    brandName: 'SmartQMA',
-    brandTag: 'Manufacturing & Traceability Platform',
-    bannerHeadline: 'Traceability, simplified.',
-    bannerDescription:
-      'Track every product across the production line: from goods intake and QR laser marking, to SMD/THT assembly, AOI/ICT/EOL inspection, and export.',
-    bannerFooter: '© 2026 SmartQMA • Industrial Quality System',
-
-    authPortalTitle: 'Authentication portal',
-    authPortalSubtitle: 'Welcome to the SmartQMA platform.',
-    usernameLabel: 'Username *',
-    usernamePlaceholder: 'e.g. operator, engineer, director, owner',
-    passwordLabel: 'Password *',
-    passwordPlaceholder: '••••••••',
-    stationLabel: 'Workstation / Destination *',
-    testAutofillLabel: 'TEST AUTOFILL:',
-    signInButton: 'Sign in',
-    signingIn: 'Signing in...',
-
-    validationRequired: 'Please enter both username and password.',
-    authErrorDefault: 'Invalid username or password.',
-
-    workstationsSection: 'WORKSTATIONS',
-    navigationSection: 'NAVIGATION',
-    backToLogin: 'Back to Login',
-    signOut: 'Sign out',
-
-    lineLabel: 'Electronic Assembly Line 1',
-    statusActive: 'Status: Active',
-
-    metricProcessed: 'PROCESSED UNITS',
-    metricPassed: 'PASSED (PASS)',
-    metricFailed: 'FAILED (SCRAP)',
-
-    workspaceTitle: 'Workstation Space',
-    workspaceDescPrefix: 'This is the operational workspace for workstation',
-    workspaceDescSuffix:
-      'Currently an empty workspace, ready for specific process and inspection controls.',
-    statsMenuTitle: 'STATISTICS OPTIONS',
-    statisticaAccessDenied:
-      'Restricted access: Only Director and Owner roles have access to the Statistics pages.',
-    restrictedAccessTitle: 'Restricted Access',
   },
 };

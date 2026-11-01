@@ -24,7 +24,7 @@ import {
 } from './icons/IndustrialIcons';
 
 interface FlowGeneratorViewProps {
-  lang: Language;
+  lang?: Language;
   currentUser?: User | null;
 }
 
@@ -91,7 +91,7 @@ export interface GeneratorConfig {
   qr_defect_pct: number;
 }
 
-export function FlowGeneratorView({ lang }: FlowGeneratorViewProps) {
+export function FlowGeneratorView(_props: FlowGeneratorViewProps) {
   const [config, setConfig] = useState<GeneratorConfig | null>(null);
   const [loading, setLoading] = useState<boolean>(true);
   const [saving, setSaving] = useState<boolean>(false);
@@ -179,7 +179,7 @@ export function FlowGeneratorView({ lang }: FlowGeneratorViewProps) {
       }
       const data = await res.json();
       setConfig(data.data);
-      setNotice(lang === 'ro' ? 'Setările au fost salvate cu succes.' : 'Settings saved successfully.');
+      setNotice('Setările au fost salvate cu succes.');
       setTimeout(() => setNotice(null), 4000);
     } catch (err: any) {
       setError(err.message);
@@ -192,10 +192,7 @@ export function FlowGeneratorView({ lang }: FlowGeneratorViewProps) {
   const handleResetConfig = async () => {
     if (
       !window.confirm(
-        lang === 'ro'
-          ? 'Sigur doriți să resetați toate setările generatorului la valorile implicite din fabrică?'
-          : 'Are you sure you want to reset all generator settings to factory defaults?'
-      )
+        'Sigur doriți să resetați toate setările generatorului la valorile implicite din fabrică?')
     ) {
       return;
     }
@@ -208,7 +205,7 @@ export function FlowGeneratorView({ lang }: FlowGeneratorViewProps) {
       if (!res.ok) throw new Error('Eroare la resetarea configurației');
       const data = await res.json();
       setConfig(data.data);
-      setNotice(lang === 'ro' ? 'Configurația a fost resetată la standardul din fabrică.' : 'Configuration reset to factory standard.');
+      setNotice('Configurația a fost resetată la standardul din fabrică.');
       setTimeout(() => setNotice(null), 4000);
     } catch (err: any) {
       setError(err.message);
@@ -234,7 +231,7 @@ export function FlowGeneratorView({ lang }: FlowGeneratorViewProps) {
           `[${new Date().toLocaleTimeString()}] Magazie & Calitate: Stoc conform, verificat de analistul calitate.`,
         ]);
       }
-      setNotice(lang === 'ro' ? 'Verificare stoc & analist calitate finalizată.' : 'Warehouse & QA check completed.');
+      setNotice('Verificare stoc & analist calitate finalizată.');
       setTimeout(() => setNotice(null), 3500);
       fetchStats();
     } catch (err: any) {
@@ -246,7 +243,7 @@ export function FlowGeneratorView({ lang }: FlowGeneratorViewProps) {
   const handleGenerateBatch = async (countOverride?: number) => {
     const countToGenerate = countOverride || batchCount;
     if (countToGenerate < 1 || countToGenerate > 500) {
-      setError(lang === 'ro' ? 'Numărul de plăci trebuie să fie între 1 și 500' : 'Number of boards must be between 1 and 500');
+      setError('Numărul de plăci trebuie să fie între 1 și 500');
       return;
     }
 
@@ -273,10 +270,7 @@ export function FlowGeneratorView({ lang }: FlowGeneratorViewProps) {
       }
 
       setNotice(
-        lang === 'ro'
-          ? `Lot de ${countToGenerate} plăci generat (${data.first_serial} ➔ ${data.last_serial}).`
-          : `Batch of ${countToGenerate} boards generated (${data.first_serial} ➔ ${data.last_serial}).`
-      );
+        `Lot de ${countToGenerate} plăci generat (${data.first_serial} ➔ ${data.last_serial}).`);
       setTimeout(() => setNotice(null), 5000);
 
       fetchStats();
@@ -388,9 +382,7 @@ export function FlowGeneratorView({ lang }: FlowGeneratorViewProps) {
       <div className="flow-gen-loading">
         <div className="flow-gen-spinner" />
         <span>
-          {lang === 'ro'
-            ? 'Se încarcă modulul generatorului de flux...'
-            : 'Loading production flow generator...'}
+          {'Se încarcă modulul generatorului de flux...'}
         </span>
       </div>
     );
@@ -421,30 +413,21 @@ export function FlowGeneratorView({ lang }: FlowGeneratorViewProps) {
         <div className="flow-gen-title-block">
           <div className="flow-gen-badge-row">
             <span className="flow-gen-badge primary">
-              {lang === 'ro' ? 'Generator Flux Producție PCBA' : 'PCBA Flow Generator'}
+              {'Generator Flux Producție PCBA'}
             </span>
             <span className="flow-gen-badge warning">
-              {lang === 'ro' ? 'Stația Export Exclusă' : 'Export Excluded'}
+              {'Stația Export Exclusă'}
             </span>
             <span className={`flow-gen-badge ${isSimulating ? 'success pulse' : 'secondary'}`}>
               {isSimulating
-                ? lang === 'ro'
-                  ? `Simulare Activă (${simSpeed}x)`
-                  : `Simulation Running (${simSpeed}x)`
-                : lang === 'ro'
-                ? 'Simulare Inactivă'
-                : 'Simulation Inactive'}
+                ? `Simulare Activă (${simSpeed}x)`: 'Simulare Inactivă'}
             </span>
           </div>
           <h1 className="flow-gen-main-heading">
-            {lang === 'ro'
-              ? 'Generator de flux industrial și simulare proces'
-              : 'Industrial flow generator & process simulation'}
+            {'Generator de flux industrial și simulare proces'}
           </h1>
           <p className="flow-gen-subtext">
-            {lang === 'ro'
-              ? 'Orchestrează fluxul de fabricație: Magazie ➔ Recepție Calitate ➔ QR Laser ➔ SMD ➔ AOI ➔ Suport Lot (40-60 buc) ➔ THT ➔ ICT ➔ Carcasare ➔ EOL.'
-              : 'Orchestrates manufacturing flow: Warehouse ➔ QA Inspection ➔ QR Laser ➔ SMD ➔ AOI ➔ Carrier Lot (40-60 pcs) ➔ THT ➔ ICT ➔ Casing ➔ EOL.'}
+            {'Orchestrează fluxul de fabricație: Magazie ➔ Recepție Calitate ➔ QR Laser ➔ SMD ➔ AOI ➔ Suport Lot (40-60 buc) ➔ THT ➔ ICT ➔ Carcasare ➔ EOL.'}
           </p>
         </div>
 
@@ -452,7 +435,7 @@ export function FlowGeneratorView({ lang }: FlowGeneratorViewProps) {
         <div className="flow-gen-actions-card">
           <div className="flow-gen-action-group">
             <span className="flow-action-label">
-              {lang === 'ro' ? 'Generare lot:' : 'Batch generation:'}
+              {'Generare lot:'}
             </span>
             <div className="flow-batch-controls">
               <input
@@ -473,12 +456,12 @@ export function FlowGeneratorView({ lang }: FlowGeneratorViewProps) {
                 {generating ? (
                   <>
                     <span className="flow-btn-spinner" />
-                    {lang === 'ro' ? 'Se generează...' : 'Generating...'}
+                    {'Se generează...'}
                   </>
                 ) : (
                   <>
                     <ZapIcon size={14} />
-                    {lang === 'ro' ? `Lansează lot (${batchCount} buc)` : `Run batch (${batchCount} pcs)`}
+                    {`Lansează lot (${batchCount} buc)`}
                   </>
                 )}
               </button>
@@ -505,7 +488,7 @@ export function FlowGeneratorView({ lang }: FlowGeneratorViewProps) {
 
           <div className="flow-gen-action-group">
             <span className="flow-action-label">
-              {lang === 'ro' ? 'Simulare live:' : 'Live simulation:'}
+              {'Simulare live:'}
             </span>
             <div className="flow-live-controls">
               {!isSimulating ? (
@@ -515,7 +498,7 @@ export function FlowGeneratorView({ lang }: FlowGeneratorViewProps) {
                   onClick={() => setIsSimulating(true)}
                   disabled={generating}
                 >
-                  <PlayIcon size={13} /> {lang === 'ro' ? 'Pornește live' : 'Start live'}
+                  <PlayIcon size={13} /> {'Pornește live'}
                 </button>
               ) : (
                 <button
@@ -523,7 +506,7 @@ export function FlowGeneratorView({ lang }: FlowGeneratorViewProps) {
                   className="flow-btn danger"
                   onClick={() => setIsSimulating(false)}
                 >
-                  <StopIcon size={13} /> {lang === 'ro' ? 'Oprește live' : 'Stop live'}
+                  <StopIcon size={13} /> {'Oprește live'}
                 </button>
               )}
 
@@ -533,9 +516,9 @@ export function FlowGeneratorView({ lang }: FlowGeneratorViewProps) {
                 onChange={(e) => setSimSpeed(Number(e.target.value))}
                 title="Viteză simulare"
               >
-                <option value={1}>1x ({lang === 'ro' ? 'Timp real' : 'Real-time'})</option>
-                <option value={5}>5x ({lang === 'ro' ? 'Rapid' : 'Fast'})</option>
-                <option value={10}>10x ({lang === 'ro' ? 'Accelerat' : 'Accelerated'})</option>
+                <option value={1}>1x ({'Timp real'})</option>
+                <option value={5}>5x ({'Rapid'})</option>
+                <option value={10}>10x ({'Accelerat'})</option>
                 <option value={30}>30x (30x)</option>
                 <option value={60}>60x (60x)</option>
               </select>
@@ -546,7 +529,7 @@ export function FlowGeneratorView({ lang }: FlowGeneratorViewProps) {
                 onClick={handleCheckWarehouse}
                 title="Verificare componente magazie și marcare conform de către analistul calitate"
               >
-                <PackageIcon size={14} /> {lang === 'ro' ? 'Verifică magazie & QC' : 'Check stock & QC'}
+                <PackageIcon size={14} /> {'Verifică magazie & QC'}
               </button>
             </div>
           </div>
@@ -559,7 +542,7 @@ export function FlowGeneratorView({ lang }: FlowGeneratorViewProps) {
               onClick={handleSaveConfig}
             >
               <SaveIcon size={14} />
-              {saving ? '...' : lang === 'ro' ? 'Salvează' : 'Save'}
+              {saving ? '...' : 'Salvează'}
             </button>
             <button
               type="button"
@@ -569,7 +552,7 @@ export function FlowGeneratorView({ lang }: FlowGeneratorViewProps) {
               title="Resetează toți parametrii la standardul industrial din fabrică"
             >
               <RotateCcwIcon size={14} />
-              {lang === 'ro' ? 'Reset fabrică' : 'Reset'}
+              {'Reset fabrică'}
             </button>
           </div>
         </div>
@@ -579,17 +562,17 @@ export function FlowGeneratorView({ lang }: FlowGeneratorViewProps) {
       {stats && (
         <section className="flow-kpi-bar" aria-label="Statistici producție">
           <div className="flow-kpi-card">
-            <span className="flow-kpi-title">{lang === 'ro' ? 'Total PCB Marcate' : 'Total PCBs Marked'}</span>
+            <span className="flow-kpi-title">{'Total PCB Marcate'}</span>
             <span className="flow-kpi-value">{stats.qr_total || 0}</span>
             <span className="flow-kpi-sub">QR Laser 12 cifre</span>
           </div>
           <div className="flow-kpi-card">
-            <span className="flow-kpi-title">{lang === 'ro' ? 'Trecute prin SMD' : 'Passed SMD'}</span>
+            <span className="flow-kpi-title">{'Trecute prin SMD'}</span>
             <span className="flow-kpi-value">{stats.smd_boards_total || 0}</span>
             <span className="flow-kpi-sub">7 componente montate</span>
           </div>
           <div className="flow-kpi-card">
-            <span className="flow-kpi-title">{lang === 'ro' ? 'Inspecție AOI' : 'AOI Inspection'}</span>
+            <span className="flow-kpi-title">{'Inspecție AOI'}</span>
             <span className="flow-kpi-value">
               <span className="text-success">{stats.aoi?.pass || 0}</span> /{' '}
               <span className="text-danger">{stats.aoi?.fail || 0}</span>
@@ -597,7 +580,7 @@ export function FlowGeneratorView({ lang }: FlowGeneratorViewProps) {
             <span className="flow-kpi-sub">Admise / Rebut optic</span>
           </div>
           <div className="flow-kpi-card">
-            <span className="flow-kpi-title">{lang === 'ro' ? 'Test Electric ICT' : 'ICT Test'}</span>
+            <span className="flow-kpi-title">{'Test Electric ICT'}</span>
             <span className="flow-kpi-value">
               <span className="text-success">{stats.ict?.pass || 0}</span> /{' '}
               <span className="text-danger">{stats.ict?.fail || 0}</span>
@@ -605,7 +588,7 @@ export function FlowGeneratorView({ lang }: FlowGeneratorViewProps) {
             <span className="flow-kpi-sub">Admise / Rebut electric</span>
           </div>
           <div className="flow-kpi-card">
-            <span className="flow-kpi-title">{lang === 'ro' ? 'Test Final EOL' : 'EOL Test'}</span>
+            <span className="flow-kpi-title">{'Test Final EOL'}</span>
             <span className="flow-kpi-value">
               <span className="text-success">{stats.eol?.pass || 0}</span> /{' '}
               <span className="text-danger">{stats.eol?.fail || 0}</span>
@@ -613,7 +596,7 @@ export function FlowGeneratorView({ lang }: FlowGeneratorViewProps) {
             <span className="flow-kpi-sub">Admise / Rebut funcțional</span>
           </div>
           <div className="flow-kpi-card highlight">
-            <span className="flow-kpi-title">{lang === 'ro' ? 'Randament Global (Yield)' : 'Overall Yield'}</span>
+            <span className="flow-kpi-title">{'Randament Global (Yield)'}</span>
             <span className="flow-kpi-value text-accent">{stats.yield_pct || 100}%</span>
             <span className="flow-kpi-sub">
               {stats.final_good || 0} bune / {stats.final_scrap || 0} rebutate
@@ -626,10 +609,10 @@ export function FlowGeneratorView({ lang }: FlowGeneratorViewProps) {
       <section className="flow-pipeline-section" aria-label="Diagrama vizuală a fluxului de producție">
         <div className="flow-pipeline-header">
           <h2 className="flow-section-heading">
-            {lang === 'ro' ? '1. Arhitectura fluxului industrial de producție' : '1. Industrial Production Flow Architecture'}
+            {'1. Arhitectura fluxului industrial de producție'}
           </h2>
           <span className="flow-section-badge">
-            {lang === 'ro' ? 'Secvență cronologică' : 'Chronological Sequence'}
+            {'Secvență cronologică'}
           </span>
         </div>
 
@@ -638,14 +621,14 @@ export function FlowGeneratorView({ lang }: FlowGeneratorViewProps) {
             {/* Step 0: Magazie & QC */}
             <div className="flow-station-node">
               <div className="flow-node-tag">
-                {lang === 'ro' ? 'Intrare' : 'Input'}
+                {'Intrare'}
               </div>
               <div className="flow-node-icon">
                 <PackageIcon size={16} />
               </div>
               <div className="flow-node-title">Magazie & QC</div>
               <div className="flow-node-desc">
-                {lang === 'ro' ? 'Comenzi stoc & analist calitate' : 'Stock orders & QA sign-off'}
+                {'Comenzi stoc & analist calitate'}
               </div>
               <div className="flow-node-badges">
                 <span className="node-chip">Auto: {config.auto_order_warehouse ? 'DA' : 'NU'}</span>
@@ -821,7 +804,7 @@ export function FlowGeneratorView({ lang }: FlowGeneratorViewProps) {
             onClick={() => setActiveTab('flow')}
           >
             <ClipboardIcon size={14} />
-            {lang === 'ro' ? 'Configurare Generală & Serii' : 'General & Serial Config'}
+            {'Configurare Generală & Serii'}
           </button>
           <button
             type="button"
@@ -829,7 +812,7 @@ export function FlowGeneratorView({ lang }: FlowGeneratorViewProps) {
             onClick={() => setActiveTab('defects')}
           >
             <AlertTriangleIcon size={14} />
-            {lang === 'ro' ? 'Rate Defecte & Evenimente Aleatorii' : 'Defect Rates & Random Events'}
+            {'Rate Defecte & Evenimente Aleatorii'}
           </button>
           <button
             type="button"
@@ -837,7 +820,7 @@ export function FlowGeneratorView({ lang }: FlowGeneratorViewProps) {
             onClick={() => setActiveTab('cycles')}
           >
             <ClockIcon size={14} />
-            {lang === 'ro' ? 'Timpi de Ciclu la Stații' : 'Station Cycle Times'}
+            {'Timpi de Ciclu la Stații'}
           </button>
           <button
             type="button"
@@ -845,7 +828,7 @@ export function FlowGeneratorView({ lang }: FlowGeneratorViewProps) {
             onClick={() => setActiveTab('buffers')}
           >
             <TruckIcon size={14} />
-            {lang === 'ro' ? 'Tranzit, Buffere & Suport Lot' : 'Transit, Buffers & Carrier Lot'}
+            {'Tranzit, Buffere & Suport Lot'}
           </button>
           <button
             type="button"
@@ -853,7 +836,7 @@ export function FlowGeneratorView({ lang }: FlowGeneratorViewProps) {
             onClick={() => setActiveTab('warehouse')}
           >
             <PackageIcon size={14} />
-            {lang === 'ro' ? 'Magazie & Analist Calitate' : 'Warehouse & QA Analyst'}
+            {'Magazie & Analist Calitate'}
           </button>
         </div>
 
@@ -863,17 +846,15 @@ export function FlowGeneratorView({ lang }: FlowGeneratorViewProps) {
             <div className="flow-grid-2">
               <div className="flow-panel-card">
                 <h3 className="flow-panel-title">
-                  {lang === 'ro' ? 'Formatul Numărului de Serie Industrial' : 'Industrial Serial Number Format'}
+                  {'Formatul Numărului de Serie Industrial'}
                 </h3>
                 <p className="flow-panel-desc">
-                  {lang === 'ro'
-                    ? 'Seriile pe toate plăcile trebuie să fie obligatoriu de 12 cifre: YYMMDD urmat de 6 cifre incrementabile zilnic (ex: 260902000001).'
-                    : 'Serials must strictly have 12 numeric digits: YYMMDD followed by 6 incrementable digits per day (e.g. 260902000001).'}
+                  {'Seriile pe toate plăcile trebuie să fie obligatoriu de 12 cifre: YYMMDD urmat de 6 cifre incrementabile zilnic (ex: 260902000001).'}
                 </p>
 
                 <div className="flow-field-group">
                   <label className="flow-field-label">
-                    {lang === 'ro' ? 'Mod generare prefix YYMMDD:' : 'YYMMDD prefix mode:'}
+                    {'Mod generare prefix YYMMDD:'}
                   </label>
                   <select
                     className="flow-input-field"
@@ -881,10 +862,10 @@ export function FlowGeneratorView({ lang }: FlowGeneratorViewProps) {
                     onChange={(e: any) => updateConfigField('serial_prefix_mode', e.target.value)}
                   >
                     <option value="current_date">
-                      {lang === 'ro' ? 'Data curentă a sistemului (automat)' : 'System current date (automatic)'}
+                      {'Data curentă a sistemului (automat)'}
                     </option>
                     <option value="custom">
-                      {lang === 'ro' ? 'Data manuală / Prefix fix de 6 cifre' : 'Manual date / 6-digit fixed prefix'}
+                      {'Data manuală / Prefix fix de 6 cifre'}
                     </option>
                   </select>
                 </div>
@@ -892,7 +873,7 @@ export function FlowGeneratorView({ lang }: FlowGeneratorViewProps) {
                 {config.serial_prefix_mode === 'custom' && (
                   <div className="flow-field-group">
                     <label className="flow-field-label">
-                      {lang === 'ro' ? 'Prefix manual 6 cifre (ex: 260902):' : 'Manual 6-digit prefix (e.g. 260902):'}
+                      {'Prefix manual 6 cifre (ex: 260902):'}
                     </label>
                     <input
                       type="text"
@@ -906,7 +887,7 @@ export function FlowGeneratorView({ lang }: FlowGeneratorViewProps) {
 
                 <div className="flow-field-group">
                   <label className="flow-field-label">
-                    {lang === 'ro' ? 'Model produs PCB:' : 'PCB Product Model:'}
+                    {'Model produs PCB:'}
                   </label>
                   <input
                     type="text"
@@ -919,29 +900,27 @@ export function FlowGeneratorView({ lang }: FlowGeneratorViewProps) {
 
               <div className="flow-panel-card">
                 <h3 className="flow-panel-title">
-                  {lang === 'ro' ? 'Stare & Integritate Generator' : 'Generator State & Integrity'}
+                  {'Stare & Integritate Generator'}
                 </h3>
                 <p className="flow-panel-desc">
-                  {lang === 'ro'
-                    ? 'Generatorul rulează pe un thread backend dedicat și este optimizat pentru viteză și stabilitate.'
-                    : 'The generator operates on an asynchronous backend architecture designed for low-latency non-blocking responsiveness.'}
+                  {'Generatorul rulează pe un thread backend dedicat și este optimizat pentru viteză și stabilitate.'}
                 </p>
 
                 <div className="flow-info-box">
                   <div className="info-row">
-                    <span>{lang === 'ro' ? 'Stare modul:' : 'Module state:'}</span>
+                    <span>{'Stare modul:'}</span>
                     <strong className="text-success">{config.enabled ? 'ACTIVAT' : 'DEZACTIVAT'}</strong>
                   </div>
                   <div className="info-row">
-                    <span>{lang === 'ro' ? 'Stații integrate în flux:' : 'Integrated stations:'}</span>
+                    <span>{'Stații integrate în flux:'}</span>
                     <strong>QR Laser, SMD, AOI, THT, ICT, EOL (6 stații)</strong>
                   </div>
                   <div className="info-row">
-                    <span>{lang === 'ro' ? 'Stație Export:' : 'Export station:'}</span>
+                    <span>{'Stație Export:'}</span>
                     <strong className="text-accent">EXCLUSĂ</strong>
                   </div>
                   <div className="info-row">
-                    <span>{lang === 'ro' ? 'Format serializare:' : 'Serialization standard:'}</span>
+                    <span>{'Format serializare:'}</span>
                     <strong className="text-accent">12 cifre numerice (YYMMDDNNNNNN)</strong>
                   </div>
                 </div>
@@ -958,20 +937,18 @@ export function FlowGeneratorView({ lang }: FlowGeneratorViewProps) {
               <div className="flow-panel-card">
                 <div className="flow-card-head">
                   <h3 className="flow-panel-title">
-                    {lang === 'ro' ? 'Defecte de SMD (Total setat: 2.0%)' : 'SMD Defects (Target total: 2.0%)'}
+                    {'Defecte de SMD (Total setat: 2.0%)'}
                   </h3>
                   <span className="flow-badge danger">Total: {totalSmdDefects}%</span>
                 </div>
                 <p className="flow-panel-desc">
-                  {lang === 'ro'
-                    ? 'Componentele SMD au o probabilitate totală de defect de 2.0%, repartizată pe stațiile din aval:'
-                    : 'SMD components have a 2.0% total defect probability distributed across downstream checkpoints:'}
+                  {'Componentele SMD au o probabilitate totală de defect de 2.0%, repartizată pe stațiile din aval:'}
                 </p>
 
                 {/* SMD prins la AOI */}
                 <div className="flow-slider-field">
                   <div className="slider-label-row">
-                    <span>{lang === 'ro' ? 'Prinse la AOI (Inspecție optică):' : 'Caught at AOI (Optical):'}</span>
+                    <span>{'Prinse la AOI (Inspecție optică):'}</span>
                     <strong>{config.smd_defect_aoi_pct}%</strong>
                   </div>
                   <input
@@ -984,16 +961,14 @@ export function FlowGeneratorView({ lang }: FlowGeneratorViewProps) {
                     className="flow-slider"
                   />
                   <div className="slider-hint">
-                    {lang === 'ro'
-                      ? 'Rebutat imediat la AOI (punți cositor, componente lipsă, tombstone).'
-                      : 'Fails immediately at AOI (solder bridges, missing parts, tombstoning).'}
+                    {'Rebutat imediat la AOI (punți cositor, componente lipsă, tombstone).'}
                   </div>
                 </div>
 
                 {/* SMD prins la ICT */}
                 <div className="flow-slider-field">
                   <div className="slider-label-row">
-                    <span>{lang === 'ro' ? 'Prinse la ICT (Test in-circuit):' : 'Caught at ICT (Bed-of-nails):'}</span>
+                    <span>{'Prinse la ICT (Test in-circuit):'}</span>
                     <strong>{config.smd_defect_ict_pct}%</strong>
                   </div>
                   <input
@@ -1006,16 +981,14 @@ export function FlowGeneratorView({ lang }: FlowGeneratorViewProps) {
                     className="flow-slider"
                   />
                   <div className="slider-hint">
-                    {lang === 'ro'
-                      ? 'Scapă de AOI și este depistat la testul electric ICT (scurtcircuit alimentare, rezonator defect).'
-                      : 'Escapes AOI, detected by ICT electrical probes (shorted rails, bad oscillator).'}
+                    {'Scapă de AOI și este depistat la testul electric ICT (scurtcircuit alimentare, rezonator defect).'}
                   </div>
                 </div>
 
                 {/* SMD scăpat la EOL */}
                 <div className="flow-slider-field">
                   <div className="slider-label-row">
-                    <span>{lang === 'ro' ? 'Scăpate la EOL (Test final):' : 'Escaped to EOL (Final test):'}</span>
+                    <span>{'Scăpate la EOL (Test final):'}</span>
                     <strong>{config.smd_defect_eol_pct}%</strong>
                   </div>
                   <input
@@ -1028,14 +1001,12 @@ export function FlowGeneratorView({ lang }: FlowGeneratorViewProps) {
                     className="flow-slider"
                   />
                   <div className="slider-hint">
-                    {lang === 'ro'
-                      ? 'Pică la testarea finală EOL din cauza SMD (eroare protocol USB, supracurent LDO).'
-                      : 'Fails at final functional test due to SMD (USB failure, LDO excessive draw).'}
+                    {'Pică la testarea finală EOL din cauza SMD (eroare protocol USB, supracurent LDO).'}
                   </div>
                 </div>
 
                 <div className="flow-summary-chip success">
-                  <span>{lang === 'ro' ? 'Rată conformă SMD (trec, sunt bune):' : 'SMD Pass Rate:'}</span>
+                  <span>{'Rată conformă SMD (trec, sunt bune):'}</span>
                   <strong>{smdPassRate}%</strong>
                 </div>
               </div>
@@ -1044,20 +1015,18 @@ export function FlowGeneratorView({ lang }: FlowGeneratorViewProps) {
               <div className="flow-panel-card">
                 <div className="flow-card-head">
                   <h3 className="flow-panel-title">
-                    {lang === 'ro' ? 'Defecte de THT (Total setat: 1.5%)' : 'THT Defects (Target total: 1.5%)'}
+                    {'Defecte de THT (Total setat: 1.5%)'}
                   </h3>
                   <span className="flow-badge danger">Total: {totalThtDefects}%</span>
                 </div>
                 <p className="flow-panel-desc">
-                  {lang === 'ro'
-                    ? 'Componentele THT (U1 ATmega328P DIP-28, headere) au o rată de defect de 1.5%:'
-                    : 'THT components (U1 ATmega328P DIP-28, pin headers) have a 1.5% defect rate:'}
+                  {'Componentele THT (U1 ATmega328P DIP-28, headere) au o rată de defect de 1.5%:'}
                 </p>
 
                 {/* THT prins la ICT */}
                 <div className="flow-slider-field">
                   <div className="slider-label-row">
-                    <span>{lang === 'ro' ? 'Prinse de ICT (Bed-of-Nails):' : 'Caught at ICT:'}</span>
+                    <span>{'Prinse de ICT (Bed-of-Nails):'}</span>
                     <strong>{config.tht_defect_ict_pct}%</strong>
                   </div>
                   <input
@@ -1070,16 +1039,14 @@ export function FlowGeneratorView({ lang }: FlowGeneratorViewProps) {
                     className="flow-slider"
                   />
                   <div className="slider-hint">
-                    {lang === 'ro'
-                      ? 'Lipitură rece, pin U1 nesudat sau punte pe headere prinsă la ICT.'
-                      : 'Cold solder, unsoldered pin or header short caught at ICT fixture.'}
+                    {'Lipitură rece, pin U1 nesudat sau punte pe headere prinsă la ICT.'}
                   </div>
                 </div>
 
                 {/* THT scăpat la EOL */}
                 <div className="flow-slider-field">
                   <div className="slider-label-row">
-                    <span>{lang === 'ro' ? 'Prinse de EOL (Test final):' : 'Caught at EOL:'}</span>
+                    <span>{'Prinse de EOL (Test final):'}</span>
                     <strong>{config.tht_defect_eol_pct}%</strong>
                   </div>
                   <input
@@ -1092,14 +1059,12 @@ export function FlowGeneratorView({ lang }: FlowGeneratorViewProps) {
                     className="flow-slider"
                   />
                   <div className="slider-hint">
-                    {lang === 'ro'
-                      ? 'Conexiune THT intermitentă depistată la vibrații/carcasare EOL.'
-                      : 'Intermittent THT joint failing during final boxed operation.'}
+                    {'Conexiune THT intermitentă depistată la vibrații/carcasare EOL.'}
                   </div>
                 </div>
 
                 <div className="flow-summary-chip success">
-                  <span>{lang === 'ro' ? 'Rată conformă THT (trec, sunt bune):' : 'THT Pass Rate:'}</span>
+                  <span>{'Rată conformă THT (trec, sunt bune):'}</span>
                   <strong>{thtPassRate}%</strong>
                 </div>
 
@@ -1108,7 +1073,7 @@ export function FlowGeneratorView({ lang }: FlowGeneratorViewProps) {
                 {/* Defect QR Laser */}
                 <div className="flow-slider-field">
                   <div className="slider-label-row">
-                    <span>{lang === 'ro' ? 'Rată fail marcare QR Laser:' : 'QR Laser failure rate:'}</span>
+                    <span>{'Rată fail marcare QR Laser:'}</span>
                     <strong>{config.qr_defect_pct}%</strong>
                   </div>
                   <input
@@ -1121,9 +1086,7 @@ export function FlowGeneratorView({ lang }: FlowGeneratorViewProps) {
                     className="flow-slider"
                   />
                   <div className="slider-hint">
-                    {lang === 'ro'
-                      ? 'Conform specificației, la QR Laser nu ar trebui să fie failuri (0%).'
-                      : 'Per specification, QR laser should have 0% failures currently.'}
+                    {'Conform specificației, la QR Laser nu ar trebui să fie failuri (0%).'}
                   </div>
                 </div>
               </div>
@@ -1139,13 +1102,11 @@ export function FlowGeneratorView({ lang }: FlowGeneratorViewProps) {
               <div className="flow-panel-card">
                 <h3 className="flow-panel-title">1. QR Laser</h3>
                 <p className="flow-panel-desc">
-                  {lang === 'ro'
-                    ? 'Timpul în care PCB-ul stă la stația de marcare laser.'
-                    : 'Duration board spends at QR laser marking station.'}
+                  {'Timpul în care PCB-ul stă la stația de marcare laser.'}
                 </p>
                 <div className="flow-field-group">
                   <label className="flow-field-label">
-                    {lang === 'ro' ? 'Timp staționare QR (secunde):' : 'QR cycle time (seconds):'}
+                    {'Timp staționare QR (secunde):'}
                   </label>
                   <input
                     type="number"
@@ -1163,13 +1124,11 @@ export function FlowGeneratorView({ lang }: FlowGeneratorViewProps) {
               <div className="flow-panel-card">
                 <h3 className="flow-panel-title">2. Amplasare SMD</h3>
                 <p className="flow-panel-desc">
-                  {lang === 'ro'
-                    ? 'Timpul în care piesa stă la mașina Pick & Place.'
-                    : 'Time board stays at SMD Pick & Place machine.'}
+                  {'Timpul în care piesa stă la mașina Pick & Place.'}
                 </p>
                 <div className="flow-field-group">
                   <label className="flow-field-label">
-                    {lang === 'ro' ? 'Timp staționare SMD (secunde):' : 'SMD cycle time (seconds):'}
+                    {'Timp staționare SMD (secunde):'}
                   </label>
                   <input
                     type="number"
@@ -1187,13 +1146,11 @@ export function FlowGeneratorView({ lang }: FlowGeneratorViewProps) {
               <div className="flow-panel-card">
                 <h3 className="flow-panel-title">3. Inspecție AOI</h3>
                 <p className="flow-panel-desc">
-                  {lang === 'ro'
-                    ? 'Scanare optică camere HD & comparare algoritmică.'
-                    : 'HD optical camera scan & algorithm comparison.'}
+                  {'Scanare optică camere HD & comparare algoritmică.'}
                 </p>
                 <div className="flow-field-group">
                   <label className="flow-field-label">
-                    {lang === 'ro' ? 'Timp inspecție AOI (secunde):' : 'AOI inspection time (seconds):'}
+                    {'Timp inspecție AOI (secunde):'}
                   </label>
                   <input
                     type="number"
@@ -1211,13 +1168,11 @@ export function FlowGeneratorView({ lang }: FlowGeneratorViewProps) {
               <div className="flow-panel-card">
                 <h3 className="flow-panel-title">4. Amplasare & Cositorire THT</h3>
                 <p className="flow-panel-desc">
-                  {lang === 'ro'
-                    ? 'Timp amplasare manuală soclu U1 & cositorire selectivă.'
-                    : 'Manual placement of U1 socket & selective soldering.'}
+                  {'Timp amplasare manuală soclu U1 & cositorire selectivă.'}
                 </p>
                 <div className="flow-field-group">
                   <label className="flow-field-label">
-                    {lang === 'ro' ? 'Timp THT (secunde):' : 'THT cycle time (seconds):'}
+                    {'Timp THT (secunde):'}
                   </label>
                   <input
                     type="number"
@@ -1235,13 +1190,11 @@ export function FlowGeneratorView({ lang }: FlowGeneratorViewProps) {
               <div className="flow-panel-card">
                 <h3 className="flow-panel-title">5. Testare In-Circuit (ICT)</h3>
                 <p className="flow-panel-desc">
-                  {lang === 'ro'
-                    ? 'Coborâre pat de ace (bed-of-nails) & măsurători voltaj/rezistențe.'
-                    : 'Bed-of-nails fixture engagement & voltage/component tests.'}
+                  {'Coborâre pat de ace (bed-of-nails) & măsurători voltaj/rezistențe.'}
                 </p>
                 <div className="flow-field-group">
                   <label className="flow-field-label">
-                    {lang === 'ro' ? 'Durată test ICT (secunde):' : 'ICT test duration (seconds):'}
+                    {'Durată test ICT (secunde):'}
                   </label>
                   <input
                     type="number"
@@ -1259,13 +1212,11 @@ export function FlowGeneratorView({ lang }: FlowGeneratorViewProps) {
               <div className="flow-panel-card">
                 <h3 className="flow-panel-title">6. Testare Finală (EOL)</h3>
                 <p className="flow-panel-desc">
-                  {lang === 'ro'
-                    ? 'Test funcțional complet în carcasă cu simulare periferice.'
-                    : 'Complete functional test in casing with simulated peripherals.'}
+                  {'Test funcțional complet în carcasă cu simulare periferice.'}
                 </p>
                 <div className="flow-field-group">
                   <label className="flow-field-label">
-                    {lang === 'ro' ? 'Durată test EOL (secunde):' : 'EOL test duration (seconds):'}
+                    {'Durată test EOL (secunde):'}
                   </label>
                   <input
                     type="number"
@@ -1291,14 +1242,12 @@ export function FlowGeneratorView({ lang }: FlowGeneratorViewProps) {
                 <div className="flow-card-head">
                   <h3 className="flow-panel-title">
                     <CarrierIcon size={16} style={{ verticalAlign: 'middle', marginRight: 6 }} />
-                    {lang === 'ro' ? 'Suport Lot AOI ➔ THT (40 - 60 piese)' : 'Carrier Lot AOI ➔ THT (40 - 60 pcs)'}
+                    {'Suport Lot AOI ➔ THT (40 - 60 piese)'}
                   </h3>
                   <span className="flow-badge primary">Transfer în bloc</span>
                 </div>
                 <p className="flow-panel-desc">
-                  {lang === 'ro'
-                    ? 'Regulă critică de producție: Plăcile nu trec una câte una la THT, ci se acumulează pe tăvi suport de câte 40-60 piese și trec toate odată când tava este completă.'
-                    : 'Critical rule: Boards do not transfer one by one to THT; they accumulate on carriers of 40-60 pcs and move together once carrier is full.'}
+                  {'Regulă critică de producție: Plăcile nu trec una câte una la THT, ci se acumulează pe tăvi suport de câte 40-60 piese și trec toate odată când tava este completă.'}
                 </p>
 
                 <div className="flow-grid-3">
@@ -1353,12 +1302,10 @@ export function FlowGeneratorView({ lang }: FlowGeneratorViewProps) {
               {/* Tranzit QR -> SMD */}
               <div className="flow-panel-card">
                 <h3 className="flow-panel-title">
-                  {lang === 'ro' ? 'Tranzit QR ➔ SMD & Pauze Producție' : 'QR ➔ SMD Transit & Pauses'}
+                  {'Tranzit QR ➔ SMD & Pauze Producție'}
                 </h3>
                 <p className="flow-panel-desc">
-                  {lang === 'ro'
-                    ? 'Tranzit standard de 30 secunde cu perioade aleatorii de pauză între 1 și 10 minute.'
-                    : 'Standard 30s transit with random production pause intervals between 1 and 10 minutes.'}
+                  {'Tranzit standard de 30 secunde cu perioade aleatorii de pauză între 1 și 10 minute.'}
                 </p>
 
                 <div className="flow-grid-2">
@@ -1420,12 +1367,10 @@ export function FlowGeneratorView({ lang }: FlowGeneratorViewProps) {
               {/* Tranzit SMD -> AOI */}
               <div className="flow-panel-card">
                 <h3 className="flow-panel-title">
-                  {lang === 'ro' ? 'Tranzit SMD ➔ AOI (25 - 50 secunde)' : 'SMD ➔ AOI Transit (25 - 50s)'}
+                  {'Tranzit SMD ➔ AOI (25 - 50 secunde)'}
                 </h3>
                 <p className="flow-panel-desc">
-                  {lang === 'ro'
-                    ? 'Interval între cuptorul de reflow SMD și stația AOI cu pauze rare de minute.'
-                    : 'Transit between reflow oven and AOI with rare minute-long pauses.'}
+                  {'Interval între cuptorul de reflow SMD și stația AOI cu pauze rare de minute.'}
                 </p>
 
                 <div className="flow-grid-2">
@@ -1457,12 +1402,10 @@ export function FlowGeneratorView({ lang }: FlowGeneratorViewProps) {
               {/* Tranzit THT -> ICT & ICT -> EOL */}
               <div className="flow-panel-card">
                 <h3 className="flow-panel-title">
-                  {lang === 'ro' ? 'Tranzit THT ➔ ICT & Carcasare ➔ EOL' : 'THT ➔ ICT & Casing ➔ EOL'}
+                  {'Tranzit THT ➔ ICT & Carcasare ➔ EOL'}
                 </h3>
                 <p className="flow-panel-desc">
-                  {lang === 'ro'
-                    ? 'THT spre ICT durează 30-40 secunde; după ICT, carcasarea și deplasarea spre EOL sunt aleatorii.'
-                    : 'THT to ICT lasts 30-40s; casing and transit to EOL are randomized.'}
+                  {'THT spre ICT durează 30-40 secunde; după ICT, carcasarea și deplasarea spre EOL sunt aleatorii.'}
                 </p>
 
                 <div className="flow-grid-2">
@@ -1517,12 +1460,10 @@ export function FlowGeneratorView({ lang }: FlowGeneratorViewProps) {
             <div className="flow-grid-2">
               <div className="flow-panel-card">
                 <h3 className="flow-panel-title">
-                  {lang === 'ro' ? 'Comenzi Automate din Magazie' : 'Automated Warehouse Orders'}
+                  {'Comenzi Automate din Magazie'}
                 </h3>
                 <p className="flow-panel-desc">
-                  {lang === 'ro'
-                    ? 'Când generatorul pornește sau stocul scade sub 50 de bucăți, plasează automat comenzi de reaprovizionare în baza de date a magaziei.'
-                    : 'When stock drops below 50 pcs, automatically orders replenishment batches in inventory table.'}
+                  {'Când generatorul pornește sau stocul scade sub 50 de bucăți, plasează automat comenzi de reaprovizionare în baza de date a magaziei.'}
                 </p>
 
                 <div className="flow-field-group">
@@ -1534,16 +1475,14 @@ export function FlowGeneratorView({ lang }: FlowGeneratorViewProps) {
                       className="flow-toggle"
                     />
                     <span>
-                      {lang === 'ro'
-                        ? 'Activează comanda automată la stoc redus'
-                        : 'Enable auto replenishment orders'}
+                      {'Activează comanda automată la stoc redus'}
                     </span>
                   </label>
                 </div>
 
                 <div className="flow-field-group">
                   <label className="flow-field-label">
-                    {lang === 'ro' ? 'Cantitate comandată per lot (bucăți):' : 'Batch order quantity (pcs):'}
+                    {'Cantitate comandată per lot (bucăți):'}
                   </label>
                   <input
                     type="number"
@@ -1559,12 +1498,10 @@ export function FlowGeneratorView({ lang }: FlowGeneratorViewProps) {
 
               <div className="flow-panel-card">
                 <h3 className="flow-panel-title">
-                  {lang === 'ro' ? 'Verificare Automată Analist Calitate' : 'Automated QA Analyst Verification'}
+                  {'Verificare Automată Analist Calitate'}
                 </h3>
                 <p className="flow-panel-desc">
-                  {lang === 'ro'
-                    ? 'Fiecare lot sosit în recepție este inspectat și marcat automat ca fiind CONFORM și semnat de către analistul calitate.'
-                    : 'Incoming shipments are automatically verified, approved CONFORM and signed by the QA analyst.'}
+                  {'Fiecare lot sosit în recepție este inspectat și marcat automat ca fiind CONFORM și semnat de către analistul calitate.'}
                 </p>
 
                 <div className="flow-field-group">
@@ -1576,16 +1513,14 @@ export function FlowGeneratorView({ lang }: FlowGeneratorViewProps) {
                       className="flow-toggle"
                     />
                     <span>
-                      {lang === 'ro'
-                        ? 'Semnare automată de către Analist Calitate'
-                        : 'Automatic sign-off by Quality Analyst'}
+                      {'Semnare automată de către Analist Calitate'}
                     </span>
                   </label>
                 </div>
 
                 <div className="flow-field-group">
                   <label className="flow-field-label">
-                    {lang === 'ro' ? 'Utilizator Analist Calitate:' : 'Quality Analyst Username:'}
+                    {'Utilizator Analist Calitate:'}
                   </label>
                   <input
                     type="text"
@@ -1597,7 +1532,7 @@ export function FlowGeneratorView({ lang }: FlowGeneratorViewProps) {
 
                 <div className="flow-field-group">
                   <label className="flow-field-label">
-                    {lang === 'ro' ? 'Decizie recepție lot:' : 'Incoming batch verdict:'}
+                    {'Decizie recepție lot:'}
                   </label>
                   <select
                     className="flow-input-field"
@@ -1621,7 +1556,7 @@ export function FlowGeneratorView({ lang }: FlowGeneratorViewProps) {
           <div className="console-title-group">
             <span className="console-dot-live" />
             <h3 className="flow-console-title">
-              {lang === 'ro' ? 'Jurnal de Evenimente & Trasabilitate Live' : 'Live Traceability & Event Log'}
+              {'Jurnal de Evenimente & Trasabilitate Live'}
             </h3>
             <span className="console-counter">({eventLogs.length} înregistrări)</span>
           </div>
@@ -1640,7 +1575,7 @@ export function FlowGeneratorView({ lang }: FlowGeneratorViewProps) {
               className="console-btn-clear"
               onClick={() => setEventLogs([])}
             >
-              {lang === 'ro' ? 'Șterge jurnal' : 'Clear log'}
+              {'Șterge jurnal'}
             </button>
           </div>
         </div>
@@ -1648,9 +1583,7 @@ export function FlowGeneratorView({ lang }: FlowGeneratorViewProps) {
         <div className="flow-console-body" ref={logContainerRef}>
           {eventLogs.length === 0 ? (
             <div className="console-empty">
-              {lang === 'ro'
-                ? 'Jurnalul este gol. Apăsați pe „Lansează lot” sau porniți simularea live pentru a vizualiza deplasarea pieselor.'
-                : 'Log is empty. Click "Run batch" or start live simulation to monitor PCB movement.'}
+              {'Jurnalul este gol. Apăsați pe „Lansează lot” sau porniți simularea live pentru a vizualiza deplasarea pieselor.'}
             </div>
           ) : (
             eventLogs.map((log, idx) => {

@@ -1,3 +1,59 @@
+:root {
+  /* ==============================================================================
+     SmartQMA Design System — Elegant & Traditional Light Theme
+     Paletă: Dominanță alb/gri foarte deschis (#FFFFFF, #FAFAFA, #F5F6F8),
+             Roșu & Vișiniu / Bordeaux (#6B0F24, #7A0C22, #8B1535, #54091A),
+             Accente discrete Albastru Cobalt (#1E3A8A, #1D4ED8, #2563EB),
+             Griuri neutre & Text cărbune (#1E293B, #475569, #64748B, #94A3B8)
+     ============================================================================== */
+  --qma-bg-white: #ffffff;
+  --qma-bg-airy: #fafbfc;
+  --qma-bg-subtle: #f5f6f8;
+  --qma-bg-card: #ffffff;
+
+  /* Vișiniu / Bordeaux / Burgundy */
+  --qma-primary-wine: #7a0c22;
+  --qma-primary-bordeaux: #6b0f24;
+  --qma-primary-crimson: #8b1535;
+  --qma-primary-dark: #54091a;
+  --qma-primary-deepest: #3f0513;
+  --qma-wine-tint: #fdf2f4;
+  --qma-wine-tint-hover: #fae8eb;
+  --qma-wine-border: #f2c7ce;
+
+  /* Accente Albastru Cobalt */
+  --qma-cobalt: #1e3a8a;
+  --qma-cobalt-light: #1d4ed8;
+  --qma-cobalt-tint: #eff6ff;
+  --qma-cobalt-border: #bfdbfe;
+
+  /* Neutre & Borduri */
+  --qma-border-light: #eaecf0;
+  --qma-border-medium: #d0d5dd;
+  --qma-border-strong: #98a2b3;
+  --qma-text-main: #1e293b;
+  --qma-text-secondary: #475569;
+  --qma-text-muted: #64748b;
+  --qma-text-light: #94a3b8;
+
+  /* Tipografie */
+  --font-serif: 'Playfair Display', Georgia, Cambria, 'Times New Roman', serif;
+  --font-sans: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
+  --font-mono: 'JetBrains Mono', 'Fira Code', Consolas, monospace;
+
+  /* Raze rotunjire - Pill elegant */
+  --radius-pill: 9999px;
+  --radius-xl: 16px;
+  --radius-lg: 12px;
+  --radius-md: 8px;
+  --radius-sm: 6px;
+
+  /* Umbre subtile flat/distinse */
+  --qma-shadow-subtle: 0 1px 3px rgba(0, 0, 0, 0.05), 0 1px 2px rgba(0, 0, 0, 0.03);
+  --qma-shadow-card: 0 4px 20px -2px rgba(107, 15, 36, 0.04), 0 2px 6px -1px rgba(0, 0, 0, 0.03);
+  --qma-shadow-hover: 0 8px 24px -4px rgba(107, 15, 36, 0.12), 0 4px 8px -2px rgba(0, 0, 0, 0.04);
+}
+
 * {
   box-sizing: border-box;
   margin: 0;
@@ -5,14 +61,32 @@
 }
 
 body {
-  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
-  background-color: #f1f5f9;
-  color: #0f172a;
+  font-family: var(--font-sans);
+  background-color: var(--qma-bg-white);
+  color: var(--qma-text-main);
   min-height: 100vh;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
 }
 
 #root {
   min-height: 100vh;
   display: flex;
   flex-direction: column;
+}
+
+/* Scrollbar rafinat și discret */
+::-webkit-scrollbar {
+  width: 7px;
+  height: 7px;
+}
+::-webkit-scrollbar-track {
+  background: #f8fafc;
+}
+::-webkit-scrollbar-thumb {
+  background: #cbd5e1;
+  border-radius: 9999px;
+}
+::-webkit-scrollbar-thumb:hover {
+  background: var(--qma-primary-wine);
 }

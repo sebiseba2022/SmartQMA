@@ -33,10 +33,10 @@ export const EMPTY_PLM_FILTERS: PlmColumnFilters = {
 };
 
 interface PlmPageProps {
-  lang: Language;
+  lang?: Language;
 }
 
-export function PlmPage({ lang }: PlmPageProps) {
+export function PlmPage(_props: PlmPageProps) {
   const [idents, setIdents] = useState<ComponentIdentItem[]>([]);
   const [totalCount, setTotalCount] = useState<number>(0);
   const [offset, setOffset] = useState<number>(0);
@@ -159,10 +159,7 @@ export function PlmPage({ lang }: PlmPageProps) {
   const handleDraftFilterChange = (field: keyof PlmColumnFilters, value: string) => {
     if (isStandAloneWildcard(value)) {
       setTableNotice(
-        lang === 'ro'
-          ? 'Nu puteți selecta toate elementele deoarece îngreunează baza de date.'
-          : 'You cannot select all elements as it slows down the database.'
-      );
+        'Nu puteți selecta toate elementele deoarece îngreunează baza de date.');
     } else if (tableNotice) {
       setTableNotice(null);
     }
@@ -179,10 +176,7 @@ export function PlmPage({ lang }: PlmPageProps) {
       const hasStandalone = Object.values(draftFilters).some(isStandAloneWildcard);
       if (hasStandalone) {
         setTableNotice(
-          lang === 'ro'
-            ? 'Nu puteți selecta toate elementele deoarece îngreunează baza de date.'
-            : 'You cannot select all elements as it slows down the database.'
-        );
+          'Nu puteți selecta toate elementele deoarece îngreunează baza de date.');
         return;
       }
 
@@ -285,10 +279,7 @@ export function PlmPage({ lang }: PlmPageProps) {
               className={`magazie-round-btn ${isAllActive ? 'active' : ''}`}
               onClick={handleLoadTop50All}
               title={
-                lang === 'ro'
-                  ? 'Încarcă primele 50 de componente din catalog (defilați pentru mai multe)'
-                  : 'Load first 50 components (scroll for more)'
-              }
+                'Încarcă primele 50 de componente din catalog (defilați pentru mai multe)'}
               aria-label="Toate"
             >
               <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor">
@@ -309,7 +300,7 @@ export function PlmPage({ lang }: PlmPageProps) {
               type="button"
               className="magazie-round-btn"
               onClick={handleResetFilters}
-              title={lang === 'ro' ? 'Resetează filtrele și tabelul' : 'Reset filters and table'}
+              title={'Resetează filtrele și tabelul'}
               aria-label="Resetează"
             >
               <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor">
@@ -322,7 +313,7 @@ export function PlmPage({ lang }: PlmPageProps) {
               </svg>
             </button>
             <span className="magazie-round-btn-label">
-              {lang === 'ro' ? 'Resetează' : 'Reset'}
+              {'Resetează'}
             </span>
           </div>
 
@@ -334,10 +325,7 @@ export function PlmPage({ lang }: PlmPageProps) {
               onClick={handleExportCsv}
               disabled={queriedIdents.length === 0}
               title={
-                lang === 'ro'
-                  ? 'Exportă datele interogate în fișier CSV'
-                  : 'Export queried data to CSV'
-              }
+                'Exportă datele interogate în fișier CSV'}
               aria-label="Exportă CSV"
             >
               <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor">
@@ -382,13 +370,11 @@ export function PlmPage({ lang }: PlmPageProps) {
         {hasActiveQuery && (
           <div className="magazie-table-toolbar-info">
             <span>
-              {lang === 'ro'
-                ? `Afișate ${queriedIdents.length} din ${totalCount} componente găsite`
-                : `Showing ${queriedIdents.length} of ${totalCount} components`}
+              {`Afișate ${queriedIdents.length} din ${totalCount} componente găsite`}
             </span>
             {hasMore && (
               <span className="magazie-count-badge">
-                {lang === 'ro' ? 'Defilați pentru mai multe (top 50)' : 'Scroll for more (top 50)'}
+                {'Defilați pentru mai multe (top 50)'}
               </span>
             )}
           </div>
@@ -401,15 +387,15 @@ export function PlmPage({ lang }: PlmPageProps) {
                 <th className="col-idx" style={{ width: '65px' }}>#</th>
                 <th className="col-ident" style={{ width: '95px' }}>Ident</th>
                 <th className="col-name" style={{ minWidth: '160px' }}>
-                  {lang === 'ro' ? 'Denumire componentă' : 'Part name'}
+                  {'Denumire componentă'}
                 </th>
-                <th style={{ width: '140px' }}>{lang === 'ro' ? 'Cod producător (MPN)' : 'MPN'}</th>
-                <th style={{ width: '130px' }}>{lang === 'ro' ? 'Furnizor' : 'Provider'}</th>
-                <th style={{ width: '110px' }}>{lang === 'ro' ? 'Tip capsulă' : 'Package type'}</th>
-                <th style={{ width: '130px' }}>{lang === 'ro' ? 'Producător' : 'Manufacturer'}</th>
-                <th style={{ width: '85px' }}>{lang === 'ro' ? 'Unitate' : 'Unit'}</th>
+                <th style={{ width: '140px' }}>{'Cod producător (MPN)'}</th>
+                <th style={{ width: '130px' }}>{'Furnizor'}</th>
+                <th style={{ width: '110px' }}>{'Tip capsulă'}</th>
+                <th style={{ width: '130px' }}>{'Producător'}</th>
+                <th style={{ width: '85px' }}>{'Unitate'}</th>
                 <th style={{ width: '110px', textAlign: 'center' }}>
-                  {lang === 'ro' ? 'Fișă tehnică' : 'Datasheet'}
+                  {'Fișă tehnică'}
                 </th>
               </tr>
             </thead>
@@ -555,10 +541,7 @@ export function PlmPage({ lang }: PlmPageProps) {
                       className="plm-datasheet-btn"
                       onClick={() => setActiveDatasheetIdent(item)}
                       title={
-                        lang === 'ro'
-                          ? `Deschide fișa tehnică (datasheet) pentru ident ${item.ident}`
-                          : `Open datasheet for ident ${item.ident}`
-                      }
+                        `Deschide fișa tehnică (datasheet) pentru ident ${item.ident}`}
                     >
                       <svg
                         width="14"
@@ -575,7 +558,7 @@ export function PlmPage({ lang }: PlmPageProps) {
                           d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"
                         />
                       </svg>
-                      {lang === 'ro' ? 'Datasheet' : 'Datasheet'}
+                      {'Datasheet'}
                     </button>
                   </td>
                 </tr>
@@ -586,9 +569,7 @@ export function PlmPage({ lang }: PlmPageProps) {
                   <td colSpan={9}>
                     <div className="magazie-scroll-loader">
                       <span className="magazie-mini-spinner" />
-                      {lang === 'ro'
-                        ? 'Se încarcă încă 50 de componente...'
-                        : 'Loading 50 more components...'}
+                      {'Se încarcă încă 50 de componente...'}
                     </div>
                   </td>
                 </tr>
@@ -644,15 +625,15 @@ export function PlmPage({ lang }: PlmPageProps) {
 
             <div className="plm-datasheet-info-bar">
               <div>
-                <strong>{lang === 'ro' ? 'Cod producător:' : 'MPN:'}</strong>{' '}
+                <strong>{'Cod producător:'}</strong>{' '}
                 <code>{activeDatasheetIdent.manufacturer_part_number || 'N/A'}</code>
               </div>
               <div>
-                <strong>{lang === 'ro' ? 'Capsulă:' : 'Package:'}</strong>{' '}
+                <strong>{'Capsulă:'}</strong>{' '}
                 <span>{activeDatasheetIdent.package_type}</span>
               </div>
               <div>
-                <strong>{lang === 'ro' ? 'Furnizor:' : 'Provider:'}</strong>{' '}
+                <strong>{'Furnizor:'}</strong>{' '}
                 <span>{activeDatasheetIdent.provider}</span>
               </div>
             </div>
@@ -677,7 +658,7 @@ export function PlmPage({ lang }: PlmPageProps) {
                   className="magazie-btn-cancel"
                   style={{ textDecoration: 'none', display: 'inline-flex', alignItems: 'center' }}
                 >
-                  ↗ {lang === 'ro' ? 'Deschide în filă nouă' : 'Open in new tab'}
+                  ↗ {'Deschide în filă nouă'}
                 </a>
                 <a
                   href={`/api/v1/idents/${activeDatasheetIdent.ident}/datasheet`}
@@ -685,7 +666,7 @@ export function PlmPage({ lang }: PlmPageProps) {
                   className="magazie-btn-cancel"
                   style={{ textDecoration: 'none', display: 'inline-flex', alignItems: 'center' }}
                 >
-                  ⬇ {lang === 'ro' ? 'Descarcă PDF' : 'Download PDF'}
+                  ⬇ {'Descarcă PDF'}
                 </a>
               </div>
               <button
@@ -693,7 +674,7 @@ export function PlmPage({ lang }: PlmPageProps) {
                 className="magazie-btn-submit"
                 onClick={() => setActiveDatasheetIdent(null)}
               >
-                {lang === 'ro' ? 'Închide' : 'Close'}
+                {'Închide'}
               </button>
             </div>
           </div>

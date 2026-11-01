@@ -1,14 +1,20 @@
 <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 64 64" width="64" height="64">
-  <rect width="64" height="64" rx="14" fill="#181512" />
-  <circle cx="30" cy="28" r="16" stroke="url(#qgrad)" stroke-width="5" fill="none" />
-  <circle cx="23" cy="28" r="3" fill="#ea580c" />
-  <path d="M23 28 L36 41 L50 41" stroke="url(#qgrad)" stroke-width="4.5" stroke-linecap="round" stroke-linejoin="round" fill="none" />
-  <circle cx="50" cy="41" r="3" fill="#ea580c" />
+  <rect width="64" height="64" rx="16" fill="#ffffff" stroke="#f1f5f9" stroke-width="2" />
+  <!-- Elegant SmartQMA infinity trace symbol -->
+  <path d="M 23 24 C 17 24 12 28 12 33 C 12 38 17 42 23 42 C 29 42 33 37 36 33 C 39 29 43 24 49 24 C 55 24 60 28 60 33 C 60 38 55 42 49 42 C 45 42 41 39 38 35 L 34 31" 
+        stroke="url(#qmaBordeauxGrad)" stroke-width="5" stroke-linecap="round" stroke-linejoin="round" fill="none" />
+  <!-- Loop ribbon detail -->
+  <path d="M 43 38 C 45 43 49 45 52 45 C 56 45 59 42 59 38" 
+        stroke="#7A0C22" stroke-width="3" stroke-linecap="round" fill="none" />
+  <!-- Cobalt and burgundy trace nodes -->
+  <circle cx="23" cy="24" r="2.5" fill="#1E3A8A" />
+  <circle cx="49" cy="42" r="2.5" fill="#1E3A8A" />
+  <circle cx="36" cy="33" r="3" fill="#7A0C22" />
   <defs>
-    <linearGradient id="qgrad" x1="0%" y1="0%" x2="100%" y2="100%">
-      <stop offset="0%" stop-color="#dc2626" />
-      <stop offset="50%" stop-color="#ea580c" />
-      <stop offset="100%" stop-color="#f59e0b" />
+    <linearGradient id="qmaBordeauxGrad" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#9E1A36" />
+      <stop offset="50%" stop-color="#7A0C22" />
+      <stop offset="100%" stop-color="#54091A" />
     </linearGradient>
   </defs>
 </svg>

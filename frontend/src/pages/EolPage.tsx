@@ -9,7 +9,7 @@ import { useRealtimeLiveFeed } from '../utils/useRealtimeLiveFeed';
 import { LiveStreamFreezeBanner } from '../components/LiveStreamFreezeBanner';
 
 interface EolPageProps {
-  lang: Language;
+  lang?: Language;
   currentUser?: User | null;
 }
 
@@ -29,7 +29,7 @@ const EMPTY_FILTERS: EolFilters = {
 
 const MIN_EMPTY_TABLE_ROWS = 22;
 
-export function EolPage({ lang, currentUser }: EolPageProps) {
+export function EolPage({ currentUser }: EolPageProps) {
   const [totalCount, setTotalCount] = useState<number>(0);
   const [, setLoading] = useState<boolean>(true);
   const [error, setError] = useState<string | null>(null);
@@ -123,10 +123,7 @@ export function EolPage({ lang, currentUser }: EolPageProps) {
       if (!res.ok) throw new Error(data.message || 'Eroare la salvare.');
 
       setNotice(
-        lang === 'ro'
-          ? `Testul funcțional final EOL pentru PCB ${cleanSerial} a fost înregistrat: ${formResult}.`
-          : `EOL functional test for PCB ${cleanSerial} recorded: ${formResult}.`
-      );
+        `Testul funcțional final EOL pentru PCB ${cleanSerial} a fost înregistrat: ${formResult}.`);
       setIsRecordModalOpen(false);
       setFormSerial('');
       fetchResults();
@@ -169,10 +166,7 @@ export function EolPage({ lang, currentUser }: EolPageProps) {
       if (!res.ok) throw new Error(data.message || 'Eroare.');
 
       setNotice(
-        lang === 'ro'
-          ? `PCB ${cleanSerial} testat la EOL: ${verdict}.`
-          : `PCB ${cleanSerial} tested at EOL: ${verdict}.`
-      );
+        `PCB ${cleanSerial} testat la EOL: ${verdict}.`);
       setQuickPcbSerial('');
       fetchResults();
     } catch (err: any) {
@@ -278,7 +272,7 @@ export function EolPage({ lang, currentUser }: EolPageProps) {
             <button
               type="button"
               className="magazie-round-btn primary"
-              title={lang === 'ro' ? 'Înregistrează test funcțional EOL' : 'Record EOL test'}
+              title={'Înregistrează test funcțional EOL'}
               onClick={() => setIsRecordModalOpen(true)}
             >
               <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5">
@@ -290,7 +284,7 @@ export function EolPage({ lang, currentUser }: EolPageProps) {
               </svg>
             </button>
             <span className="magazie-round-btn-label">
-              {lang === 'ro' ? 'Test EOL' : 'EOL test'}
+              {'Test EOL'}
             </span>
           </div>
 
@@ -299,7 +293,7 @@ export function EolPage({ lang, currentUser }: EolPageProps) {
             <button
               type="button"
               className={`magazie-round-btn ${filters.test_result === 'FAIL' ? 'active' : ''}`}
-              title={lang === 'ro' ? 'Afișează doar teste eșuate (FAIL)' : 'Show failed tests only'}
+              title={'Afișează doar teste eșuate (FAIL)'}
               onClick={() =>
                 setFilters({
                   ...filters,
@@ -316,7 +310,7 @@ export function EolPage({ lang, currentUser }: EolPageProps) {
               </svg>
             </button>
             <span className="magazie-round-btn-label">
-              {lang === 'ro' ? 'Doar FAIL' : 'FAIL only'}
+              {'Doar FAIL'}
             </span>
           </div>
 
@@ -325,7 +319,7 @@ export function EolPage({ lang, currentUser }: EolPageProps) {
             <button
               type="button"
               className="magazie-round-btn"
-              title={lang === 'ro' ? 'Reîmprospătează lista' : 'Refresh list'}
+              title={'Reîmprospătează lista'}
               onClick={fetchResults}
             >
               <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
@@ -337,7 +331,7 @@ export function EolPage({ lang, currentUser }: EolPageProps) {
               </svg>
             </button>
             <span className="magazie-round-btn-label">
-              {lang === 'ro' ? 'Reîmprospătare' : 'Refresh'}
+              {'Reîmprospătare'}
             </span>
           </div>
 
@@ -346,7 +340,7 @@ export function EolPage({ lang, currentUser }: EolPageProps) {
             <button
               type="button"
               className="magazie-round-btn"
-              title={lang === 'ro' ? 'Exportă CSV' : 'Export CSV'}
+              title={'Exportă CSV'}
               onClick={handleExportCsv}
             >
               <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
@@ -358,7 +352,7 @@ export function EolPage({ lang, currentUser }: EolPageProps) {
               </svg>
             </button>
             <span className="magazie-round-btn-label">
-              {lang === 'ro' ? 'Exportă CSV' : 'Export CSV'}
+              {'Exportă CSV'}
             </span>
           </div>
         </div>
@@ -387,7 +381,7 @@ export function EolPage({ lang, currentUser }: EolPageProps) {
         <section className="station-quick-bar" aria-label="Operare rapidă EOL">
           <div className="station-quick-group">
             <span className="station-quick-label">
-              {lang === 'ro' ? 'Testare finală PCB:' : 'Final PCB test:'}
+              {'Testare finală PCB:'}
             </span>
             <input
               type="text"
@@ -418,7 +412,7 @@ export function EolPage({ lang, currentUser }: EolPageProps) {
 
           <div className="station-kpi-group">
             <div className="station-kpi-chip success">
-              <span>{lang === 'ro' ? 'Rată finală EOL:' : 'EOL Pass Rate:'}</span>
+              <span>{'Rată finală EOL:'}</span>
               <strong>{fpyRate}</strong>
             </div>
             <div className="station-kpi-chip">
@@ -430,7 +424,7 @@ export function EolPage({ lang, currentUser }: EolPageProps) {
               <strong>{failCount}</strong>
             </div>
             <div className="station-kpi-chip">
-              <span>{lang === 'ro' ? 'Total validate:' : 'Total validated:'}</span>
+              <span>{'Total validate:'}</span>
               <strong>{totalCount}</strong>
             </div>
           </div>
@@ -439,14 +433,10 @@ export function EolPage({ lang, currentUser }: EolPageProps) {
         {/* Toolbar informativ */}
         <div className="magazie-table-toolbar-info">
           <span>
-            {lang === 'ro'
-              ? 'Punct de verificare EOL — Testare funcțională finală, consum curent & certificare produs'
-              : 'EOL Inspection Point — End-Of-Line Functional Testing, Current Draw & Certification'}
+            {'Punct de verificare EOL — Testare funcțională finală, consum curent & certificare produs'}
           </span>
           <span className="magazie-count-badge">
-            {lang === 'ro'
-              ? `${filteredResults.length} din ${totalCount} teste funcționale afișate`
-              : `${filteredResults.length} of ${totalCount} functional tests displayed`}
+            {`${filteredResults.length} din ${totalCount} teste funcționale afișate`}
           </span>
         </div>
 
@@ -454,7 +444,7 @@ export function EolPage({ lang, currentUser }: EolPageProps) {
         <LiveStreamFreezeBanner
           pendingCount={pendingNewCount}
           onResume={resumeLiveStream}
-          lang={lang}
+
         />
 
         {/* Tabel */}
@@ -463,18 +453,18 @@ export function EolPage({ lang, currentUser }: EolPageProps) {
             <thead>
               <tr>
                 <th className="col-idx" style={{ width: '65px' }}>#</th>
-                <th style={{ width: '150px' }}>{lang === 'ro' ? 'Serie PCB' : 'PCB Serial'}</th>
-                <th style={{ width: '135px' }}>{lang === 'ro' ? 'Model produs' : 'Product model'}</th>
-                <th style={{ width: '105px' }}>{lang === 'ro' ? 'Versiuni HW / SW' : 'HW / SW Vers'}</th>
-                <th style={{ width: '80px' }}>{lang === 'ro' ? 'Rezultat' : 'Verdict'}</th>
-                <th style={{ width: '95px' }}>{lang === 'ro' ? 'Curent (mA)' : 'Current (mA)'}</th>
+                <th style={{ width: '150px' }}>{'Serie PCB'}</th>
+                <th style={{ width: '135px' }}>{'Model produs'}</th>
+                <th style={{ width: '105px' }}>{'Versiuni HW / SW'}</th>
+                <th style={{ width: '80px' }}>{'Rezultat'}</th>
+                <th style={{ width: '95px' }}>{'Curent (mA)'}</th>
                 <th style={{ minWidth: '150px' }}>
-                  {lang === 'ro' ? 'Verificări funcționale' : 'Functional checks'}
+                  {'Verificări funcționale'}
                 </th>
-                <th style={{ width: '100px' }}>{lang === 'ro' ? 'Operator' : 'Operator'}</th>
-                <th style={{ width: '140px' }}>{lang === 'ro' ? 'Data testării' : 'Tested at'}</th>
+                <th style={{ width: '100px' }}>{'Operator'}</th>
+                <th style={{ width: '140px' }}>{'Data testării'}</th>
                 <th style={{ width: '80px', textAlign: 'center' }}>
-                  {lang === 'ro' ? 'Detalii' : 'Details'}
+                  {'Detalii'}
                 </th>
               </tr>
             </thead>
@@ -486,7 +476,7 @@ export function EolPage({ lang, currentUser }: EolPageProps) {
                   <input
                     type="text"
                     className="magazie-cell-input ident-input"
-                    placeholder={lang === 'ro' ? 'Filtrează serie...' : 'Filter serial...'}
+                    placeholder={'Filtrează serie...'}
                     value={filters.qr_serial_number}
                     onChange={(e) =>
                       setFilters({ ...filters, qr_serial_number: e.target.value })
@@ -509,7 +499,7 @@ export function EolPage({ lang, currentUser }: EolPageProps) {
                     value={filters.test_result}
                     onChange={(e) => setFilters({ ...filters, test_result: e.target.value })}
                   >
-                    <option value="">{lang === 'ro' ? 'Toate' : 'All'}</option>
+                    <option value="">{'Toate'}</option>
                     <option value="PASS">PASS</option>
                     <option value="FAIL">FAIL</option>
                   </select>
@@ -540,7 +530,7 @@ export function EolPage({ lang, currentUser }: EolPageProps) {
                   <td className="col-idx-cell" style={{ fontWeight: 700, color: '#64748b' }}>
                     #{r.id}
                   </td>
-                  <td className="magazie-mono-cell" style={{ fontWeight: 700, color: '#ea580c' }}>
+                  <td className="magazie-mono-cell" style={{ fontWeight: 700, color: '#7a0c22' }}>
                     {r.qr_serial_number}
                   </td>
                   <td className="magazie-name-cell">{r.product_ident}</td>
@@ -573,7 +563,7 @@ export function EolPage({ lang, currentUser }: EolPageProps) {
                         setSelectedResult(r);
                       }}
                     >
-                      {lang === 'ro' ? 'Detalii' : 'Details'}
+                      {'Detalii'}
                     </button>
                   </td>
                 </tr>
@@ -604,7 +594,7 @@ export function EolPage({ lang, currentUser }: EolPageProps) {
           <div className="magazie-modal-card" onClick={(e) => e.stopPropagation()}>
             <div className="magazie-modal-header">
               <h3 className="magazie-modal-title">
-                {lang === 'ro' ? 'Înregistrare testare funcțională finală EOL' : 'Record EOL functional test'}
+                {'Înregistrare testare funcțională finală EOL'}
               </h3>
               <button
                 type="button"
@@ -618,7 +608,7 @@ export function EolPage({ lang, currentUser }: EolPageProps) {
             <form onSubmit={handleRecordSubmit}>
               <div className="magazie-modal-form">
                 <div className="magazie-form-field">
-                  <label>{lang === 'ro' ? 'Serie placă PCB (12 cifre)*' : 'PCB serial (12 digits)*'}</label>
+                  <label>{'Serie placă PCB (12 cifre)*'}</label>
                   <input
                     type="text"
                     required
@@ -635,7 +625,7 @@ export function EolPage({ lang, currentUser }: EolPageProps) {
                 </div>
 
                 <div className="magazie-form-field">
-                  <label>{lang === 'ro' ? 'Model produs*' : 'Product model*'}</label>
+                  <label>{'Model produs*'}</label>
                   <input
                     type="text"
                     value={formProductIdent}
@@ -644,7 +634,7 @@ export function EolPage({ lang, currentUser }: EolPageProps) {
                 </div>
 
                 <div className="magazie-form-field">
-                  <label>{lang === 'ro' ? 'Rezultat test final*' : 'Final verdict*'}</label>
+                  <label>{'Rezultat test final*'}</label>
                   <select
                     value={formResult}
                     onChange={(e) => setFormResult(e.target.value as any)}
@@ -655,7 +645,7 @@ export function EolPage({ lang, currentUser }: EolPageProps) {
                 </div>
 
                 <div className="magazie-form-field">
-                  <label>{lang === 'ro' ? 'Consum curent (mA)*' : 'Current draw (mA)*'}</label>
+                  <label>{'Consum curent (mA)*'}</label>
                   <input
                     type="number"
                     step="0.01"
@@ -665,7 +655,7 @@ export function EolPage({ lang, currentUser }: EolPageProps) {
                 </div>
 
                 <div className="magazie-form-field" style={{ gridColumn: 'span 2' }}>
-                  <label>{lang === 'ro' ? 'Baterie verificări funcționale' : 'Functional checks checklist'}</label>
+                  <label>{'Baterie verificări funcționale'}</label>
                   <div
                     style={{
                       display: 'flex',
@@ -720,7 +710,7 @@ export function EolPage({ lang, currentUser }: EolPageProps) {
                   className="magazie-btn-cancel"
                   onClick={() => setIsRecordModalOpen(false)}
                 >
-                  {lang === 'ro' ? 'Anulează' : 'Cancel'}
+                  {'Anulează'}
                 </button>
                 <button
                   type="submit"
@@ -728,12 +718,7 @@ export function EolPage({ lang, currentUser }: EolPageProps) {
                   disabled={submitting || !formSerial.trim()}
                 >
                   {submitting
-                    ? lang === 'ro'
-                      ? 'Se salvează...'
-                      : 'Saving...'
-                    : lang === 'ro'
-                    ? 'Confirmă rezultat EOL'
-                    : 'Confirm EOL test'}
+                    ? 'Se salvează...': 'Confirmă rezultat EOL'}
                 </button>
               </div>
             </form>
@@ -747,7 +732,7 @@ export function EolPage({ lang, currentUser }: EolPageProps) {
           <div className="magazie-modal-card" onClick={(e) => e.stopPropagation()}>
             <div className="magazie-modal-header">
               <h3 className="magazie-modal-title">
-                {lang === 'ro' ? 'Certificat testare funcțională EOL' : 'EOL test certificate'}
+                {'Certificat testare funcțională EOL'}
               </h3>
               <button
                 type="button"
@@ -771,14 +756,14 @@ export function EolPage({ lang, currentUser }: EolPageProps) {
               }}
             >
               <div>
-                <span style={{ color: '#64748b' }}>{lang === 'ro' ? 'Serie PCB:' : 'PCB Serial:'}</span>
-                <div style={{ fontFamily: 'monospace', fontWeight: 700, color: '#ea580c' }}>
+                <span style={{ color: '#64748b' }}>{'Serie PCB:'}</span>
+                <div style={{ fontFamily: 'monospace', fontWeight: 700, color: '#7a0c22' }}>
                   {selectedResult.qr_serial_number}
                 </div>
               </div>
 
               <div>
-                <span style={{ color: '#64748b' }}>{lang === 'ro' ? 'Rezultat final:' : 'Final verdict:'}</span>
+                <span style={{ color: '#64748b' }}>{'Rezultat final:'}</span>
                 <div>
                   <span
                     className={`status-badge ${
@@ -791,31 +776,31 @@ export function EolPage({ lang, currentUser }: EolPageProps) {
               </div>
 
               <div>
-                <span style={{ color: '#64748b' }}>{lang === 'ro' ? 'Model produs:' : 'Product model:'}</span>
+                <span style={{ color: '#64748b' }}>{'Model produs:'}</span>
                 <div style={{ fontWeight: 700 }}>{selectedResult.product_ident}</div>
               </div>
 
               <div>
-                <span style={{ color: '#64748b' }}>{lang === 'ro' ? 'Versiuni HW / SW:' : 'HW / SW Vers:'}</span>
+                <span style={{ color: '#64748b' }}>{'Versiuni HW / SW:'}</span>
                 <div style={{ fontFamily: 'monospace' }}>
                   {selectedResult.hardware_version} / {selectedResult.software_version}
                 </div>
               </div>
 
               <div>
-                <span style={{ color: '#64748b' }}>{lang === 'ro' ? 'Consum curent nominal:' : 'Current draw:'}</span>
+                <span style={{ color: '#64748b' }}>{'Consum curent nominal:'}</span>
                 <div style={{ fontWeight: 700, color: '#0f172a' }}>
                   {selectedResult.current_draw_ma} mA
                 </div>
               </div>
 
               <div>
-                <span style={{ color: '#64748b' }}>{lang === 'ro' ? 'Operator:' : 'Operator:'}</span>
+                <span style={{ color: '#64748b' }}>{'Operator:'}</span>
                 <div>{selectedResult.operator_username || '—'}</div>
               </div>
 
               <div style={{ gridColumn: 'span 2' }}>
-                <span style={{ color: '#64748b' }}>{lang === 'ro' ? 'Verificări funcționale trecute:' : 'Checks summary:'}</span>
+                <span style={{ color: '#64748b' }}>{'Verificări funcționale trecute:'}</span>
                 <div
                   style={{
                     background: '#ffffff',
@@ -832,7 +817,7 @@ export function EolPage({ lang, currentUser }: EolPageProps) {
               </div>
 
               <div style={{ gridColumn: 'span 2' }}>
-                <span style={{ color: '#64748b' }}>{lang === 'ro' ? 'Data testării:' : 'Tested at:'}</span>
+                <span style={{ color: '#64748b' }}>{'Data testării:'}</span>
                 <div>
                   {selectedResult.tested_at
                     ? new Date(selectedResult.tested_at).toLocaleString('ro-RO')
@@ -847,7 +832,7 @@ export function EolPage({ lang, currentUser }: EolPageProps) {
                 className="magazie-btn-cancel"
                 onClick={() => setSelectedResult(null)}
               >
-                {lang === 'ro' ? 'Închide' : 'Close'}
+                {'Închide'}
               </button>
             </div>
           </div>
